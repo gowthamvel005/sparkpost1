@@ -1,6 +1,8 @@
 'use strict';
 // Module Dependencies
 // -------------------
+
+console.log("app.js called");
 var express     = require('express');
 var bodyParser  = require('body-parser');
 var errorhandler = require('errorhandler');
