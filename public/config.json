@@ -8,7 +8,7 @@
     "type": "REST",
     "lang": {
         "en-US": {
-            "name": "Test",
+            "name": "Hearsay Journey",
           "description": "A Template for a custom Journey Builder activity",
           "step1Label": "Configure Activity"
         }
@@ -58,8 +58,8 @@
     ],
     "userInterfaces": {
         "configModal": {
-            "height": 400,
-            "width": 1000,
+            "height": 300,
+            "width": 600,
           "fullscreen": false
         }
     },
