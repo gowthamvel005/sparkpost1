@@ -21,7 +21,7 @@
                 }									
 			],
           "outArguments": [],
-          "url": "https://mcjourneycustomactivity.herokuapp.com/execute",
+          "url": "https://mcjourneycustomactivity.herokuapp.com/journeybuilder/execute",
            "verb": "POST",
             "body": "",
             "header": "",
