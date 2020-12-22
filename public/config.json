@@ -2,13 +2,12 @@
     "workflowApiVersion": "1.1",
     "metaData": {
         "icon": "images/icon.png",
-        "iconSmall": "images/iconSmall.png"
-       
+        "iconSmall": "images/iconSmall.png"       
     },
     "type": "REST",
     "lang": {
         "en-US": {
-            "name": "Hearsay Journey",
+            "name": "New Custom Journey",
           "description": "A Template for a custom Journey Builder activity",
           "step1Label": "Configure Activity"
         }
@@ -21,7 +20,7 @@
                 }									
 			],
           "outArguments": [],
-          "url": "https://working-version-activity.herokuapp.com/journeybuilder/execute",
+          "url": "https://new-custom-activity.herokuapp.com/journeybuilder/execute",
            "verb": "POST",
             "body": "",
             "header": "",
@@ -34,24 +33,24 @@
         }
     },
     "configurationArguments": {
-      "applicationExtensionKey": "18d9ef23-3fe7-485a-9eef-9374cd21aafe",
+      "applicationExtensionKey": "ae585fab-e978-4db1-a899-9778edf96f50",
       "save": {
-        "url": "https://working-version-activity.herokuapp.com/journeybuilder/save",
+        "url": "https://new-custom-activity.herokuapp.com/journeybuilder/save",
           "verb": "POST",
         "useJwt": true
        },
        "publish": {
-        "url": "https://working-version-activity.herokuapp.com/journeybuilder/publish",
+        "url": "https://new-custom-activity.herokuapp.com/journeybuilder/publish",
            "verb": "POST",
         "useJwt": true
        },
       "stop": {
-        "url": "https://working-version-activity.herokuapp.com/journeybuilder/stop",
+        "url": "https://new-custom-activity.herokuapp.com/journeybuilder/stop",
            "verb": "POST",
         "useJwt": true
       },
       "validate": {
-        "url": "https://working-version-activity.herokuapp.com/journeybuilder/validate",
+        "url": "https://new-custom-activity.herokuapp.com/journeybuilder/validate",
         "verb": "POST",
         "useJwt": true
       }
