@@ -44,14 +44,20 @@ define([
 
         $.each(inArguments, function (index, inArgument) {
             $.each(inArgument, function (key, val) {
-                
-              
+                console.log('key '+key);
+                console.log('value '+val);
             });
         });
-
+        
+        connection.trigger('publishButton', {
+            button: 'publish',
+            text: 'publish',
+            visible: true
+        });
+        
         connection.trigger('updateButton', {
             button: 'next',
-            text: 'done',
+            text: 'save',
             visible: true
         });
     }
