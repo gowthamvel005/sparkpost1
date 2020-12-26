@@ -72,8 +72,9 @@ define([
     }
 
     function save() {
-        var someValFromCAInput = $('#step1').val();
-        console.log('Input values '+someValFromCAInput);
+        
+        var name = $('#select1').find('option:selected').html();
+        console.log('name '+name);
 
         payload['arguments'].execute.inArguments = [{
             "tokens": authTokens,
@@ -84,6 +85,10 @@ define([
 
         console.log(JSON.stringify(payload));
         connection.trigger('updateActivity', payload);
+    }
+    
+    function getMessage() {
+        return $('#select1').find('option:selected').attr('value').trim();
     }
 
 
