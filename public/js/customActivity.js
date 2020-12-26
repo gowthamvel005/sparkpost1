@@ -72,7 +72,7 @@ define([
     }
 
     function save() {
-        var someValFromCAInput = $('#activityInput').val();
+        var someValFromCAInput = $('#step1').val();
         console.log('Input values '+someValFromCAInput);
 
         payload['arguments'].execute.inArguments = [{
@@ -82,7 +82,7 @@ define([
         
         payload['metaData'].isConfigured = true;
 
-        console.log(JSON.stringfy(payload));
+        console.log(JSON.stringify(payload));
         connection.trigger('updateActivity', payload);
     }
 
