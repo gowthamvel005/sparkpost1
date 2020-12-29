@@ -38,12 +38,12 @@ define([
             if(message != 'Current Journey'){
                 reviewPageEnabled = !reviewPageEnabled; // toggle status
                 steps[2].active = !steps[2].active; // toggle active
+                connection.trigger('updateSteps', steps);
             } else {
                 reviewPageEnabled = false; // toggle status
                 steps[1].active = !steps[1].active; // toggle active
+                connection.trigger('updateSteps', steps);
             }
-            connection.trigger('updateSteps', steps);
-
             $('#message').html(message);
         });
     }
