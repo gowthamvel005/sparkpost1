@@ -7,12 +7,11 @@ define([
 
     var connection = new Postmonger.Session();
     var payload = {};
-    var lastStepEnabled = false;
+    var reviewPageEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
-        { "label": "Step 1", "key": "step1" },
-        { "label": "Step 2", "key": "step2" },
-        { "label": "Step 3", "key": "step3" },
-        { "label": "Step 4", "key": "step4", "active": false }
+        { "label": "Template Selection", "key": "step1" },
+        { "label": "Map the Template Field", "key": "step2", "active": false},
+        { "label": "Review Template Field", "key": "step3", "active": false}
     ];
     var currentStep = steps[0].key;
 
@@ -36,18 +35,16 @@ define([
         // Disable the next button if a value isn't selected
         $('#select1').change(function() {
             var message = getMessage();
-            connection.trigger('updateButton', { button: 'next', enabled: Boolean(message) });
+            if(message != 'Current Journey'){
+                reviewPageEnabled = !reviewPageEnabled; // toggle status
+                steps[2].active = !steps[2].active; // toggle active
+            } else {
+                reviewPageEnabled = false; // toggle status
+                steps[1].active = !steps[1].active; // toggle active
+            }
+            connection.trigger('updateSteps', steps);
 
             $('#message').html(message);
-        });
-
-        // Toggle step 4 active/inactive
-        // If inactive, wizard hides it and skips over it during navigation
-        $('#toggleLastStep').click(function() {
-            lastStepEnabled = !lastStepEnabled; // toggle status
-            steps[3].active = !steps[3].active; // toggle active
-
-            connection.trigger('updateSteps', steps);
         });
     }
 
@@ -98,8 +95,7 @@ define([
 
     function onClickedNext () {
         if (
-            (currentStep.key === 'step3' && steps[3].active === false) ||
-            currentStep.key === 'step4'
+            (currentStep.key === 'step3' || currentStep.key === 'step2'
         ) {
             save();
         } else {
@@ -125,7 +121,7 @@ define([
 
         $('.step').hide();
 
-        switch(currentStep.key) {
+         switch(currentStep.key) {
             case 'step1':
                 $('#step1').show();
                 connection.trigger('updateButton', {
@@ -145,7 +141,7 @@ define([
                 });
                 connection.trigger('updateButton', {
                     button: 'next',
-                    text: 'next',
+                    text: 'done',
                     visible: true
                 });
                 break;
@@ -155,22 +151,11 @@ define([
                      button: 'back',
                      visible: true
                 });
-                if (lastStepEnabled) {
-                    connection.trigger('updateButton', {
-                        button: 'next',
-                        text: 'next',
-                        visible: true
-                    });
-                } else {
-                    connection.trigger('updateButton', {
-                        button: 'next',
-                        text: 'done',
-                        visible: true
-                    });
-                }
-                break;
-            case 'step4':
-                $('#step4').show();
+                connection.trigger('updateButton', {
+                     button: 'next',
+                     text: 'done',
+                     visible: true
+                });
                 break;
         }
     }
