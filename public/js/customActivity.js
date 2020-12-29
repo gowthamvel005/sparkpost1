@@ -36,7 +36,7 @@ define([
         $('#select1').change(function() {
             var message = getMessage();
             console.log('message value '+message);
-            if(message != 'Current Journey'){
+            if(message != 'CurrentJourney'){
                 //reviewPageEnabled = !reviewPageEnabled; // toggle status
                 steps[1].active = false;
                 steps[2].active = true; // toggle active
