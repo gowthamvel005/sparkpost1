@@ -35,13 +35,16 @@ define([
         // Disable the next button if a value isn't selected
         $('#select1').change(function() {
             var message = getMessage();
+            console.log('message value '+message);
             if(message != 'Current Journey'){
-                reviewPageEnabled = !reviewPageEnabled; // toggle status
-                steps[2].active = !steps[2].active; // toggle active
+                //reviewPageEnabled = !reviewPageEnabled; // toggle status
+                steps[1].active = false;
+                steps[2].active = true; // toggle active
                 connection.trigger('updateSteps', steps);
             } else {
-                reviewPageEnabled = false; // toggle status
-                steps[1].active = !steps[1].active; // toggle active
+                //reviewPageEnabled = false; // toggle status
+                steps[2].active = false;
+                steps[1].active = true; // toggle active
                 connection.trigger('updateSteps', steps);
             }
             $('#message').html(message);
