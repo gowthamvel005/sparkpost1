@@ -107,10 +107,10 @@ define([
 		console.log('input value '+input);
 		var validityState_object = input.validity;
 		if (validityState_object.valueMissing){
-			showStep(null, 1);
-            		connection.trigger('updateButton', { button: 'next', enabled: false });
 	    		input.setCustomValidity('Must enter your template name!');
 	    		input.reportValidity();
+			showStep(null, 1);
+			connection.trigger('ready');
 		} else {
 	    		connection.trigger('nextStep');
 		}
