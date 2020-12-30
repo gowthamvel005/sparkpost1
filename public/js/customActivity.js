@@ -33,6 +33,7 @@ define([
         connection.trigger('requestEndpoints');
 
         // Disable the next button if a value isn't selected
+        $('#inputField-01').hide();
         $('#select-01').change(function() {
             var message = getMessage();
             console.log('message value '+message);
@@ -40,11 +41,13 @@ define([
                 //reviewPageEnabled = !reviewPageEnabled; // toggle status
                 steps[1].active = false;
                 steps[2].active = true; // toggle active
+                $('#inputField-01').hide();
                 connection.trigger('updateSteps', steps);
             } else {
                 //reviewPageEnabled = false; // toggle status
                 steps[2].active = false;
                 steps[1].active = true; // toggle active
+                $('#inputField-01').show();
                 connection.trigger('updateSteps', steps);
             }
             $('#message').html(message);
