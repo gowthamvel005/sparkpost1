@@ -33,7 +33,6 @@ define([
         connection.trigger('requestEndpoints');
 
         // Disable the next button if a value isn't selected
-        $('#inputField-01').hide();
         $('#select-01').change(function() {
             var message = getMessage();
             console.log('message value '+message);
@@ -58,7 +57,7 @@ define([
         if (data) {
             payload = data;
         }
-
+        $('#inputField-01').hide();
         var message;
         var hasInArguments = Boolean(
             payload['arguments'] &&
