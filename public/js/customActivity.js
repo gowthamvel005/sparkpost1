@@ -103,6 +103,15 @@ define([
         if (currentStep.key === 'step3' || currentStep.key === 'step2') {
             save();
         } else {
+            
+            var input = $('#text-input-id-1');
+			var validityState_object = input.validity;
+
+			if (validityState_object.valueMissing)
+			{
+				input.setCustomValidity('Must enter your template name!');
+				input.reportValidity();
+			}
             connection.trigger('nextStep');
         }
     }
