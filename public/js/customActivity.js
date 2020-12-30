@@ -33,7 +33,7 @@ define([
         connection.trigger('requestEndpoints');
 
         // Disable the next button if a value isn't selected
-        $('#select1').change(function() {
+        $('#select-01').change(function() {
             var message = getMessage();
             console.log('message value '+message);
             if(message != 'CurrentJourney'){
@@ -80,7 +80,7 @@ define([
             connection.trigger('updateButton', { button: 'next', enabled: false });
             // If there is a message, skip to the summary step
         } else {
-            $('#select1').find('option[value='+ message +']').attr('selected', 'selected');
+            $('#select-01').find('option[value='+ message +']').attr('selected', 'selected');
             $('#message').html(message);
             showStep(null, 3);
         }
@@ -162,7 +162,7 @@ define([
     }
 
     function save() {
-        var name = $('#select1').find('option:selected').html();
+        var name = $('#select-01').find('option:selected').html();
         var value = getMessage();
 
         // 'payload' is initialized on 'initActivity' above.
@@ -179,7 +179,7 @@ define([
     }
 
     function getMessage() {
-        return $('#select1').find('option:selected').attr('value').trim();
+        return $('#select-01').find('option:selected').attr('value').trim();
     }
 
 });
