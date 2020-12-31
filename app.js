@@ -13,7 +13,7 @@ var routes      = require('./routes');
 var activity    = require('./routes/activity');
 
 var app = express();
-
+const JWT = require(Path.join(__dirname, 'lib', 'jwtDecoder.js'));
 // Configure Express
 app.set('port', process.env.PORT || 3000);
 app.use(bodyParser.raw({type: 'application/jwt'}));
