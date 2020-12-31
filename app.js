@@ -54,7 +54,7 @@ app.post('/journeybuilder/execute/', (req, res) => {
 		
 	
 			
-		 console.log('row data Balaji Second:-'+decodedArgs);	
+		 console.log('row data Balaji Second:-'+JSON.stringify(decodedArgs));	
 		
 	   			
             res.send(200, 'Execute');
