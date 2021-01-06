@@ -4,9 +4,10 @@ define([
     Postmonger
 ) {
     'use strict';
-
+	
     var connection = new Postmonger.Session();
     var payload = {};
+    var authToken;
     var reviewPageEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
         { "label": "Template Selection", "key": "step1" },
@@ -37,17 +38,17 @@ define([
         $('#select-01').change(function() {
             var message = getMessage();
             console.log('message value '+message);
-            if(message != 'CurrentJourney'){
+            if(message == 'CurrentJourney'){
                 //reviewPageEnabled = !reviewPageEnabled; // toggle status
-                steps[1].active = false;
+                steps[1].active = true;
                 steps[2].active = true; // toggle active
-                $('#inputField-01').hide();
+                $('#inputField-01').show();
                 connection.trigger('updateSteps', steps);
             } else {
                 //reviewPageEnabled = false; // toggle status
-                steps[2].active = false;
-                steps[1].active = true; // toggle active
-                $('#inputField-01').show();
+                steps[2].active = true;
+                steps[1].active = false; // toggle active
+                $('#inputField-01').hide();
                 connection.trigger('updateSteps', steps);
             }
             $('#message').html(message);
@@ -92,6 +93,7 @@ define([
     function onGetTokens (tokens) {
         // Response: tokens = { token: <legacy token>, fuel2token: <fuel api token> }
          console.log(tokens);
+	 authToken = tokens.token;
     }
 
     function onGetEndpoints (endpoints) {
@@ -101,9 +103,9 @@ define([
 
     function onClickedNext () {
 	var selectOption = getMessage();
-        if (currentStep.key === 'step3' || currentStep.key === 'step2') {
+        if (currentStep.key === 'step3') {
             save();
-        } else if(selectOption == 'CurrentJourney'){
+        } else if(currentStep.key === 'step1' && selectOption == 'CurrentJourney'){
 		var input = $('#text-input-id-1')[0];
 		var validityState_object = input.validity;
 		if (validityState_object.valueMissing){
@@ -113,9 +115,15 @@ define([
 			showStep(null, 1);
 			connection.trigger('ready');
 		} else {
-	    		connection.trigger('nextStep');
+			var myHeaders = new Headers();
+			myHeaders.append("Content-Type", "text/xml");
+			
+			var raw = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\" xmlns:u=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">\n    <s:Header>\n        <a:Action s:mustUnderstand=\"1\">Retrieve</a:Action>\n        <a:To s:mustUnderstand=\"1\">https://.soap.marketingcloudapis.com/Service.asmx</a:To>\n        <fueloauth xmlns=\"http://exacttarget.com\">authToken</fueloauth>\n    </s:Header>\n    <s:Body xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n        <RetrieveRequestMsg xmlns=\"http://exacttarget.com/wsdl/partnerAPI\">\n            <RetrieveRequest>\n                <ObjectType>DataExtension</ObjectType>\n                <Properties>ObjectID</Properties>\n                <Properties>CustomerKey</Properties>\n                <Properties>Name</Properties>\n                <Properties>IsSendable</Properties>\n                <Properties>SendableSubscriberField.Name</Properties>\n                <Filter xsi:type=\"SimpleFilterPart\">\n                    <Property>CustomerKey</Property>\n                    <SimpleOperator>equals</SimpleOperator>\n                    <Value>Test_Job_Insert</Value>\n                </Filter>\n            </RetrieveRequest>\n        </RetrieveRequestMsg>\n    </s:Body>\n</s:Envelope>";
+			
+			fetch('/validate/dataextension/', { method: 'POST', headers: myHeaders,  body: raw }).then(response => response.text()).then(result => console.log(result)).catch(error => console.log('error', error));
+	    		//connection.trigger('nextStep');
 		}
-        } else {
+        } else if(currentStep.key === 'step2'){ {
 		connection.trigger('nextStep');
 	}
     }
