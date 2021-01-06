@@ -134,7 +134,29 @@ exports.validateDE = function (req, res) {
       console.log(error);
     });
     
-    var rawdata = '<?xml version="1.0" encoding="UTF-8"?>\n<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">\n    <s:Header>\n        <a:Action s:mustUnderstand="1">Retrieve</a:Action>\n        <a:To s:mustUnderstand="1">https://.soap.marketingcloudapis.com/Service.asmx</a:To>\n        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>\n    </s:Header>\n    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">\n        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">\n            <RetrieveRequest>\n                <ObjectType>DataExtension</ObjectType>\n                <Properties>ObjectID</Properties>\n                <Properties>CustomerKey</Properties>\n                <Properties>Name</Properties>\n                <Properties>IsSendable</Properties>\n                <Properties>SendableSubscriberField.Name</Properties>\n                <Filter xsi:type="SimpleFilterPart">\n                    <Property>CustomerKey</Property>\n                    <SimpleOperator>equals</SimpleOperator>\n                    <Value>Test_Job_Insert</Value>\n                </Filter>\n            </RetrieveRequest>\n        </RetrieveRequestMsg>\n    </s:Body>\n</s:Envelope>';
+    var soapMessage='';
+        soapMessage+='<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+        soapMessage+='<soapenv:Header>';
+        soapMessage+='<fueloauth>'+authToken+'</fueloauth>';
+        soapMessage+='</soapenv:Header>';
+        soapMessage+='<soapenv:Body>';
+        soapMessage+='<RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">';
+        soapMessage+=  '<RetrieveRequest>';
+        soapMessage+= '<ObjectType>DataExtension</ObjectType>';
+        soapMessage+=  '<Properties>ObjectID</Properties>';
+        soapMessage+=  ' <Properties>CustomerKey</Properties>';
+        soapMessage+=  '<Properties>Name</Properties>';
+        soapMessage+=  '<Properties>IsSendable</Properties>';
+        soapMessage+=  '<Properties>SendableSubscriberField.Name</Properties>'; 
+        soapMessage+=  '<Filter xsi:type="SimpleFilterPart">';
+        soapMessage+=  '<Property>CustomerKey</Property>';
+        soapMessage+=  '<SimpleOperator>equals</SimpleOperator>';
+        soapMessage+=  '<Value>Test_Job_Insert</Value>';
+        soapMessage+=  '</Filter>';
+        soapMessage+='</RetrieveRequest>';
+        soapMessage+='</RetrieveRequestMsg>';
+        soapMessage+='</soapenv:Body>';
+        soapMessage+='</soapenv:Envelope>';
         
     var configs = {
           method: 'post',
@@ -142,7 +164,7 @@ exports.validateDE = function (req, res) {
           headers: { 
             'Content-Type': 'text/xml'
           },
-          data : rawdata
+          data : soapMessage
     };
         
     axios(configs)
