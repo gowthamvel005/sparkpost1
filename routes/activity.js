@@ -135,7 +135,7 @@ exports.validateDE = function (req, res) {
     });
     
     var soapMessage='';
-        soapMessage+='<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+        /*soapMessage+='<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
         soapMessage+='<soapenv:Header>';
         soapMessage+='<fueloauth>'+authToken+'</fueloauth>';
         soapMessage+='</soapenv:Header>';
@@ -156,7 +156,31 @@ exports.validateDE = function (req, res) {
         soapMessage+='</RetrieveRequest>';
         soapMessage+='</RetrieveRequestMsg>';
         soapMessage+='</soapenv:Body>';
-        soapMessage+='</soapenv:Envelope>';
+        soapMessage+='</soapenv:Envelope>';*/
+    soapMessage+='<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">';
+    soapMessage+='<s:Header>';
+    soapMessage+='<a:Action s:mustUnderstand="1">Retrieve</a:Action>';
+    soapMessage+='<a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>';
+    soapMessage+='<fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>';
+    soapMessage+='</s:Header>';
+    soapMessage+='<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">';
+    soapMessage+='<RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">';
+    soapMessage+='<RetrieveRequest>';
+    soapMessage+='<ObjectType>DataExtension</ObjectType>';
+    soapMessage+='<Properties>ObjectID</Properties>';
+    soapMessage+='<Properties>CustomerKey</Properties>';
+    soapMessage+='<Properties>Name</Properties>';
+    soapMessage+='<Properties>IsSendable</Properties>';
+    soapMessage+='<Properties>SendableSubscriberField.Name</Properties>';
+    soapMessage+='<Filter xsi:type="SimpleFilterPart">';
+    soapMessage+='<Property>CustomerKey</Property>';
+    soapMessage+='<SimpleOperator>equals</SimpleOperator>';
+    soapMessage+='<Value>Test_Job_Insert</Value>';
+    soapMessage+='</Filter>';
+    soapMessage+='</RetrieveRequest>';
+    soapMessage+='</RetrieveRequestMsg>';
+    soapMessage+='</s:Body>';
+    soapMessage+='</s:Envelope>';
         
     var configs = {
           method: 'post',
