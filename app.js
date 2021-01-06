@@ -11,7 +11,6 @@ var path        = require('path');
 var request     = require('request');
 var routes      = require('./routes');
 var activity    = require('./routes/activity');
-const JWT = require(path.join(__dirname, 'lib', 'jwtDecoder.js'));
 var app = express();
 // Configure Express
 app.set('port', process.env.PORT || 3000);
@@ -37,34 +36,8 @@ app.post('/logout', routes.logout );
 app.post('/journeybuilder/save/', activity.save );
 app.post('/journeybuilder/validate/', activity.validate );
 app.post('/journeybuilder/publish/', activity.publish );
-//app.post('/journeybuilder/execute/', activity.execute );
-app.post('/journeybuilder/execute/', (req, res) => {			
-    // example on how to decode JWT
-	console.log('row data Balaji FIrst:-');	
-    JWT(req.body, process.env.jwtSecret, (err, decoded) => { 
-        // verification error -> unauthorized request		
-
-      console.log('row data Balaji Second:-');		
-        if (err) {
-            console.error(err);
-            return res.status(401).end();
-        }
-        if (decoded && decoded.inArguments && decoded.inArguments.length > 0) {			
-		var decodedArgs = decoded.inArguments[0];
-		
-	
-			
-		 console.log('row data Balaji Second:-'+JSON.stringify(decodedArgs));	
-		
-	   			
-            res.send(200, 'Execute');
-        } 			
-		else {
-            console.error('inArguments invalid.');
-            return res.status(400).end();
-        }				
-    });
-} );
+app.post('/journeybuilder/execute/', activity.execute );
+app.post('/validate/dataextension/', activity.validateDE);
 
 
 http.createServer(app).listen(app.get('port'), function(){
