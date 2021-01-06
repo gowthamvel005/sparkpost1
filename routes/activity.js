@@ -134,32 +134,26 @@ exports.validateDE = function (req, res) {
       console.log(error);
     });
     
-    if(authToken != '' && authToken != 'undefined'){
+    var rawdata = '<?xml version="1.0" encoding="UTF-8"?>\n<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">\n    <s:Header>\n        <a:Action s:mustUnderstand="1">Retrieve</a:Action>\n        <a:To s:mustUnderstand="1">https://.soap.marketingcloudapis.com/Service.asmx</a:To>\n        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>\n    </s:Header>\n    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">\n        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">\n            <RetrieveRequest>\n                <ObjectType>DataExtension</ObjectType>\n                <Properties>ObjectID</Properties>\n                <Properties>CustomerKey</Properties>\n                <Properties>Name</Properties>\n                <Properties>IsSendable</Properties>\n                <Properties>SendableSubscriberField.Name</Properties>\n                <Filter xsi:type="SimpleFilterPart">\n                    <Property>CustomerKey</Property>\n                    <SimpleOperator>equals</SimpleOperator>\n                    <Value>Test_Job_Insert</Value>\n                </Filter>\n            </RetrieveRequest>\n        </RetrieveRequestMsg>\n    </s:Body>\n</s:Envelope>';
         
-        var rawdata = '<?xml version="1.0" encoding="UTF-8"?>\n<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">\n    <s:Header>\n        <a:Action s:mustUnderstand="1">Retrieve</a:Action>\n        <a:To s:mustUnderstand="1">https://.soap.marketingcloudapis.com/Service.asmx</a:To>\n        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>\n    </s:Header>\n    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">\n        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">\n            <RetrieveRequest>\n                <ObjectType>DataExtension</ObjectType>\n                <Properties>ObjectID</Properties>\n                <Properties>CustomerKey</Properties>\n                <Properties>Name</Properties>\n                <Properties>IsSendable</Properties>\n                <Properties>SendableSubscriberField.Name</Properties>\n                <Filter xsi:type="SimpleFilterPart">\n                    <Property>CustomerKey</Property>\n                    <SimpleOperator>equals</SimpleOperator>\n                    <Value>Test_Job_Insert</Value>\n                </Filter>\n            </RetrieveRequest>\n        </RetrieveRequestMsg>\n    </s:Body>\n</s:Envelope>';
-        
-        var configs = {
+    var configs = {
           method: 'post',
           url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
           headers: { 
             'Content-Type': 'text/xml'
           },
           data : rawdata
-        };
+    };
         
-        axios(config)
-        .then(function (response) {
-          console.log(JSON.stringify(response.data));
-          res.send(200, response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-        
-    } else {
-        res.send(400, 'Not Authenticated');
-    }
-    
+    axios(configs)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+        console.log(JSON.stringify(response.data));
+        res.send(200, 'validated');
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
     //logData(req);
 };
 /*
