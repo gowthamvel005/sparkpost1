@@ -129,51 +129,52 @@ exports.validateDE = function (req, res) {
       console.log(JSON.stringify(response.data));
         authToken = response.data.access_token;
         console.log('authToken '+authToken);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-    
-    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
-+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-+'    <s:Header>'
-+'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-+'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
-+'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
-+'    </s:Header>'
-+'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-+'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-+'            <RetrieveRequest>'
-+'                <ObjectType>DataExtension</ObjectType>'
-+'                <Properties>ObjectID</Properties>'
-+'                <Properties>CustomerKey</Properties>'
-+'                <Properties>Name</Properties>'
-+'                <Properties>IsSendable</Properties>'
-+'                <Properties>SendableSubscriberField.Name</Properties>'
-+'                <Filter xsi:type="SimpleFilterPart">'
-+'                    <Property>CustomerKey</Property>'
-+'                    <SimpleOperator>equals</SimpleOperator>'
-+'                    <Value>Test_Job_Insert</Value>'
-+'                </Filter>'
-+'            </RetrieveRequest>'
-+'        </RetrieveRequestMsg>'
-+'    </s:Body>'
-+'</s:Envelope>';
-    
-    var configs = {
-          method: 'post',
-          url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
-          headers: { 
-            'Content-Type': 'text/xml'
-          },
-          data : soapMessage
-    };
         
-    axios(configs)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-        console.log(JSON.stringify(response.data));
-        res.send(200, 'validated');
+        let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
+        +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
+        +'    <s:Header>'
+        +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
+        +'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
+        +'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
+        +'    </s:Header>'
+        +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+        +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+        +'            <RetrieveRequest>'
+        +'                <ObjectType>DataExtension</ObjectType>'
+        +'                <Properties>ObjectID</Properties>'
+        +'                <Properties>CustomerKey</Properties>'
+        +'                <Properties>Name</Properties>'
+        +'                <Properties>IsSendable</Properties>'
+        +'                <Properties>SendableSubscriberField.Name</Properties>'
+        +'                <Filter xsi:type="SimpleFilterPart">'
+        +'                    <Property>CustomerKey</Property>'
+        +'                    <SimpleOperator>equals</SimpleOperator>'
+        +'                    <Value>Test_Job_Insert</Value>'
+        +'                </Filter>'
+        +'            </RetrieveRequest>'
+        +'        </RetrieveRequestMsg>'
+        +'    </s:Body>'
+        +'</s:Envelope>';
+
+        var configs = {
+            method: 'post',
+            url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
+                headers: { 
+                'Content-Type': 'text/xml'
+             },
+             data : soapMessage
+         };
+
+         axios(configs)
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+                console.log(JSON.stringify(response.data));
+                res.send(200, 'validated');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        
     })
     .catch(function (error) {
       console.log(error);
