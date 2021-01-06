@@ -114,7 +114,7 @@ exports.validateDE = function (req, res) {
     console.log('validating DataExtension');
     
     var data = JSON.stringify({"grant_type":"client_credentials","client_id":"lrdyhupmuhr4zl7vwj8a3giq","client_secret":"g8EvTsIYGpPFxovz9nKj0cXy","account_id":"514009708"});
-    var authToken = '';
+    var authToken;
     var config = {
       method: 'post',
       url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.auth.marketingcloudapis.com/v2/token',
@@ -134,54 +134,32 @@ exports.validateDE = function (req, res) {
       console.log(error);
     });
     
-    var soapMessage='';
-        /*soapMessage+='<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
-        soapMessage+='<soapenv:Header>';
-        soapMessage+='<fueloauth>'+authToken+'</fueloauth>';
-        soapMessage+='</soapenv:Header>';
-        soapMessage+='<soapenv:Body>';
-        soapMessage+='<RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">';
-        soapMessage+=  '<RetrieveRequest>';
-        soapMessage+= '<ObjectType>DataExtension</ObjectType>';
-        soapMessage+=  '<Properties>ObjectID</Properties>';
-        soapMessage+=  ' <Properties>CustomerKey</Properties>';
-        soapMessage+=  '<Properties>Name</Properties>';
-        soapMessage+=  '<Properties>IsSendable</Properties>';
-        soapMessage+=  '<Properties>SendableSubscriberField.Name</Properties>'; 
-        soapMessage+=  '<Filter xsi:type="SimpleFilterPart">';
-        soapMessage+=  '<Property>CustomerKey</Property>';
-        soapMessage+=  '<SimpleOperator>equals</SimpleOperator>';
-        soapMessage+=  '<Value>Test_Job_Insert</Value>';
-        soapMessage+=  '</Filter>';
-        soapMessage+='</RetrieveRequest>';
-        soapMessage+='</RetrieveRequestMsg>';
-        soapMessage+='</soapenv:Body>';
-        soapMessage+='</soapenv:Envelope>';*/
-    soapMessage+='<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">';
-    soapMessage+='<s:Header>';
-    soapMessage+='<a:Action s:mustUnderstand="1">Retrieve</a:Action>';
-    soapMessage+='<a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>';
-    soapMessage+='<fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>';
-    soapMessage+='</s:Header>';
-    soapMessage+='<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">';
-    soapMessage+='<RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">';
-    soapMessage+='<RetrieveRequest>';
-    soapMessage+='<ObjectType>DataExtension</ObjectType>';
-    soapMessage+='<Properties>ObjectID</Properties>';
-    soapMessage+='<Properties>CustomerKey</Properties>';
-    soapMessage+='<Properties>Name</Properties>';
-    soapMessage+='<Properties>IsSendable</Properties>';
-    soapMessage+='<Properties>SendableSubscriberField.Name</Properties>';
-    soapMessage+='<Filter xsi:type="SimpleFilterPart">';
-    soapMessage+='<Property>CustomerKey</Property>';
-    soapMessage+='<SimpleOperator>equals</SimpleOperator>';
-    soapMessage+='<Value>Test_Job_Insert</Value>';
-    soapMessage+='</Filter>';
-    soapMessage+='</RetrieveRequest>';
-    soapMessage+='</RetrieveRequestMsg>';
-    soapMessage+='</s:Body>';
-    soapMessage+='</s:Envelope>';
-        
+    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
++'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
++'    <s:Header>'
++'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
++'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
++'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
++'    </s:Header>'
++'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
++'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
++'            <RetrieveRequest>'
++'                <ObjectType>DataExtension</ObjectType>'
++'                <Properties>ObjectID</Properties>'
++'                <Properties>CustomerKey</Properties>'
++'                <Properties>Name</Properties>'
++'                <Properties>IsSendable</Properties>'
++'                <Properties>SendableSubscriberField.Name</Properties>'
++'                <Filter xsi:type="SimpleFilterPart">'
++'                    <Property>CustomerKey</Property>'
++'                    <SimpleOperator>equals</SimpleOperator>'
++'                    <Value>Test_Job_Insert</Value>'
++'                </Filter>'
++'            </RetrieveRequest>'
++'        </RetrieveRequestMsg>'
++'    </s:Body>'
++'</s:Envelope>';
+    
     var configs = {
           method: 'post',
           url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
