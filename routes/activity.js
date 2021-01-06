@@ -168,7 +168,7 @@ exports.validateDE = function (req, res) {
          axios(configs)
             .then(function (response) {
                 console.log(JSON.stringify(response.data));
-                console.log(JSON.stringify(response.data));
+                console.log(response.data);
                 res.send(200, 'validated');
             })
             .catch(function (error) {
