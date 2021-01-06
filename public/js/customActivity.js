@@ -123,7 +123,7 @@ define([
 			fetch('/validate/dataextension/', { method: 'POST', headers: myHeaders,  body: raw }).then(response => response.text()).then(result => console.log(result)).catch(error => console.log('error', error));
 	    		//connection.trigger('nextStep');
 		}
-        } else if(currentStep.key === 'step2'){ {
+        } else if(currentStep.key === 'step2'){
 		connection.trigger('nextStep');
 	}
     }
