@@ -52,7 +52,7 @@ define([
                 $('#inputField-01').hide();
                 connection.trigger('updateSteps', steps);
             }
-            $('#message').html(message);
+            //$('#message').html(message);
         });
     }
 
@@ -99,7 +99,7 @@ define([
                     div_data += "<li>"+key+' : '+val+"</li>";
                 }
             }
-            $('#intTypeValues').html(intTypeValue);
+            $('#intTypeValues').html(div_data);
             showStep(null, 3);
         }
     }
@@ -145,6 +145,16 @@ define([
             if(getIntegrationName('#select-journey7') != '--Select--') hearsayfields [getIntegrationType('#select-journey7')] = getIntegrationType('#select-hearsay7');
             if(getIntegrationName('#select-journey8') != '--Select--') hearsayfields [getIntegrationType('#select-journey8')] = getIntegrationType('#select-hearsay8');
             console.log('hearsayfields '+hearsayfields);
+	    var div_data = '';
+	    for (var key in hearsayfields) {
+	    	if (hearsayfields.hasOwnProperty(key)) {
+			var val = hearsayfields[key];
+			console.log('key '+key);
+			console.log('value '+val);
+			div_data += "<li>"+key+' : '+val+"</li>";
+		}
+	    }
+	    $('#intTypeValues').html(div_data);
             connection.trigger('nextStep');
 	    }
     }
