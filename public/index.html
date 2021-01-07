@@ -21,6 +21,17 @@
             require(config, dependencies);
         })();
     </script>
+    <script>
+	$('select').on('change', function() {
+		$('option').prop('disabled', false); //reset all the disabled options on every change event
+		$('select').each(function() { //loop through all the select elements
+			var val = this.value;
+			$('select').not(this).find('option').filter(function() { //filter option elements having value as selected option
+				return this.value === val;
+			}).prop('disabled', true); //disable those option elements
+		});
+	}).change();
+    </script>
 
     <!--Styles-->
     <style type="text/css">
@@ -627,8 +638,16 @@
 		</div>
 	 </div>
    </div>
-<div id="step3" class="step">
-    You chose the message: <div id="message"></div>
-    </div>
+   <div id="step3" class="step">
+	<div class="slds-grid slds-grid_vertical slds-m-around_medium">
+		<div class="slds-col slds-size_2-of-6 slds-m-around_xx-small">
+			<label >DATA EXTENSION TEMPLATES (NEW)</label>
+		</div>
+		<div id="intTypeValues" class="slds-col slds-size_2-of-6 slds-m-around_xx-small">
+			Hello
+		</div>
+	  </div>
+	 <hr />
+   </div>
 </body>
 </html>
