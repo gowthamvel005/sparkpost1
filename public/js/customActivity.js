@@ -60,7 +60,7 @@ define([
         var intTypeValue;
         if (data) {
             payload = data;
-            intTypeValue = payload.intValue;
+            intTypeValue = payload.name;
         }
         
         var mapfields;
