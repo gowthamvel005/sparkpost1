@@ -8,7 +8,8 @@ define([
     var connection = new Postmonger.Session();
     var payload = {};
     var authToken;
-    var reviewPageEnabled = false;
+    var hearsayfields = {};
+    var lastStepEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
         { "label": "Template Selection", "key": "step1" },
         { "label": "Map the Template Field", "key": "step2", "active": false},
@@ -36,10 +37,10 @@ define([
         
         // Disable the next button if a value isn't selected
         $('#select-01').change(function() {
-            var message = getMessage();
+            var message = getIntegrationType('#select-01');
             console.log('message value '+message);
             if(message == 'CurrentJourney'){
-                //reviewPageEnabled = !reviewPageEnabled; // toggle status
+                lastStepEnabled = !lastStepEnabled; // toggle status
                 steps[1].active = true;
                 steps[2].active = true; // toggle active
                 $('#inputField-01').show();
@@ -56,11 +57,13 @@ define([
     }
 
     function initialize (data) {
+        var intTypeName;
         if (data) {
             payload = data;
+            intTypeName = payload.name;
         }
         
-        var message;
+        var mapfields;
         var hasInArguments = Boolean(
             payload['arguments'] &&
             payload['arguments'].execute &&
@@ -72,20 +75,31 @@ define([
 
         $.each(inArguments, function(index, inArgument) {
             $.each(inArgument, function(key, val) {
-                if (key === 'message') {
-                    message = val;
+                if (key === 'hearsayfields') {
+                    mapfields = val;
                 }
             });
         });
 
+        if (intTypeName) {
+            $('#select-01').find('option[value='+ intTypeName +']').attr('selected', 'selected');
+        }
         // If there is no message selected, disable the next button
-        if (!message) {
+        if (!mapfields) {
             showStep(null, 1);
             connection.trigger('updateButton', { button: 'next', enabled: false });
-            // If there is a message, skip to the summary step
+            // If there is a intTypeValue, skip to the summary step
         } else {
-            $('#select-01').find('option[value='+ message +']').attr('selected', 'selected');
-            $('#message').html(message);
+            var div_data = '';
+            for (var key in mapfields) {
+                if (mapfields.hasOwnProperty(key)) {
+                    var val = mapfields[key];
+                    console.log('key '+key);
+                    console.log('value '+val);
+                    div_data += "<li>"+key+' : '+val+"</li>";
+                }
+            }
+            $('#intTypeValues').html(intTypeValue);
             showStep(null, 3);
         }
     }
@@ -93,7 +107,7 @@ define([
     function onGetTokens (tokens) {
         // Response: tokens = { token: <legacy token>, fuel2token: <fuel api token> }
          console.log(tokens);
-	 authToken = tokens.token;
+	    authToken = tokens.token;
     }
 
     function onGetEndpoints (endpoints) {
@@ -102,30 +116,37 @@ define([
     }
 
     function onClickedNext () {
-	var selectOption = getMessage();
+	var selectOption = getIntegrationType('#select-01');
         if (currentStep.key === 'step3') {
             save();
         } else if(currentStep.key === 'step1' && selectOption == 'CurrentJourney'){
-		var input = $('#text-input-id-1')[0];
-		var validityState_object = input.validity;
-		if (validityState_object.valueMissing){
-			
-	    		input.setCustomValidity('Must enter your template name!');
-	    		input.reportValidity();
-			showStep(null, 1);
-			connection.trigger('ready');
-		} else {
-			var myHeaders = new Headers();
-			myHeaders.append("Content-Type", "text/xml");
-			
-			var raw = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\" xmlns:u=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">\n    <s:Header>\n        <a:Action s:mustUnderstand=\"1\">Retrieve</a:Action>\n        <a:To s:mustUnderstand=\"1\">https://.soap.marketingcloudapis.com/Service.asmx</a:To>\n        <fueloauth xmlns=\"http://exacttarget.com\">authToken</fueloauth>\n    </s:Header>\n    <s:Body xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n        <RetrieveRequestMsg xmlns=\"http://exacttarget.com/wsdl/partnerAPI\">\n            <RetrieveRequest>\n                <ObjectType>DataExtension</ObjectType>\n                <Properties>ObjectID</Properties>\n                <Properties>CustomerKey</Properties>\n                <Properties>Name</Properties>\n                <Properties>IsSendable</Properties>\n                <Properties>SendableSubscriberField.Name</Properties>\n                <Filter xsi:type=\"SimpleFilterPart\">\n                    <Property>CustomerKey</Property>\n                    <SimpleOperator>equals</SimpleOperator>\n                    <Value>Test_Job_Insert</Value>\n                </Filter>\n            </RetrieveRequest>\n        </RetrieveRequestMsg>\n    </s:Body>\n</s:Envelope>";
-			
-			fetch('/validate/dataextension/' , { method: 'POST',  headers: myHeaders, body: raw}).then(response => response.text()).then(result => console.log(result)).catch(error => console.log('error', error));
-	    		//connection.trigger('nextStep');
-		}
+            var input = $('#text-input-id-1')[0];
+            var validityState_object = input.validity;
+            if (validityState_object.valueMissing){
+                
+                    input.setCustomValidity('Must enter your template name!');
+                    input.reportValidity();
+                showStep(null, 1);
+                connection.trigger('ready');
+            } else {
+                //var myHeaders = new Headers();
+                //myHeaders.append("Content-Type", "text/xml");
+                
+                //fetch('/validate/dataextension/' , { method: 'POST',  headers: myHeaders, body: raw}).then(response => response.text()).then(result => console.log(result)).catch(error => console.log('error', error));
+                    connection.trigger('nextStep');
+            }
         } else if(currentStep.key === 'step2'){
-		connection.trigger('nextStep');
-	}
+            if(getIntegrationName('#select-journey') != '--Select--') hearsayfields [getIntegrationType('#select-journey')] = getIntegrationType('#select-hearsay');
+            if(getIntegrationName('#select-journey2') != '--Select--') hearsayfields [getIntegrationType('#select-journey2')] = getIntegrationType('#select-hearsay2');
+            if(getIntegrationName('#select-journey3') != '--Select--') hearsayfields [getIntegrationType('#select-journey3')] = getIntegrationType('#select-hearsay3');
+            if(getIntegrationName('#select-journey4') != '--Select--') hearsayfields [getIntegrationType('#select-journey4')] = getIntegrationType('#select-hearsay4');
+            if(getIntegrationName('#select-journey5') != '--Select--') hearsayfields [getIntegrationType('#select-journey5')] = getIntegrationType('#select-hearsay5');
+            if(getIntegrationName('#select-journey6') != '--Select--') hearsayfields [getIntegrationType('#select-journey6')] = getIntegrationType('#select-hearsay6');
+            if(getIntegrationName('#select-journey7') != '--Select--') hearsayfields [getIntegrationType('#select-journey7')] = getIntegrationType('#select-hearsay7');
+            if(getIntegrationName('#select-journey8') != '--Select--') hearsayfields [getIntegrationType('#select-journey8')] = getIntegrationType('#select-hearsay8');
+            console.log('hearsayfields '+hearsayfields);
+            connection.trigger('nextStep');
+	    }
     }
 
     function onClickedBack () {
@@ -151,7 +172,7 @@ define([
                 $('#step1').show();
                 connection.trigger('updateButton', {
                     button: 'next',
-                    enabled: Boolean(getMessage())
+                    enabled: Boolean(getIntegrationType('#select-01'))
                 });
                 connection.trigger('updateButton', {
                     button: 'back',
@@ -164,11 +185,19 @@ define([
                     button: 'back',
                     visible: true
                 });
-                connection.trigger('updateButton', {
-                    button: 'next',
-                    text: 'done',
-                    visible: true
-                });
+                if (lastStepEnabled) {
+                    connection.trigger('updateButton', {
+                        button: 'next',
+                        text: 'next',
+                        visible: true
+                    });
+                } else {
+                    connection.trigger('updateButton', {
+                        button: 'next',
+                        text: 'done',
+                        visible: true
+                    });
+                }
                 break;
             case 'step3':
                 $('#step3').show();
@@ -186,24 +215,22 @@ define([
     }
 
     function save() {
-        var name = $('#select-01').find('option:selected').html();
-        var value = getMessage();
+        var name = getIntegrationName('#select-01');
 
-        // 'payload' is initialized on 'initActivity' above.
-        // Journey Builder sends an initial payload with defaults
-        // set by this activity's config.json file.  Any property
-        // may be overridden as desired.
         payload.name = name;
-
-        payload['arguments'].execute.inArguments = [{ "message": value }];
+        console.log('hearsayfields '+hearsayfields);
+        payload['arguments'].execute.inArguments = [{ "hearsayfields": hearsayfields }];
 
         payload['metaData'].isConfigured = true;
 
         connection.trigger('updateActivity', payload);
     }
 
-    function getMessage() {
-        return $('#select-01').find('option:selected').attr('value').trim();
+    function getIntegrationType(elementID) {
+        return $(elementID).find('option:selected').attr('value').trim();
     }
 
+    function getIntegrationName(elementID) {
+        return $(elementID).find('option:selected').html();
+    }
 });
