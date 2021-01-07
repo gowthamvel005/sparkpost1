@@ -82,7 +82,9 @@ define([
         });
 
         if (intTypeValue) {
-            $('#select-01').find('option[text='+ intTypeValue +']').attr('selected', 'selected');
+            $("#select-01 option").filter(function() {
+	    	return this.text == intTypeValue; 
+	    }).attr('selected', true);
         }
         // If there is no message selected, disable the next button
         if (!mapfields) {
