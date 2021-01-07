@@ -82,7 +82,7 @@ define([
         });
 
         if (intTypeValue) {
-            $('#select-01').find('option[value='+ intTypeValue +']').attr('selected', 'selected');
+            $('#select-01').find('option[text='+ intTypeValue +']').attr('selected', 'selected');
         }
         // If there is no message selected, disable the next button
         if (!mapfields) {
@@ -218,7 +218,6 @@ define([
         var name = getIntegrationName('#select-01');
 
         payload.name = name;
-	payload.intValue = getIntegrationType('#select-01');
         console.log('hearsayfields '+hearsayfields);
         payload['arguments'].execute.inArguments = [{ "hearsayfields": hearsayfields }];
 
