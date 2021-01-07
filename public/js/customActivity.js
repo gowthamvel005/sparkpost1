@@ -57,10 +57,10 @@ define([
     }
 
     function initialize (data) {
-        var intTypeName;
+        var intTypeValue;
         if (data) {
             payload = data;
-            intTypeName = payload.name;
+            intTypeValue = payload.intValue;
         }
         
         var mapfields;
@@ -81,8 +81,8 @@ define([
             });
         });
 
-        if (intTypeName) {
-            $('#select-01').find('option[value='+ intTypeName +']').attr('selected', 'selected');
+        if (intTypeValue) {
+            $('#select-01').find('option[value='+ intTypeValue +']').attr('selected', 'selected');
         }
         // If there is no message selected, disable the next button
         if (!mapfields) {
@@ -218,6 +218,7 @@ define([
         var name = getIntegrationName('#select-01');
 
         payload.name = name;
+	payload.intValue = getIntegrationType('#select-01');
         console.log('hearsayfields '+hearsayfields);
         payload['arguments'].execute.inArguments = [{ "hearsayfields": hearsayfields }];
 
