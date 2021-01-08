@@ -226,10 +226,22 @@ define([
 		    
 		var DEName = $('#text-input-id-1').val(); 	
                 
-                fetch('/validate/dataextension/' , { method: 'POST',  headers: myHeaders, body: DEName})
-		    .then(response => response.text())
-		    .then(result => console.log(result))
-		    .catch(error => console.log('error', error));
+		fetch("/validate/dataextension/", {
+		  method: "post",
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/json'
+		  },
+
+		  //make sure to serialize your JSON body
+		  body: JSON.stringify({
+		    name: DEName
+		  })
+		})
+		.then( (response) => { 
+		   console.log('response is '+response);
+		})
+		.catch(error => console.log('error', error));		    
                 connection.trigger('nextStep');
             }
         } else if(currentStep.key === 'step2'){
