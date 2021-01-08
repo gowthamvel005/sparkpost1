@@ -111,7 +111,7 @@ exports.publish = function (req, res) {
 exports.validateDE = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     //console.log( req.body );
-    console.log('request DEName is '+req.body);
+    console.log('request DEName is '+req.body.name);
     var xml2js = require('xml2js');
     
     var data = JSON.stringify({"grant_type":"client_credentials","client_id":"lrdyhupmuhr4zl7vwj8a3giq","client_secret":"g8EvTsIYGpPFxovz9nKj0cXy","account_id":"514009708"});
@@ -150,7 +150,7 @@ exports.validateDE = function (req, res) {
         +'                <Filter xsi:type="SimpleFilterPart">'
         +'                    <Property>CustomerKey</Property>'
         +'                    <SimpleOperator>equals</SimpleOperator>'
-        +'                    <Value>Test_Job_Insert</Value>'
+        +'                    <Value>'+req.body.name+'</Value>'
         +'                </Filter>'
         +'            </RetrieveRequest>'
         +'        </RetrieveRequestMsg>'
@@ -169,7 +169,6 @@ exports.validateDE = function (req, res) {
          axios(configs)
             .then(function (response) {
                 console.log(JSON.stringify(response.data));
-                console.log('responsse data '+response.data);
                 let rawdata = response.data;
              
                 var parser = new xml2js.Parser();
@@ -180,12 +179,8 @@ exports.validateDE = function (req, res) {
                      res.send(200, 'validated');
                   } else {
                       res.send(301, 'already exist');
-                  }
-                  /*rawData.forEach(element => { 
-                    console.log('iteraring '+JSON.stringify(element)); 
-                  });*/ 
+                  } 
                 });
-                res.send(200, 'validated');
             })
             .catch(function (error) {
                 console.log(error);
