@@ -38,12 +38,12 @@ define([
         // Disable the next button if a value isn't selected
 	$('.slds-select.hearsay').on('change', function(event) {
 		$('.slds-select.hearsay').find('option').show();
-		intializeSelectHearsay();
+		intializeSelectHearsay(event.target.id);
 	});
 
 	$('.slds-select.journey').on('change', function(event) {
 		$('.slds-select.journey').find('option').show();
-		intializeSelectJourney();
+		intializeSelectJourney(event.target.id);
 	});
 	    
         $('#select-01').change(function() {
@@ -116,31 +116,32 @@ define([
         }
     }
     
-    function intializeSelectJourney() {
+    function intializeSelectJourney(targetId) {
 	// this "initializes the boxes"
 	$('.slds-select.journey').each(function(box) {
 		var value = $('.slds-select.journey')[box].value;
+		var thisElement = this.id;
 		if (value) {
-			const div_data = '<div class="slds-progress-ring slds-progress-ring_complete">'+
-				'<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">'+
-				'<svg viewBox="-1 -1 2 2">'+
-				'<circle class="slds-progress-ring__path" id="slds-progress-ring-path-44" cx="0" cy="0" r="1"></circle>'+
-				'</svg>'+
-				'</div>'+
-				'<div class="slds-progress-ring__content">'+
-				'<span class="slds-icon_container slds-icon-utility-check" title="Complete">'+
-				'<svg class="slds-icon" aria-hidden="true">'+
-				'<use xlink:href="assets/styles/icons/utility-sprite/svg/symbols.svg#check"></use>'+
-				'</svg>'+
-				'<span class="slds-assistive-text">Complete</span>'+
-				'</span>'+
-				'</div>'+
-				'</div>'
-			$('#'+this.id+'-ring').html(div_data);
 			$('.slds-select.journey').not(this).find('option[value="' + value + '"]').hide();
-		} else {
-			const thisElement = this.id;
-			const div_data = '<div class="slds-progress-ring slds-progress-ring_expired">'+
+		}
+		
+		if ((targetId === thisElement) && value) {
+		    const div_data = '<div class="slds-progress-ring slds-progress-ring_complete">' +
+			'<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">' +
+			'<svg viewBox="-1 -1 2 2">' +
+			'<circle class="slds-progress-ring__path" id="slds-progress-ring-path-44" cx="0" cy="0" r="1"></circle>' +
+			'</svg>' +
+			'</div>' +
+			'<div class="slds-progress-ring__content">' +
+			'<span class="slds-icon_container slds-icon-utility-check" title="Complete">' +
+			'<img src="assets/icons/action/check_60.png"/>' +
+			'<span class="slds-assistive-text">Complete</span>' +
+			'</span>' +
+			'</div>' +
+			'</div>'
+		    $('#' + thisElement + '-ring').html(div_data);
+		} else if ((targetId === thisElement) && !value) {
+		    const div_data = '<div class="slds-progress-ring slds-progress-ring_expired">'+
 				'<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">'+
 				'<svg viewBox="-1 -1 2 2">'+
 				'<path class="slds-progress-ring__path" id="slds-progress-ring-path-46" d="M 1 0 A 1 1 0 0 1 1.00 0.00 L 0 0"></path>'+
@@ -148,44 +149,45 @@ define([
 				'</div>'+
 				'<div class="slds-progress-ring__content">'+thisElement.charAt(thisElement.length - 1)+'</div>'+
 				'</div>'
-			$('#'+thisElement+'-ring').html(div_data);
+		    $('#' + thisElement + '-ring').html(div_data);
 		}
 	});
     };
     
-    function intializeSelectHearsay() {
+    function intializeSelectHearsay(targetId) {
 	// this "initializes the boxes"
 	$('.slds-select.hearsay').each(function(box) {
 		var value = $('.slds-select.hearsay')[box].value;
+		var thisElement = this.id;
 		if (value) {
-			const div_data = '<div class="slds-progress-ring slds-progress-ring_complete">'+
-				'<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">'+
-				'<svg viewBox="-1 -1 2 2">'+
-				'<circle class="slds-progress-ring__path" id="slds-progress-ring-path-44" cx="0" cy="0" r="1"></circle>'+
-				'</svg>'+
-				'</div>'+
-				'<div class="slds-progress-ring__content">'+
-				'<span class="slds-icon_container slds-icon-utility-check" title="Complete">'+
-				'<svg class="slds-icon" aria-hidden="true">'+
-				'<use xlink:href="assets/styles/icons/utility-sprite/svg/symbols.svg#check"></use>'+
-				'</svg>'+
-				'<span class="slds-assistive-text">Complete</span>'+
-				'</span>'+
-				'</div>'+
-				'</div>'
-			$('#'+this.id+'-ring').html(div_data);
 			$('.slds-select.hearsay').not(this).find('option[value="' + value + '"]').hide();
-		} else {
-			const thisElement = this.id;
-			const div_data = '<div class="slds-progress-ring slds-progress-ring_expired">'+
-				'<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">'+
-				'<svg viewBox="-1 -1 2 2">'+
-				'<path class="slds-progress-ring__path" id="slds-progress-ring-path-46" d="M 1 0 A 1 1 0 0 1 1.00 0.00 L 0 0"></path>'+
-				'</svg>'+
-				'</div>'+
-				'<div class="slds-progress-ring__content" style="background: gray"></div>'+
-				'</div>'
-			$('#'+thisElement+'-ring').html(div_data);
+		}
+		
+		if ((targetId === thisElement) && value) {
+		    const div_data = '<div class="slds-progress-ring slds-progress-ring_complete">' +
+			'<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">' +
+			'<svg viewBox="-1 -1 2 2">' +
+			'<circle class="slds-progress-ring__path" id="slds-progress-ring-path-44" cx="0" cy="0" r="1"></circle>' +
+			'</svg>' +
+			'</div>' +
+			'<div class="slds-progress-ring__content">' +
+			'<span class="slds-icon_container slds-icon-utility-check" title="Complete">' +
+			'<img src="assets/icons/action/check_60.png"/>' +
+			'<span class="slds-assistive-text">Complete</span>' +
+			'</span>' +
+			'</div>' +
+			'</div>'
+		    $('#' + thisElement + '-ring').html(div_data);
+		} else if ((targetId === thisElement) && !value) {
+		    const div_data = '<div class="slds-progress-ring slds-progress-ring_expired">' +
+			'<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
+			'<svg viewBox="-1 -1 2 2">' +
+			'<path class="slds-progress-ring__path" id="slds-progress-ring-path-46" d="M 1 0 A 1 1 0 0 1 1.00 0.00 L 0 0"></path>' +
+			'</svg>' +
+			'</div>' +
+			'<div class="slds-progress-ring__content" style="background: gray"></div>' +
+			'</div>'
+		    $('#' + thisElement + '-ring').html(div_data);
 		}
 	});
     };
