@@ -221,11 +221,16 @@ define([
                 showStep(null, 1);
                 connection.trigger('ready');
             } else {
-                //var myHeaders = new Headers();
-                //myHeaders.append("Content-Type", "text/xml");
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "text/xml");
+		    
+		var DEName = $('#text-input-id-1').val(); 	
                 
-                //fetch('/validate/dataextension/' , { method: 'POST',  headers: myHeaders, body: raw}).then(response => response.text()).then(result => console.log(result)).catch(error => console.log('error', error));
-                    connection.trigger('nextStep');
+                fetch('/validate/dataextension/' , { method: 'POST',  headers: myHeaders, body: DEName})
+		    .then(response => response.text())
+		    .then(result => console.log(result))
+		    .catch(error => console.log('error', error));
+                connection.trigger('nextStep');
             }
         } else if(currentStep.key === 'step2'){
             if(getIntegrationName('#select-journey1') != '--Select--') hearsayfields [getIntegrationType('#select-journey1')] = getIntegrationType('#select-hearsay1');
