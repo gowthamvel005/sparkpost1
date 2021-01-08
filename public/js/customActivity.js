@@ -225,23 +225,23 @@ define([
                 myHeaders.append("Content-Type", "text/xml");
 		    
 		var DEName = $('#text-input-id-1').val(); 	
-                
+                const data = { dename: DEName }
+		
 		fetch("/validate/dataextension/", {
-		  method: "post",
+		  method: "POST",
 		  headers: {
-		    'Accept': 'application/json',
-		    'Content-Type': 'application/json'
+		    'Accept': 'text/xml',
+		    'Content-Type': 'text/xml'
 		  },
-
-		  //make sure to serialize your JSON body
-		  body: JSON.stringify({
-		    name: DEName
-		  })
+		  body: JSON.stringify(data),
 		})
-		.then( (response) => { 
-		   console.log('response is '+JSON.strigify(response));
+		.then(response => response.text())
+		.then(data => {
+		  console.log('Success:', data);
 		})
-		.catch(error => console.log('error', error));		    
+		.catch((error) => {
+		  console.error('Error:', error);
+		});		    
                 connection.trigger('nextStep');
             }
         } else if(currentStep.key === 'step2'){
