@@ -36,6 +36,16 @@ define([
         connection.trigger('requestEndpoints');
         
         // Disable the next button if a value isn't selected
+	$('.slds-select.hearsay').on('change', function(event) {
+		$('.slds-select.hearsay').find('option').show();
+		intializeSelectHearsay();
+	});
+
+	$('.slds-select.journey').on('change', function(event) {
+		$('.slds-select.journey').find('option').show();
+		intializeSelectJourney();
+	});
+	    
         $('#select-01').change(function() {
             var message = getIntegrationType('#select-01');
             console.log('message value '+message);
@@ -105,6 +115,26 @@ define([
             showStep(null, 3);
         }
     }
+    
+    function intializeSelectJourney() {
+	// this "initializes the boxes"
+	$('.slds-select.journey').each(function(box) {
+		var value = $('.slds-select.journey')[box].value;
+		if (value) {
+			$('.slds-select.journey').not(this).find('option[value="' + value + '"]').hide();
+		}
+	});
+    };
+    
+    function intializeSelectHearsay() {
+	// this "initializes the boxes"
+	$('.slds-select.hearsay').each(function(box) {
+		var value = $('.slds-select.hearsay')[box].value;
+		if (value) {
+			$('.slds-select.hearsay').not(this).find('option[value="' + value + '"]').hide();
+		}
+	});
+    };
 
     function onGetTokens (tokens) {
         // Response: tokens = { token: <legacy token>, fuel2token: <fuel api token> }
