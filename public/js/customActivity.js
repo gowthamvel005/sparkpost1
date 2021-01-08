@@ -130,7 +130,7 @@ define([
 				'<div class="slds-progress-ring__content">'+
 				'<span class="slds-icon_container slds-icon-utility-check" title="Complete">'+
 				'<svg class="slds-icon" aria-hidden="true">'+
-				'<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#check"></use>'+
+				'<use xlink:href="assets/styles/icons/utility-sprite/svg/symbols.svg#check"></use>'+
 				'</svg>'+
 				'<span class="slds-assistive-text">Complete</span>'+
 				'</span>'+
@@ -167,7 +167,7 @@ define([
 				'<div class="slds-progress-ring__content">'+
 				'<span class="slds-icon_container slds-icon-utility-check" title="Complete">'+
 				'<svg class="slds-icon" aria-hidden="true">'+
-				'<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#check"></use>'+
+				'<use xlink:href="assets/styles/icons/utility-sprite/svg/symbols.svg#check"></use>'+
 				'</svg>'+
 				'<span class="slds-assistive-text">Complete</span>'+
 				'</span>'+
