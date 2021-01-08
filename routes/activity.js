@@ -111,7 +111,7 @@ exports.publish = function (req, res) {
 exports.validateDE = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     //console.log( req.body );
-    console.log('request is '+req);
+    console.log('request DEName is '+req.DEName);
     var xml2js = require('xml2js');
     
     var data = JSON.stringify({"grant_type":"client_credentials","client_id":"lrdyhupmuhr4zl7vwj8a3giq","client_secret":"g8EvTsIYGpPFxovz9nKj0cXy","account_id":"514009708"});
