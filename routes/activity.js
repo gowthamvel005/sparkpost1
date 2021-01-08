@@ -6,7 +6,7 @@ const Path = require('path');
 const JWT = require(Path.join(__dirname, '..', 'lib', 'jwtDecoder.js'));
 var util = require('util');
 var http = require('https');
-var axios = require('axios'); 
+var axios = require('axios');
 
 exports.logExecuteData = [];
 
@@ -112,6 +112,7 @@ exports.validateDE = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     //console.log( req.body );
     console.log('validating DataExtension');
+    var xml2js = require('xml2js');
     
     var data = JSON.stringify({"grant_type":"client_credentials","client_id":"lrdyhupmuhr4zl7vwj8a3giq","client_secret":"g8EvTsIYGpPFxovz9nKj0cXy","account_id":"514009708"});
     var authToken;
@@ -168,7 +169,22 @@ exports.validateDE = function (req, res) {
          axios(configs)
             .then(function (response) {
                 console.log(JSON.stringify(response.data));
-                console.log(response.data);
+                console.log('responsse data '+response.data);
+                let rawdata = response.data;
+             
+                var parser = new xml2js.Parser();
+                parser.parseString(rawdata, function(err,result){
+                  console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                  let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+                  if(rawData == 'undefined'){
+                     res.send(200, 'validated');
+                  } else {
+                      res.send(301, 'already exist');
+                  }
+                  /*rawData.forEach(element => { 
+                    console.log('iteraring '+JSON.stringify(element)); 
+                  });*/ 
+                });
                 res.send(200, 'validated');
             })
             .catch(function (error) {
