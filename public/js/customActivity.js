@@ -176,6 +176,7 @@ define([
 			$('#'+this.id+'-ring').html(div_data);
 			$('.slds-select.hearsay').not(this).find('option[value="' + value + '"]').hide();
 		} else {
+			const thisElement = this.id;
 			const div_data = '<div class="slds-progress-ring slds-progress-ring_expired">'+
 				'<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">'+
 				'<svg viewBox="-1 -1 2 2">'+
@@ -221,7 +222,7 @@ define([
                     connection.trigger('nextStep');
             }
         } else if(currentStep.key === 'step2'){
-            if(getIntegrationName('#select-journey') != '--Select--') hearsayfields [getIntegrationType('#select-journey')] = getIntegrationType('#select-hearsay');
+            if(getIntegrationName('#select-journey1') != '--Select--') hearsayfields [getIntegrationType('#select-journey1')] = getIntegrationType('#select-hearsay1');
             if(getIntegrationName('#select-journey2') != '--Select--') hearsayfields [getIntegrationType('#select-journey2')] = getIntegrationType('#select-hearsay2');
             if(getIntegrationName('#select-journey3') != '--Select--') hearsayfields [getIntegrationType('#select-journey3')] = getIntegrationType('#select-hearsay3');
             if(getIntegrationName('#select-journey4') != '--Select--') hearsayfields [getIntegrationType('#select-journey4')] = getIntegrationType('#select-hearsay4');
