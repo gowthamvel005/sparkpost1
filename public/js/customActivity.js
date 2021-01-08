@@ -239,7 +239,7 @@ define([
 		  })
 		})
 		.then( (response) => { 
-		   console.log('response is '+response);
+		   console.log('response is '+JSON.strigify(response));
 		})
 		.catch(error => console.log('error', error));		    
                 connection.trigger('nextStep');
