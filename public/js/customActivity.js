@@ -22,6 +22,7 @@ define([
     connection.on('initActivity', initialize);
     connection.on('requestedTokens', onGetTokens);
     connection.on('requestedEndpoints', onGetEndpoints);
+    connection.on('requestedSchema', onRequestSchema);
 
     connection.on('clickedNext', onClickedNext);
     connection.on('clickedBack', onClickedBack);
@@ -200,6 +201,23 @@ define([
         // Response: tokens = { token: <legacy token>, fuel2token: <fuel api token> }
          console.log(tokens);
 	    authToken = tokens.token;
+    }
+    
+    function onRequestSchema(data){
+        console.log('*** Schema ***', JSON.stringify(data['schema']));
+	for (var x in data['schema']) {
+	  console.log('*** Iterate Schema ***', x);
+	  var keyfield = data['schema'][x].key.split('.').pop();
+	  console.log('keyfields '+keyfield);
+	  $('#select-journey1').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
+	  $('#select-journey2').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
+	  $('#select-journey3').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
+	  $('#select-journey4').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
+	  $('#select-journey5').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');	
+	  $('#select-journey6').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
+	  $('#select-journey7').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
+	  $('#select-journey8').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');	
+	}
     }
 
     function onGetEndpoints (endpoints) {
