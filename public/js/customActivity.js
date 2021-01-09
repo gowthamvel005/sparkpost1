@@ -35,7 +35,7 @@ define([
 
         connection.trigger('requestTokens');
         connection.trigger('requestEndpoints');
-        
+        connection.trigger('requestSchema');
         // Disable the next button if a value isn't selected
 	$('.slds-select.hearsay').on('change', function(event) {
 		$('.slds-select.hearsay').find('option').show();
