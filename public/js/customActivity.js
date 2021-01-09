@@ -209,14 +209,14 @@ define([
 	  console.log('*** Iterate Schema ***', x);
 	  var keyfield = data['schema'][x].key.split('.').pop();
 	  console.log('keyfields '+keyfield);
-	  $('#select-journey1').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
-	  $('#select-journey2').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
-	  $('#select-journey3').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
-	  $('#select-journey4').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
-	  $('#select-journey5').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');	
-	  $('#select-journey6').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
-	  $('#select-journey7').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');
-	  $('#select-journey8').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + val.slice(1)+'</option>');	
+	  $('#select-journey1').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+	  $('#select-journey2').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+	  $('#select-journey3').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+	  $('#select-journey4').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+	  $('#select-journey5').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
+	  $('#select-journey6').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+	  $('#select-journey7').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+	  $('#select-journey8').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
 	}
     }
 
