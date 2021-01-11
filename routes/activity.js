@@ -221,9 +221,6 @@ function authCallout(){
     });
 }
 
-async function doStuff() {
-  // ...
-}
 /*
  * POST Handler for /validate/ route of Activity.
  */
