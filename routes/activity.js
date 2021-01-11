@@ -251,13 +251,17 @@ exports.retrieveDERows =  function (req, res) {
                 parser.parseString(rawdata, function(err,result){
                   console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
                   let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-                  var arrayList = [];
-                  for(var x in rawData){
-                    console.log('data '+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'][x]['Properties'][0]['Property'][0]['Value']));
-                    arrayList.push(JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'][x]['Properties'][0]['Property'][0]['Value']));
+                  //var arrayList = [];
+                  //for(var x in rawData){
+                  //  console.log('data '+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'][x]['Properties'][0]['Property'][0]['Value']));
+                  //  arrayList.push(JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'][x]['Properties'][0]['Property'][0]['Value']));
+                 // }
+                 // console.log('arrayList '+arrayList);
+                  if(rawData){
+                     res.status(200).send(rawData);
+                  } else {
+                      res.status(301).send('No rows retrieved');
                   }
-                  console.log('arrayList '+arrayList);
-                  res.json(arrayList);
                 });
             })
             .catch(function (error) {
