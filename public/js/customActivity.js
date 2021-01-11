@@ -74,6 +74,22 @@ define([
             payload = data;
             intTypeValue = payload.name;
         }
+	
+	fetch("/retrieve/DERows/", {
+		method: "POST",
+		headers: {
+		'Accept': 'text/xml',
+		'Content-Type': 'text/xml'
+		},
+		body: JSON.stringify(data),
+	})
+	.then(response => response.text())
+	.then(data => {
+		  console.log('Success:', data);
+	})
+	.catch((error) => {
+		  console.error('Error:', error);
+	});
         
         var mapfields;
         var hasInArguments = Boolean(
