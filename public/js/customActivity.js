@@ -78,13 +78,13 @@ define([
 	fetch("/retrieve/DERows/", {
 		method: "POST",
 		headers: {
-		'Accept': 'application/json',
-		'Content-Type': 'application/json'
+		'Accept': 'text/xml',
+		'Content-Type': 'text/xml'
 		}
 	})
-	.then(response => response.json())
+	.then(response => response.text())
 	.then(dataValue => {
-		  console.log('Success:', dataValue);
+		console.log('Success:', dataValue);
 	})
 	.catch((error) => {
 		  console.error('Error:', error);
