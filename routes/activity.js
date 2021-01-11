@@ -193,7 +193,7 @@ exports.validateDE = function (req, res) {
     //logData(req);
 };
 
-exports.retrieveDERows = async (req, res) {
+exports.retrieveDERows =  async(req, res) => {
     
     var authToken = await authCallout();
     if(authToken){
