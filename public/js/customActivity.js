@@ -100,12 +100,10 @@ define([
 		    steps[1].active = true;
 		    steps[2].active = true; // toggle active
 		    $('#inputField-01').show();
-		    connection.trigger('updateSteps', steps);
 	    } else {
 		    steps[2].active = true;
                     steps[1].active = false; // toggle active
                     $('#inputField-01').hide();
-                    connection.trigger('updateSteps', steps);
 	    }
         }
         // If there is no message selected, disable the next button
@@ -125,6 +123,7 @@ define([
             }
             $('#intTypeValues').html(div_data);
             showStep(null, 3);
+	    connection.trigger('updateSteps', steps);
         }
     }
     
