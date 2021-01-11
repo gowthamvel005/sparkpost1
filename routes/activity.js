@@ -193,7 +193,7 @@ exports.validateDE = function (req, res) {
     //logData(req);
 };
 
-exports.retrieveDERows =  async(req, res) => {
+exports.retrieveDERows =  function (req, res) {
     
     var authToken = await authCallout();
     if(authToken){
@@ -223,6 +223,10 @@ function authCallout(){
         return undefined;
         console.log(error);
     });
+}
+
+async function doStuff() {
+  // ...
 }
 /*
  * POST Handler for /validate/ route of Activity.
