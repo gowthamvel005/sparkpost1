@@ -257,7 +257,7 @@ exports.retrieveDERows =  function (req, res) {
                     arrayList.push(JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'][x]['Properties'][0]['Property'][0]['Value']));
                   }
                   console.log('arrayList '+arrayList);
-                  res.status(200).send(arrayList);
+                  res.json(arrayList);
                 });
             })
             .catch(function (error) {
