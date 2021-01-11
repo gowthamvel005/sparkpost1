@@ -41,7 +41,7 @@ app.post('/journeybuilder/validate/', activity.validate );
 app.post('/journeybuilder/publish/', activity.publish );
 app.post('/journeybuilder/execute/', activity.execute );
 app.post('/validate/dataextension/', activity.validateDE);
-app.post('/retrieve/dataextension/rows', activity.retrieveDERows);
+app.post('/retrieve/dataextension/rows/', activity.retrieveDERows);
 
 
 http.createServer(app).listen(app.get('port'), function(){
