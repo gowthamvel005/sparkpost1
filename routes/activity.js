@@ -194,7 +194,80 @@ exports.validateDE = function (req, res) {
 };
 
 exports.retrieveDERows =  function (req, res) {
+    console.log('request DEName is '+JSON.stringify(req.body));
+    var xml2js = require('xml2js');
     
+    var data = JSON.stringify({"grant_type":"client_credentials","client_id":"lrdyhupmuhr4zl7vwj8a3giq","client_secret":"g8EvTsIYGpPFxovz9nKj0cXy","account_id":"514009708"});
+    var authToken;
+    var config = {
+      method: 'post',
+      url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.auth.marketingcloudapis.com/v2/token',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+
+    axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+        authToken = response.data.access_token;
+        console.log('authToken '+authToken);
+        
+        let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
+        +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
+        +'    <s:Header>'
+        +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
+        +'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
+        +'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
+        +'    </s:Header>'
+        +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+        +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+        +'            <RetrieveRequest>'
+        +'                <ObjectType>DataExtensionObject[Data Extension Template]</ObjectType>
+        +'      <Properties>Template Name</Properties>'
+        +'        <Properties>Hearsay Org ID</Properties>'
+        +'        <Properties>Hearsay User Reference ID</Properties>'
+        +'            </RetrieveRequest>'
+        +'        </RetrieveRequestMsg>'
+        +'    </s:Body>'
+        +'</s:Envelope>';
+
+        var configs = {
+            method: 'post',
+            url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
+                headers: { 
+                'Content-Type': 'text/xml'
+             },
+             data : soapMessage
+         };
+
+         axios(configs)
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+                let rawdata = response.data;
+             
+                var parser = new xml2js.Parser();
+                parser.parseString(rawdata, function(err,result){
+                  console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                  let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+                  var arrayList = [];
+                  for(var x in rawData){
+                    console.log('data '+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'][x]['Properties'][0]['Property'][0]['Value']));
+                    arrayList.push(JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'][x]['Properties'][0]['Property'][0]['Value']));
+                  }
+                  console.log('arrayList '+arrayList);
+                  res.status(200).send(arrayList);
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 };
 
 function authCallout(){
