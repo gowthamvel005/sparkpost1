@@ -224,7 +224,7 @@ exports.retrieveDERows =  function (req, res) {
         +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
         +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
         +'            <RetrieveRequest>'
-        +'                <ObjectType>DataExtensionObject[Data Extension Template]</ObjectType>
+        +'                <ObjectType>DataExtensionObject[Data Extension Template]</ObjectType>'
         +'      <Properties>Template Name</Properties>'
         +'        <Properties>Hearsay Org ID</Properties>'
         +'        <Properties>Hearsay User Reference ID</Properties>'
