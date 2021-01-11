@@ -192,6 +192,39 @@ exports.validateDE = function (req, res) {
     });
     //logData(req);
 };
+
+exports.retrieveDERows = function (req, res) {
+    
+    var authToken = authCallout();
+    if(authToken){
+        console.log('authToken '+authToken);
+    }
+};
+
+function authCallout(){
+    
+    var data = JSON.stringify({"grant_type":"client_credentials","client_id":"lrdyhupmuhr4zl7vwj8a3giq","client_secret":"g8EvTsIYGpPFxovz9nKj0cXy","account_id":"514009708"});
+    var authToken;
+    var config = {
+      method: 'post',
+      url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.auth.marketingcloudapis.com/v2/token',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+
+    axios(config)
+    .then(function (response) {
+        console.log('response token '+response.data.access_token);
+        return response.data.access_token;
+    }
+    })
+    .catch(function (error) {
+        return undefined;
+        console.log(error);
+    });
+}
 /*
  * POST Handler for /validate/ route of Activity.
  */
