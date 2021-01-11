@@ -96,15 +96,6 @@ define([
             $("#select-01 option").filter(function() {
 	    	return this.text == intTypeValue; 
 	    }).attr('selected', true);
-	    if(intTypeValue == 'Current Journey'){
-		    steps[1].active = true;
-		    steps[2].active = true; // toggle active
-		    $('#inputField-01').show();
-	    } else {
-		    steps[2].active = true;
-                    steps[1].active = false; // toggle active
-                    $('#inputField-01').hide();
-	    }
         }
         // If there is no message selected, disable the next button
         if (!mapfields) {
@@ -123,7 +114,6 @@ define([
             }
             $('#intTypeValues').html(div_data);
             showStep(null, 3);
-	    connection.trigger('updateSteps', steps);
         }
     }
     
