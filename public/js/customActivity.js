@@ -80,12 +80,11 @@ define([
 		headers: {
 		'Accept': 'application/json',
 		'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(data),
+		}
 	})
 	.then(response => response.json())
-	.then(data => {
-		  console.log('Success:', data);
+	.then(dataValue => {
+		  console.log('Success:', dataValue);
 	})
 	.catch((error) => {
 		  console.error('Error:', error);
