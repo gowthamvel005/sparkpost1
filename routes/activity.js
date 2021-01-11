@@ -195,10 +195,6 @@ exports.validateDE = function (req, res) {
 
 exports.retrieveDERows =  function (req, res) {
     
-    var authToken = await authCallout();
-    if(authToken){
-        console.log('authToken '+authToken);
-    }
 };
 
 function authCallout(){
