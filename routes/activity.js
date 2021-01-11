@@ -193,9 +193,9 @@ exports.validateDE = function (req, res) {
     //logData(req);
 };
 
-exports.retrieveDERows = function (req, res) {
+exports.retrieveDERows = async function (req, res) {
     
-    var authToken = authCallout();
+    var authToken = await authCallout();
     if(authToken){
         console.log('authToken '+authToken);
     }
