@@ -48,9 +48,9 @@ define([
 	});
 	    
         $('#select-01').change(function() {
-            var message = getIntegrationType('#select-01');
+            var message = getIntegrationName('#select-01');
             console.log('message value '+message);
-            if(message == 'CurrentJourney'){
+            if(message == 'Current Journey'){
                 lastStepEnabled = !lastStepEnabled; // toggle status
                 steps[1].active = true;
                 steps[2].active = true; // toggle active
@@ -114,6 +114,10 @@ define([
             }
             $('#intTypeValues').html(div_data);
             showStep(null, 3);
+	    steps[1].active = true;
+            steps[2].active = true; // toggle active
+            $('#inputField-01').show();
+            connection.trigger('updateSteps', steps);
         }
     }
     
