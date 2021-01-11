@@ -96,7 +96,7 @@ define([
             $("#select-01 option").filter(function() {
 	    	return this.text == intTypeValue; 
 	    }).attr('selected', true);
-	    if(message == 'Current Journey'){
+	    if(intTypeValue == 'Current Journey'){
 		    steps[1].active = true;
 		    steps[2].active = true; // toggle active
 		    $('#inputField-01').show();
