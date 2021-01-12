@@ -8,6 +8,7 @@ define([
     var connection = new Postmonger.Session();
     var payload = {};
     var authToken;
+    var DERowList = []
     var hearsayfields = {};
     var lastStepEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
@@ -80,6 +81,17 @@ define([
 	.then(response => response.text())
 	.then(dataValue => {
 		console.log('Success:', dataValue);
+                for(var x in JSON.parse(dataValue)){
+                  console.log('data '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']));
+                  DERowList.push(JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']));
+                }
+                console.log('DERowList '+DERowList);
+		DERowList.forEach((option) => {
+			$('#select-01').append($('<option>', {
+				value: option,
+				text: option
+			}));
+		});
 	})
 	.catch((error) => {
 		  console.error('Error:', error);
