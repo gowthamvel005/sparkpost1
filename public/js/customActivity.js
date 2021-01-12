@@ -330,7 +330,7 @@ define([
 			
 		})
 		.catch((error) => {
-			  console.error('Error:', error);
+			  showStep(null, 1);
 		});
 	}
     }
