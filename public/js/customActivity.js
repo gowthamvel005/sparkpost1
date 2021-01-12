@@ -82,8 +82,8 @@ define([
 	.then(dataValue => {
 		console.log('Success:', dataValue);
                 for(var x in JSON.parse(dataValue)){
-                  console.log('data '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']));
-                  DERowList.push(JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']));
+                  console.log('data '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
+                  DERowList.push(JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
                 }
                 console.log('DERowList '+DERowList);
 		DERowList.forEach((option) => {
