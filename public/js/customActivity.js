@@ -312,16 +312,26 @@ define([
 			      var NameValue = JSON.parse(dataValue)[x]['Properties'][0]['Property'][y]['Name'].toString();
 			      var DataValue = JSON.parse(dataValue)[x]['Properties'][0]['Property'][y]['Value'].toString();
 				if(DataValue){
-				   div_data += "<li>"+NameValue+' : '+DataValue+"</li>";
+				   hearsayfields [NameValue] = DataValue;
 				}
 			   }
 			}
+		
+		    for (var key in hearsayfields) {
+			if (hearsayfields.hasOwnProperty(key)) {
+				var val = hearsayfields[key];
+				console.log('key '+key);
+				console.log('value '+val);
+				div_data += "<li>"+key+' : '+val+"</li>";
+			}
+		    }
+		    $('#intTypeValues').html(div_data);
+		    connection.trigger('nextStep');
+			
 		})
 		.catch((error) => {
 			  console.error('Error:', error);
 		});
-		$('#intTypeValues').html(div_data);
-            	connection.trigger('nextStep');
 	}
     }
 
