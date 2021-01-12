@@ -296,7 +296,26 @@ define([
 	    }
 	    $('#intTypeValues').html(div_data);
             connection.trigger('nextStep');
-	    }
+		
+	} else if(currentStep.key === 'step1' && selectOption != 'CurrentJourney'){
+		
+		const templateName = { DEName: selectOption }
+		fetch("/dataextension/row/", {
+			method: "POST",
+			body: JSON.stringify(templateName),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			console.log('Success:', dataValue);
+			for(var x in JSON.parse(dataValue)){
+			  console.log('Name '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Name']);
+			  console.log('Value '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
+			}
+		})
+		.catch((error) => {
+			  console.error('Error:', error);
+		});
+	}
     }
 
     function onClickedBack () {
