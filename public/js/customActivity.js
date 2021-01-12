@@ -16,7 +16,7 @@ define([
         { "label": "Review Template Field", "key": "step3", "active": false}
     ];
     var currentStep = steps[0].key;
-
+    var eventDefKey;
     $(window).ready(onRender);
 
     connection.on('initActivity', initialize);
@@ -35,7 +35,6 @@ define([
         connection.trigger('requestTokens');
         connection.trigger('requestEndpoints');
         connection.trigger('requestSchema');
-	connection.trigger('updateSteps', steps);
 	    
         // Disable the next button if a value isn't selected
 	$('.slds-select.hearsay').on('change', function(event) {
@@ -219,16 +218,20 @@ define([
         console.log('*** Schema ***', JSON.stringify(data['schema']));
 	for (var x in data['schema']) {
 	  console.log('*** Iterate Schema ***', x);
+	  eventDefKey = eventDefKey == 'undefined' ? data['schema'][x].key.substr(0, data['schema'][x].key.lastIndexOf(".")) : eventDefKey;
+	  console.log('*** eventDefKey ***', eventDefKey);
 	  var keyfield = data['schema'][x].key.split('.').pop();
 	  console.log('keyfields '+keyfield);
-	  $('#select-journey1').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
-	  $('#select-journey2').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
-	  $('#select-journey3').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
-	  $('#select-journey4').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
-	  $('#select-journey5').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
-	  $('#select-journey6').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
-	  $('#select-journey7').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
-	  $('#select-journey8').append('<option value="'+keyfield.replaceAll(" ", "_")+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
+	  if(keyfield != 'endDate'){
+		  $('#select-journey1').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+		  $('#select-journey2').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+		  $('#select-journey3').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+		  $('#select-journey4').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+		  $('#select-journey5').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
+		  $('#select-journey6').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+		  $('#select-journey7').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+		  $('#select-journey8').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
+	  }
 	}
     }
 
