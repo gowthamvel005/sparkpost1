@@ -260,7 +260,7 @@ define([
 	var selectOption = getIntegrationType('#select-01');
         if (currentStep.key === 'step3') {
             save();
-        } else if(currentStep.key === 'step1' && selectOption == 'Current Journey'){
+        } else if(currentStep.key === 'step1' && selectOption == 'CurrentJourney'){
             var input = $('#text-input-id-1')[0];
             var validityState_object = input.validity;
             if (validityState_object.valueMissing){
