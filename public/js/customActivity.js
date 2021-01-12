@@ -266,8 +266,8 @@ define([
                 showStep(null, 1);
                 connection.trigger('ready');
             } else {
-                const sameCaseArray = DERowList.map(value => value.toLowerCase());
-		var inputValue = $('#text-input-id-1').val().toLowerCase();
+                const sameCaseArray = DERowList.map(value => value.toString().toLowerCase());
+		var inputValue = $('#text-input-id-1').val().toString().toLowerCase();
 		if(sameCaseArray.includes(inputValue)){
 			input.setCustomValidity('Template name already exist!');
 			input.reportValidity();
