@@ -76,11 +76,7 @@ define([
         }
 	
 	fetch("/retrieve/DERows/", {
-		method: "POST",
-		headers: {
-		'Accept': 'text/xml',
-		'Content-Type': 'text/xml'
-		}
+		method: "POST"
 	})
 	.then(response => response.text())
 	.then(dataValue => {
