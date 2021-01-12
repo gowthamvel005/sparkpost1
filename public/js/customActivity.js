@@ -69,10 +69,9 @@ define([
     }
 
     function initialize (data) {
-        var intTypeValue;
+        
         if (data) {
             payload = data;
-            intTypeValue = payload.metaData.selectedOption;
         }
 	
 	fetch("/retrieve/DERows/", {
@@ -119,11 +118,6 @@ define([
             });
         });
 
-        if (intTypeValue) {
-            $("#select-01 option").filter(function() {
-	    	return this.text == intTypeValue; 
-	    }).attr('selected', true);
-        }
         // If there is no message selected, disable the next button
         if (!mapfields) {
             showStep(null, 1);
@@ -306,6 +300,14 @@ define([
     }
 
     function onClickedBack () {
+	    if(payload){
+		var intTypeValue = payload.metaData.selectedOption;
+		if (intTypeValue) {
+		    $("#select-01 option").filter(function() {
+			return this.text == intTypeValue; 
+		    }).attr('selected', true);
+		}
+	    }
         connection.trigger('prevStep');
     }
 
