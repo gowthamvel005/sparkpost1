@@ -298,7 +298,7 @@ define([
             connection.trigger('nextStep');
 		
 	} else if(currentStep.key === 'step1' && selectOption != 'CurrentJourney'){
-		
+		var div_data = '';
 		const templateName = { DEName: selectOption }
 		fetch("/dataextension/row/", {
 			method: "POST",
@@ -308,13 +308,20 @@ define([
 		.then(dataValue => {
 			console.log('Success:', dataValue);
 			for(var x in JSON.parse(dataValue)){
-			  console.log('Name '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Name']);
-			  console.log('Value '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
+			  for(var y in JSON.parse(dataValue)[x]['Properties'][0]['Property']){
+			      var NameValue = JSON.parse(dataValue)[x]['Properties'][0]['Property'][y]['Name'].toString();
+			      var DataValue = JSON.parse(dataValue)[x]['Properties'][0]['Property'][y]['Value'].toString();
+				if(DataValue){
+				   div_data += "<li>"+NameValue+' : '+DataValue+"</li>";
+				}
+			   }
 			}
 		})
 		.catch((error) => {
 			  console.error('Error:', error);
 		});
+		$('#intTypeValues').html(div_data);
+            	connection.trigger('nextStep');
 	}
     }
 
