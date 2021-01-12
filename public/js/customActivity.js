@@ -133,7 +133,7 @@ define([
             var div_data = '';
             for (var key in mapfields) {
                 if (mapfields.hasOwnProperty(key)) {
-                    var val = mapfields[key];
+                    var val = mapfields[key].split('.').pop().replace('}}','');
                     console.log('key '+key);
                     console.log('value '+val);
                     div_data += "<li>"+key+' : '+val+"</li>";
