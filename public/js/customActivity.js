@@ -230,7 +230,7 @@ define([
         console.log('*** Schema ***', JSON.stringify(data['schema']));
 	for (var x in data['schema']) {
 	  console.log('*** Iterate Schema ***', x);
-	  eventDefKey = eventDefKey == 'undefined' ? data['schema'][x].key.substr(0, data['schema'][x].key.lastIndexOf(".")) : eventDefKey;
+	  eventDefKey = data['schema'][x].key.substr(0, data['schema'][x].key.lastIndexOf("."));
 	  console.log('*** eventDefKey ***', eventDefKey);
 	  var keyfield = data['schema'][x].key.split('.').pop();
 	  console.log('keyfields '+keyfield);
