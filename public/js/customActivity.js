@@ -374,10 +374,10 @@ define([
         var name = getIntegrationName('#select-01');
 	var inputValue = $('#text-input-id-1').val().toString();
         payload.name = inputValue;
-	payload['selectedOption'] = name;
+	payload.selectedOption = name;
 	
 	for(var x in hearsayfields){
-		hearsayfields[x] = '{{'+eventDefKey+'.\"' +hearsayfields[x]+ '\"}}';
+		hearsayfields[x] = '{{'+eventDefKey+'.\"' +hearsayfields[x].toString()+ '\"}}';
 	}
 	console.log('hearsayfields '+hearsayfields);
         payload['arguments'].execute.inArguments = [{ "hearsayfields": hearsayfields }];
