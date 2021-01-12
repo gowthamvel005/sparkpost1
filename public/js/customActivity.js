@@ -266,28 +266,16 @@ define([
                 showStep(null, 1);
                 connection.trigger('ready');
             } else {
-                var myHeaders = new Headers();
-                myHeaders.append("Content-Type", "text/xml");
-		    
-		var DEName = $('#text-input-id-1').val(); 	
-                const data = { dename: DEName }
-		
-		fetch("/validate/dataextension/", {
-		  method: "POST",
-		  headers: {
-		    'Accept': 'text/xml',
-		    'Content-Type': 'text/xml'
-		  },
-		  body: JSON.stringify(data),
-		})
-		.then(response => response.text())
-		.then(data => {
-		  console.log('Success:', data);
-		})
-		.catch((error) => {
-		  console.error('Error:', error);
-		});		    
-                connection.trigger('nextStep');
+                const sameCaseArray = DERowList.map(value => value.toLowerCase());
+		var inputValue = $('#text-input-id-1').val().toLowerCase();
+		if(sameCaseArray.includes(inputValue)){
+			input.setCustomValidity('Template name already exist!');
+			input.reportValidity();
+			showStep(null, 1);
+			connection.trigger('ready');
+		} else {
+			connection.trigger('nextStep');	
+		}
             }
         } else if(currentStep.key === 'step2'){
             if(getIntegrationName('#select-journey1') != '--Select--' && getIntegrationName('#select-hearsay1') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay1')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey1')+ '\"}}';
