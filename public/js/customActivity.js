@@ -290,14 +290,14 @@ define([
                 connection.trigger('nextStep');
             }
         } else if(currentStep.key === 'step2'){
-            if(getIntegrationName('#select-journey1') != '--Select--') hearsayfields [getIntegrationType('#select-journey1')] = getIntegrationType('#select-hearsay1');
-            if(getIntegrationName('#select-journey2') != '--Select--') hearsayfields [getIntegrationType('#select-journey2')] = getIntegrationType('#select-hearsay2');
-            if(getIntegrationName('#select-journey3') != '--Select--') hearsayfields [getIntegrationType('#select-journey3')] = getIntegrationType('#select-hearsay3');
-            if(getIntegrationName('#select-journey4') != '--Select--') hearsayfields [getIntegrationType('#select-journey4')] = getIntegrationType('#select-hearsay4');
-            if(getIntegrationName('#select-journey5') != '--Select--') hearsayfields [getIntegrationType('#select-journey5')] = getIntegrationType('#select-hearsay5');
-            if(getIntegrationName('#select-journey6') != '--Select--') hearsayfields [getIntegrationType('#select-journey6')] = getIntegrationType('#select-hearsay6');
-            if(getIntegrationName('#select-journey7') != '--Select--') hearsayfields [getIntegrationType('#select-journey7')] = getIntegrationType('#select-hearsay7');
-            if(getIntegrationName('#select-journey8') != '--Select--') hearsayfields [getIntegrationType('#select-journey8')] = getIntegrationType('#select-hearsay8');
+            if(getIntegrationName('#select-journey1') != '--Select--' && getIntegrationName('#select-hearsay1') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay1')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey1')+ '\"}}';
+            if(getIntegrationName('#select-journey2') != '--Select--' && getIntegrationName('#select-hearsay2') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay2')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey2')+ '\"}}';
+            if(getIntegrationName('#select-journey3') != '--Select--' && getIntegrationName('#select-hearsay3') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay3')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey3')+ '\"}}';
+            if(getIntegrationName('#select-journey4') != '--Select--' && getIntegrationName('#select-hearsay4') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay4')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey4')+ '\"}}';
+            if(getIntegrationName('#select-journey5') != '--Select--' && getIntegrationName('#select-hearsay5') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay5')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey5')+ '\"}}';
+            if(getIntegrationName('#select-journey6') != '--Select--' && getIntegrationName('#select-hearsay6') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay6')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey6')+ '\"}}';
+            if(getIntegrationName('#select-journey7') != '--Select--' && getIntegrationName('#select-hearsay7') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay7')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey7')+ '\"}}';
+            if(getIntegrationName('#select-journey8') != '--Select--' && getIntegrationName('#select-hearsay8') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay8')] = '{{'+eventDefKey+'.\"' +getIntegrationType('#select-journey8')+ '\"}}';
             console.log('hearsayfields '+hearsayfields);
 	    var div_data = '';
 	    for (var key in hearsayfields) {
