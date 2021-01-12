@@ -276,6 +276,7 @@ define([
 		}
             }
         } else if(currentStep.key === 'step2'){
+	    hearsayfields = {};
             if(getIntegrationName('#select-journey1') != '--Select--' && getIntegrationName('#select-hearsay1') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay1')] = getIntegrationType('#select-journey1');
             if(getIntegrationName('#select-journey2') != '--Select--' && getIntegrationName('#select-hearsay2') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay2')] = getIntegrationType('#select-journey2');
             if(getIntegrationName('#select-journey3') != '--Select--' && getIntegrationName('#select-hearsay3') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay3')] = getIntegrationType('#select-journey3');
@@ -299,6 +300,7 @@ define([
 		
 	} else if(currentStep.key === 'step1' && selectOption != 'CurrentJourney'){
 		var div_data = '';
+		hearsayfields = {};
 		const templateName = { DEName: selectOption }
 		fetch("/dataextension/row/", {
 			method: "POST",
@@ -330,6 +332,7 @@ define([
 			
 		})
 		.catch((error) => {
+			console.log('error:', error);
 			  showStep(null, 1);
 		});
 	}
@@ -413,9 +416,12 @@ define([
 	var inputValue = $('#text-input-id-1').val().toString();
         payload.name = inputValue;
 	
-	for(var x in hearsayfields){
-		hearsayfields[x] = '{{'+eventDefKey+'.\"' +hearsayfields[x].toString()+ '\"}}';
+	if(name == 'Current Journey'){
+		   for(var x in hearsayfields){
+			hearsayfields[x] = '{{'+eventDefKey+'.\"' +hearsayfields[x].toString()+ '\"}}';
+		   }
 	}
+	   
 	console.log('hearsayfields '+hearsayfields);
         payload['arguments'].execute.inArguments = [{ "hearsayfields": hearsayfields }];
 
