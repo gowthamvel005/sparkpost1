@@ -374,7 +374,6 @@ define([
         var name = getIntegrationName('#select-01');
 	var inputValue = $('#text-input-id-1').val().toString();
         payload.name = inputValue;
-	payload.selectedOption = name;
 	
 	for(var x in hearsayfields){
 		hearsayfields[x] = '{{'+eventDefKey+'.\"' +hearsayfields[x].toString()+ '\"}}';
@@ -383,7 +382,8 @@ define([
         payload['arguments'].execute.inArguments = [{ "hearsayfields": hearsayfields }];
 
         payload['metaData'].isConfigured = true;
-
+	payload.metaData['selectedOption'] = name;
+	    
         connection.trigger('updateActivity', payload);
     }
 
