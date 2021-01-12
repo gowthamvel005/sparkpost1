@@ -144,12 +144,18 @@ exports.DERow = function (req, res) {
         +'            <RetrieveRequest>'
         +'                <ObjectType>DataExtensionObject[Data Extension Template]</ObjectType>'
         +'                <Properties>Template Name</Properties>'
-        +'                <Properties>Hearsay Org ID</Properties>'
-        +'                <Properties>Hearsay User Reference ID</Properties>'
+        +'                  <Properties>Hearsay Org ID</Properties>'
+        +'                  <Properties>Hearsay User Reference ID</Properties>'
+        +'                  <Properties>Customer Name</Properties>'
+        +'                  <Properties>Option 1</Properties>'
+        +'                  <Properties>Option 2</Properties>'
+        +'                  <Properties>Option 3</Properties>'
+        +'                  <Properties>Option 4</Properties>'
+        +'                  <Properties>Option 5</Properties>'
         +'                <Filter xsi:type="SimpleFilterPart">'
-        +'                    <Property>Template Name</Property>'
-        +'                    <SimpleOperator>equals</SimpleOperator>'
-        +'                    <Value>'+templateName+'</Value>'
+        +'                  <Property>Template Name</Property>'
+        +'                  <SimpleOperator>equals</SimpleOperator>'
+        +'                  <Value>'+templateName+'</Value>'
         +'                </Filter>'
         +'            </RetrieveRequest>'
         +'        </RetrieveRequestMsg>'
@@ -174,10 +180,10 @@ exports.DERow = function (req, res) {
                 parser.parseString(rawdata, function(err,result){
                   console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
                   let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-                  if(rawData == 'undefined'){
-                     res.status(200).send('validated');
+                  if(rawData){
+                      res.status(200).send(rawData);
                   } else {
-                      res.status(301).send('already exist');
+                      res.status(301).send('No rows retrieved');
                   } 
                 });
             })
