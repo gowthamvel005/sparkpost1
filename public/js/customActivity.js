@@ -72,7 +72,7 @@ define([
         var intTypeValue;
         if (data) {
             payload = data;
-            intTypeValue = payload.name;
+            intTypeValue = payload.selectedOption;
         }
 	
 	fetch("/retrieve/DERows/", {
