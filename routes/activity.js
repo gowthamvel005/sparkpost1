@@ -202,7 +202,7 @@ exports.retrieveDERows =  function (req, res) {
     console.log('request DEName is '+JSON.stringify(req.body));
     var xml2js = require('xml2js');
     
-    var data = JSON.stringify({"grant_type":"client_credentials","client_id":"lrdyhupmuhr4zl7vwj8a3giq","client_secret":"g8EvTsIYGpPFxovz9nKj0cXy","account_id":"514009708"});
+    var data = JSON.stringify({"grant_type":"client_credentials","client_id":"04rp3fj2j115hjlr5px4fhqg","client_secret":"R8qnTC51RVmowAXzKaFG9ZA7","account_id":"514011825"});
     var authToken;
     var config = {
       method: 'post',
@@ -281,7 +281,7 @@ exports.retrieveDERows =  function (req, res) {
 
 function authCallout(){
     
-    var data = JSON.stringify({"grant_type":"client_credentials","client_id":"lrdyhupmuhr4zl7vwj8a3giq","client_secret":"g8EvTsIYGpPFxovz9nKj0cXy","account_id":"514009708"});
+    var data = JSON.stringify({"grant_type":"client_credentials","client_id":"04rp3fj2j115hjlr5px4fhqg","client_secret":"R8qnTC51RVmowAXzKaFG9ZA7","account_id":"514011825"});
     var authToken;
     var config = {
       method: 'post',
