@@ -13,8 +13,8 @@ define([
     var lastStepEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
         { "label": "Template Selection", "key": "step1" },
-        { "label": "Map the Template Field", "key": "step2", "active": false},
-        { "label": "Review Template Field", "key": "step3", "active": false}
+        { "label": "Map Template Data", "key": "step2", "active": false},
+        { "label": "Review Template", "key": "step3", "active": false}
     ];
     var currentStep = steps[0].key;
     var eventDefKey;
