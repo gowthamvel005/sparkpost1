@@ -66,8 +66,8 @@
     },
     "wizardSteps": [
        { "label": "Template Selection", "key": "step1" },
-       { "label": "Map the Template Field", "key": "step2", "active": false },
-       { "label": "Review Template Field", "key": "step3", "active": false }
+       { "label": "Map Template Data", "key": "step2", "active": false },
+       { "label": "Review Template", "key": "step3", "active": false }
     ],
     "userInterfaces": {
         "configModal": {
