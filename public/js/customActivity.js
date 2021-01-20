@@ -13,16 +13,16 @@ define([
     var lastStepEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
         { "label": "Template Selection", "key": "step1" },
-        { "label": "Map Template Data", "key": "step2", "active": false},
-        { "label": "Review Template", "key": "step3", "active": false}
+        { "label": "Map the Template Field", "key": "step2", "active": false},
+        { "label": "Review Template Field", "key": "step3", "active": false}
     ];
     var currentStep = steps[0].key;
     var eventDefKey;
     $(window).ready(onRender);
 
-    connection.on('initActivity', initialize);
     connection.on('requestedTokens', onGetTokens);
     connection.on('requestedEndpoints', onGetEndpoints);
+    connection.on('initActivity', initialize);
     connection.on('requestedSchema', onRequestSchema);
 
     connection.on('clickedNext', onClickedNext);
@@ -32,12 +32,11 @@ define([
     function onRender() {
         $('#inputField-01').hide();
         // JB will respond the first time 'ready' is called with 'initActivity'
-        connection.trigger('ready');
         connection.trigger('requestTokens');
-        connection.trigger('requestEndpoints');
+	connection.trigger('requestEndpoints');
+	connection.trigger('ready');
         connection.trigger('requestSchema');
 	    
-        // Disable the next button if a value isn't selected
 	$('.slds-select.hearsay').on('change', function(event) {
 		$('.slds-select.hearsay').find('option').show();
 		intializeSelectHearsay(event.target.id);
@@ -73,32 +72,19 @@ define([
         if (data) {
             payload = data;
         }
-	
-	fetch("/retrieve/DERows/", {
-		method: "POST"
-	})
-	.then(response => response.text())
-	.then(dataValue => {
-		console.log('Success:', dataValue);
-                for(var x in JSON.parse(dataValue)){
-                  console.log('data '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
-                  DERowList.push(JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
-                }
-                console.log('DERowList '+DERowList);
-		DERowList.forEach((option) => {
-			$('#select-01').append($('<option>', {
-				value: option,
-				text: option
-			}));
-		});
-		$('#select-01').append($('<option>', {
-			value: 'CurrentJourney',
-			text: 'Current Journey'
-		}));
-	})
-	.catch((error) => {
-		  console.error('Error:', error);
-	});
+	/*var dataOptions = new Array("firstName","lastName","name","email","title","phone","birthdate","preferredName","sourceId","sourceOwnerId","sourceOrganizationId");
+	    
+	for (var i=0; i < dataOptions.length;++i){
+		addOption($('#select-hearsay1'), dataOptions[i], dataOptions[i]);
+		addOption($('#select-hearsay2'), dataOptions[i], dataOptions[i]);
+		addOption($('#select-hearsay3'), dataOptions[i], dataOptions[i]);
+		addOption($('#select-hearsay4'), dataOptions[i], dataOptions[i]);
+		addOption($('#select-hearsay5'), dataOptions[i], dataOptions[i]);
+		addOption($('#select-hearsay6'), dataOptions[i], dataOptions[i]);
+		addOption($('#select-hearsay7'), dataOptions[i], dataOptions[i]);
+		addOption($('#select-hearsay8'), dataOptions[i], dataOptions[i]);
+		addOption($('#select-hearsay9'), dataOptions[i], dataOptions[i]);
+	}*/
         
         var mapfields;
         var hasInArguments = Boolean(
@@ -117,6 +103,30 @@ define([
                 }
             });
         });
+	    
+	/*$("#select-hearsay1 option").filter(function() {
+		return this.text == 'Name';
+	}).attr('selected', true);
+	    
+	$("#select-hearsay2 option").filter(function() {
+		intializeSelectHearsay('select-hearsay2');
+		return this.text == 'SourceId'; 
+	}).attr('selected', true);
+	    
+	$("#select-hearsay3 option").filter(function() {
+		intializeSelectHearsay('select-hearsay3');
+		return this.text == 'SourceOwnerId'; 
+	}).attr('selected', true);
+		
+	$("#select-hearsay4 option").filter(function() {
+		intializeSelectHearsay('select-hearsay4');
+		return this.text == 'SourceOrganizationId'; 
+	}).attr('selected', true);
+	    
+	$("#select-hearsay5 option").filter(function() {
+		intializeSelectHearsay('select-hearsay5');
+		return this.text == 'Phone'; 
+	}).attr('selected', true);*/
 
         // If there is no message selected, disable the next button
         if (!mapfields) {
@@ -136,6 +146,10 @@ define([
             $('#intTypeValues').html(div_data);
             showStep(null, 3);
         }
+    }
+	
+    function addOption(selectbox,text,value ) {
+    	selectbox.append('<option value="'+value+'">'+text.charAt(0).toUpperCase() + text.slice(1)+'</option>');
     }
     
     function intializeSelectJourney(targetId) {
@@ -221,7 +235,36 @@ define([
     function onGetTokens (tokens) {
         // Response: tokens = { token: <legacy token>, fuel2token: <fuel api token> }
          console.log(tokens);
-	    authToken = tokens.token;
+	    authToken = tokens.fuel2token;
+	    
+	    fetch("/retrieve/derows/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: authToken,
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			console.log('Success:', dataValue);
+			for(var x in JSON.parse(dataValue)){
+			  console.log('data '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
+			  DERowList.push(JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
+			}
+			console.log('DERowList '+DERowList);
+			DERowList.forEach((option) => {
+				$('#select-01').append($('<option>', {
+					value: option,
+					text: option
+				}));
+			});
+			$('#select-01').append($('<option>', {
+				value: 'CurrentJourney',
+				text: 'Current Journey'
+			}));
+		})
+		.catch((error) => {
+			  console.error('Error:', error);
+		});
     }
     
     function onRequestSchema(data){
@@ -240,7 +283,8 @@ define([
 		  $('#select-journey5').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
 		  $('#select-journey6').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
 		  $('#select-journey7').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
-		  $('#select-journey8').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
+		  $('#select-journey8').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+		  $('#select-journey9').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
 	  }
 	}
     }
@@ -272,19 +316,51 @@ define([
 			showStep(null, 1);
 			connection.trigger('ready');
 		} else {
+			$("#select-journey1 option").filter(function() {
+				return this.text == 'Hearsay Org ID';
+			}).attr('selected', true);
+
+			$("#select-journey2 option").filter(function() {
+				return this.text == 'Agent ID';
+			}).attr('selected', true);
+
+			$("#select-journey3 option").filter(function() {
+				return this.text == 'Cust ID'; 
+			}).attr('selected', true);
+
+			$("#select-journey4 option").filter(function() {
+				return this.text == 'Name'; 
+			}).attr('selected', true);
+
+			$("#select-journey5 option").filter(function() {
+				return this.text == 'Phone'; 
+			}).attr('selected', true);
+			
+			intializeSelectHearsay('select-hearsay1');
+			intializeSelectHearsay('select-hearsay2');
+			intializeSelectHearsay('select-hearsay3');
+			intializeSelectHearsay('select-hearsay4');
+			intializeSelectHearsay('select-hearsay5');
+			intializeSelectJourney('select-journey1');
+			intializeSelectJourney('select-journey2');
+			intializeSelectJourney('select-journey3');
+			intializeSelectJourney('select-journey4');
+			intializeSelectJourney('select-journey5');
 			connection.trigger('nextStep');	
 		}
             }
         } else if(currentStep.key === 'step2'){
 	    hearsayfields = {};
+		
             if(getIntegrationName('#select-journey1') != '--Select--' && getIntegrationName('#select-hearsay1') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay1')] = getIntegrationType('#select-journey1');
             if(getIntegrationName('#select-journey2') != '--Select--' && getIntegrationName('#select-hearsay2') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay2')] = getIntegrationType('#select-journey2');
             if(getIntegrationName('#select-journey3') != '--Select--' && getIntegrationName('#select-hearsay3') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay3')] = getIntegrationType('#select-journey3');
             if(getIntegrationName('#select-journey4') != '--Select--' && getIntegrationName('#select-hearsay4') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay4')] = getIntegrationType('#select-journey4');
-            if(getIntegrationName('#select-journey5') != '--Select--' && getIntegrationName('#select-hearsay5') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay5')] = etIntegrationType('#select-journey5');
+            if(getIntegrationName('#select-journey5') != '--Select--' && getIntegrationName('#select-hearsay5') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay5')] = getIntegrationType('#select-journey5');
             if(getIntegrationName('#select-journey6') != '--Select--' && getIntegrationName('#select-hearsay6') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay6')] = getIntegrationType('#select-journey6');
             if(getIntegrationName('#select-journey7') != '--Select--' && getIntegrationName('#select-hearsay7') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay7')] = getIntegrationType('#select-journey7');
             if(getIntegrationName('#select-journey8') != '--Select--' && getIntegrationName('#select-hearsay8') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay8')] = getIntegrationType('#select-journey8');
+	    if(getIntegrationName('#select-journey9') != '--Select--' && getIntegrationName('#select-hearsay9') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay9')] = getIntegrationType('#select-journey9');
             console.log('hearsayfields '+hearsayfields);
 	    var div_data = '';
 	    for (var key in hearsayfields) {
@@ -304,7 +380,10 @@ define([
 		const templateName = { DEName: selectOption }
 		fetch("/dataextension/row/", {
 			method: "POST",
-			body: JSON.stringify(templateName),
+			body: JSON.stringify({
+			    DEName: selectOption,
+			    token: authToken
+			}),
 		})
 		.then(response => response.text())
 		.then(dataValue => {
@@ -413,15 +492,96 @@ define([
 
     function save() {
         var name = getIntegrationName('#select-01');
-	var inputValue = $('#text-input-id-1').val().toString();
-        payload.name = inputValue;
-	
+	var inputValue;
+	var fieldListString = '';
+	    
 	if(name == 'Current Journey'){
+		   inputValue = $('#text-input-id-1').val().toString();
+		   let fieldName = '';
 		   for(var x in hearsayfields){
-			hearsayfields[x] = '{{'+eventDefKey+'.\"' +hearsayfields[x].toString()+ '\"}}';
+			fieldName =  hearsayfields[x].toString();
+			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("cust") || fieldName.toLowerCase().includes("agent") || fieldName.toLowerCase().includes("org") || fieldName.toLowerCase().includes("phone")){
+			   	fieldListString += '<Field>'
+				+'<CustomerKey>'+fieldName+'</CustomerKey>'
+				+'<Name>'+fieldName+'</Name>'
+				+'<FieldType>Text</FieldType>'
+				+'<IsRequired>true</IsRequired>'
+				+'<IsPrimaryKey>false</IsPrimaryKey>'
+				+'</Field>'
+			} else {
+				fieldListString += '<Field>'
+				+'<CustomerKey>'+fieldName+'</CustomerKey>'
+				+'<Name>'+fieldName+'</Name>'
+				+'<FieldType>Text</FieldType>'
+				+'<MaxLength>50</MaxLength>'
+				+'<IsRequired>false</IsRequired>'
+				+'<IsPrimaryKey>false</IsPrimaryKey>'
+				+'</Field>'	
+			}
+			hearsayfields[x] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
 		   }
+		fieldListString += '<Field>'
+				+'<CustomerKey>Email</CustomerKey>'
+				+'<Name>Email</Name>'
+				+'<FieldType>EmailAddress</FieldType>'
+				+'<MaxLength>250</MaxLength>'
+				+'<IsRequired>true</IsRequired>'
+				+'<IsPrimaryKey>true</IsPrimaryKey>'
+				+'</Field>'
+		console.log('fieldListString '+fieldListString);
+		let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
+		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
+		+'    <s:Header>'
+		+'        <a:Action s:mustUnderstand="1">Create</a:Action>'
+		+'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
+		+'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
+		+'    </s:Header>'
+		+'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+		+'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+		+'<Objects xsi:type="DataExtension">'
+		+'<CategoryID>cateID</CategoryID>'
+		+'<CustomerKey>DEKey</CustomerKey>'
+                +'<Name>DEName</Name>'
+                +'<IsSendable>true</IsSendable>'
+                +'<SendableDataExtensionField>'
+                +'    <CustomerKey>Email</CustomerKey>'
+                +'    <Name>Email</Name>'
+                +'    <FieldType>EmailAddress</FieldType>'
+                +'</SendableDataExtensionField>'
+                +'<SendableSubscriberField>'
+                +'    <Name>Subscriber Key</Name>'
+                +'    <Value></Value>'
+                +'</SendableSubscriberField>'
+		+'<Fields>'
+		+fieldListString
+		+'</Fields>'
+		+'</Objects>'
+		+'        </CreateRequest>'
+		+'    </s:Body>'
+		+'</s:Envelope>';
+		
+		console.log('soapMessage '+soapMessage);
+		
+		fetch("/create/dextension/", {
+			method: "POST",
+			body: JSON.stringify({
+			    name: inputValue,
+			    token: authToken,
+			    xmlData: soapMessage
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			console.log('Success:', dataValue);	
+		})
+		.catch((error) => {
+			console.log('error:', error);
+		});
+	} else {
+	   inputValue = name;
 	}
-	   
+	    
+	payload.name = inputValue;
 	console.log('hearsayfields '+hearsayfields);
         payload['arguments'].execute.inArguments = [{ "hearsayfields": hearsayfields }];
 
