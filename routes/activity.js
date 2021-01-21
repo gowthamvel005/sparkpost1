@@ -128,7 +128,7 @@ exports.createDExtension = function (req, res) {
     +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
     +'    <s:Header>'
     +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-    +'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
+    +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
     +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
     +'    </s:Header>'
     +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
@@ -152,7 +152,7 @@ exports.createDExtension = function (req, res) {
     
     var dataconfig = {
       method: 'post',
-      url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
+      url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
       headers: { 
         'Content-Type': 'text/xml'
       },
@@ -166,7 +166,7 @@ exports.createDExtension = function (req, res) {
         var data = '';
         var parser = new xml2js.Parser();
         
-        if(req.body.xmlData) data = req.body.xmlData;
+        if(req.body.xmlData) data = req.body.xmlData.replace('{process.env.mcEndpoint}','https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com');
         if(req.body.name) data = data.replace('DEKey', req.body.name+'Key').replace('DEName', req.body.name);
         
         parser.parseString(rawdata, function(err,result){
@@ -184,7 +184,7 @@ exports.createDExtension = function (req, res) {
         
         var config = {
             method: 'post',
-            url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
+            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
             headers: { 
                 'Content-Type': 'text/xml'
             },
@@ -236,7 +236,7 @@ exports.DERow = function (req, res) {
         +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
         +'    <s:Header>'
         +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-        +'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
+        +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
         +'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
         +'    </s:Header>'
         +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
@@ -264,7 +264,7 @@ exports.DERow = function (req, res) {
 
         var configs = {
             method: 'post',
-            url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
+            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
                 headers: { 
                 'Content-Type': 'text/xml'
              },
@@ -325,7 +325,7 @@ exports.retrieveDERows =  function (req, res) {
         +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
         +'    <s:Header>'
         +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-        +'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
+        +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
         +'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
         +'    </s:Header>'
         +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
@@ -342,7 +342,7 @@ exports.retrieveDERows =  function (req, res) {
 
         var configs = {
             method: 'post',
-            url: 'https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx',
+            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
                 headers: { 
                 'Content-Type': 'text/xml'
              },
