@@ -193,7 +193,15 @@ exports.createDExtension = function (req, res) {
 
          axios(config)
          .then(function (response) {
-            console.log('data extension responsed '+JSON.stringify(response.data));
+                var parser = new xml2js.Parser();
+                parser.parseString(response.data, function(err,result){
+                  console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                  let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+                  if(rawData){
+                      res.status(rawData[0]['StatusCode']).send(rawData[0]['StatusMessage']);
+                  } else {
+                      res.status(400).send('Some thing went wrong!');
+                  }
             //res.status(200).send('DataExtension Created!');
          })
          .catch(function (error) {
@@ -274,10 +282,10 @@ exports.DERow = function (req, res) {
          axios(configs)
             .then(function (response) {
                 console.log(JSON.stringify(response.data));
-                let rawdata = response.data;
+                //let rawdata = response.data;
              
                 var parser = new xml2js.Parser();
-                parser.parseString(rawdata, function(err,result){
+                parser.parseString(response.data, function(err,result){
                   console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
                   let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
                   if(rawData){
