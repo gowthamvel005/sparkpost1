@@ -117,6 +117,173 @@ exports.insertDERows = function (req, res) {
     res.send(200, 'Publish');
 };
 
+exports.createFolder = function (req, res) {
+    
+    console.log('request DEName is '+JSON.stringify(req.body));
+    var xml2js = require('xml2js');
+    
+    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
+    +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
+    +'    <s:Header>'
+    +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
+    +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
+    +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
+    +'    </s:Header>'
+    +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+    +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+    +'            <RetrieveRequest>'
+    +'                <ObjectType>DataFolder</ObjectType>'
+    +'                <Properties>ID</Properties>'
+    +'                <Properties>CustomerKey</Properties>'
+    +'                <Properties>Name</Properties>'
+    +'                <Properties>ParentFolder.ID</Properties>'
+    +'                <Properties>ParentFolder.Name</Properties>'
+    +'                <Filter xsi:type="SimpleFilterPart">'
+    +'                    <Property>Name</Property>'
+    +'                    <SimpleOperator>equals</SimpleOperator>'
+    +'                    <Value>Hearsay Integrations</Value>'
+    +'                </Filter>'
+    +'            </RetrieveRequest>'
+    +'        </RetrieveRequestMsg>'
+    +'    </s:Body>'
+    +'</s:Envelope>';
+    
+    var dataconfig = {
+      method: 'post',
+      url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
+      headers: { 
+        'Content-Type': 'text/xml'
+      },
+      data : soapMessage
+    };
+    
+    axios(dataconfig)
+    .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        //let rawdata = response.data;
+        let rawData = '';
+        var parser = new xml2js.Parser();
+        
+        parser.parseString(response.data, function(err,result){
+            //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+            rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+        });
+        
+        if(rawData == 'undefined'){
+            let folderData = '<?xml version="1.0" encoding="UTF-8"?>'
+                +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
+                +'    <s:Header>'
+                +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
+                +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
+                +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
+                +'    </s:Header>'
+                +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+                +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+                +'            <RetrieveRequest>'
+                +'                <ObjectType>DataFolder</ObjectType>'
+                +'                <Properties>ID</Properties>'
+                +'                <Properties>CustomerKey</Properties>'
+                +'                <Properties>Name</Properties>'
+                +'                <Properties>ParentFolder.ID</Properties>'
+                +'                <Properties>ParentFolder.Name</Properties>'
+                +'                <Filter xsi:type="SimpleFilterPart">'
+                +'                    <Property>Name</Property>'
+                +'                    <SimpleOperator>equals</SimpleOperator>'
+                +'                    <Value>Data Extensions</Value>'
+                +'                </Filter>'
+                +'            </RetrieveRequest>'
+                +'        </RetrieveRequestMsg>'
+                +'    </s:Body>'
+                +'</s:Envelope>';
+
+                var config = {
+                    method: 'post',
+                    url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
+                    headers: { 
+                        'Content-Type': 'text/xml'
+                    },
+                    data : folderData
+                 };
+
+                 axios(config)
+                 .then(function (response) {
+                        var parser = new xml2js.Parser();
+                        parser.parseString(response.data, function(err,result){
+                          console.log('parentFolder ID '+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                          let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+                          //let parentFolderID;
+                          if(rawData){
+                                let parentFolderID = rawData[0]['ID'];
+                                 let createFolderData = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+                                 +'<soapenv:Header>';
+                                 +'<fueloauth>'+req.body.token+'</fueloauth>'; 
+                                 +'</soapenv:Header>';
+                                 +'<soapenv:Body>';
+                                 +'<CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">';
+                                 +'<Options/>';
+                                 +'<ns1:Objects xmlns:ns1="http://exacttarget.com/wsdl/partnerAPI" xsi:type="ns1:DataFolder">';
+                                 +'<ns1:ModifiedDate xsi:nil="true"/>';
+                                 +'<ns1:ObjectID xsi:nil="true"/>';
+                                 +'<ns1:CustomerKey>Hearsay Integrations</ns1:CustomerKey>';
+                                 +'<ns1:ParentFolder>';
+                                 +'<ns1:ModifiedDate xsi:nil="true"/>';
+                                 +'<ns1:ID>'+parentFolderID+'</ns1:ID>';
+                                 +'<ns1:ObjectID xsi:nil="true"/>';
+                                 +'</ns1:ParentFolder>';
+                                 +'<ns1:Name>Hearsay Integrations</ns1:Name>';
+                                 +'<ns1:Description>Hearsay Integrations Folder</ns1:Description>';
+                                 +'<ns1:ContentType>dataextension</ns1:ContentType>';
+                                 +'<ns1:IsActive>true</ns1:IsActive>';
+                                 +'<ns1:IsEditable>true</ns1:IsEditable>';
+                                 +'<ns1:AllowChildren>true</ns1:AllowChildren>';
+                                 +'</ns1:Objects>';
+                                 +'</CreateRequest>';
+                                 +'</soapenv:Body>';
+                                 +'</soapenv:Envelope>';
+                              
+                                 var folderConfig = {
+                                    method: 'post',
+                                    url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
+                                    headers: { 
+                                        'Content-Type': 'text/xml'
+                                    },
+                                    data : createFolderData
+                                 };
+                              
+                                 axios(folderConfig)
+                                 .then(function (response) {
+                                        var parser = new xml2js.Parser();
+                                        parser.parseString(response.data, function(err,result){
+                                          console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                                          let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+                                          if(rawData){
+                                              console.log('Folder creation '+rawData[0]['StatusMessage']);
+                                              res.status(rawData[0]['StatusCode']).send(rawData[0]['StatusMessage']);
+                                          } else {
+                                              console.log('Folder creation Some thing went wrong!');
+                                              res.status(400).send('Some thing went wrong!');
+                                          }
+                                    //res.status(200).send('DataExtension Created!');
+                                 })
+                                 .catch(function (error) {
+                                     res.status(400).send(error);
+                                     console.log(error);
+                                 });
+                          }
+                    //res.status(200).send('DataExtension Created!');
+                 })
+                 .catch(function (error) {
+                     res.status(400).send(error);
+                     console.log(error);
+                 });
+          }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  
+};
+
 exports.createDExtension = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     //console.log( req.body );
