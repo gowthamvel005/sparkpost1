@@ -117,9 +117,11 @@ exports.insertDERows = function (req, res) {
     res.send(200, 'Publish');
 };
 
-exports.createFolder = function (req, res) {
-    
+exports.createDExtension = function (req, res) {
+    // Data from the req and put it in an array accessible to the main app.
+    //console.log( req.body );
     console.log('request DEName is '+JSON.stringify(req.body));
+    //var templateName = req.body.name;
     var xml2js = require('xml2js');
     
     let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -160,16 +162,17 @@ exports.createFolder = function (req, res) {
     axios(dataconfig)
     .then(function (response) {
         console.log(JSON.stringify(response.data));
-        //let rawdata = response.data;
-        let rawData = '';
+        var rawData = '';
         var parser = new xml2js.Parser();
         
         parser.parseString(response.data, function(err,result){
             //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
             rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
         });
-        
+        console.log('data is '+data);
+
         if(rawData == 'undefined'){
+
             let folderData = '<?xml version="1.0" encoding="UTF-8"?>'
                 +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
                 +'    <s:Header>'
@@ -204,17 +207,23 @@ exports.createFolder = function (req, res) {
                     },
                     data : folderData
                  };
-
+        
                  axios(config)
                  .then(function (response) {
-                        var parser = new xml2js.Parser();
-                        parser.parseString(response.data, function(err,result){
-                          console.log('parentFolder ID '+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-                          let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-                          //let parentFolderID;
-                          if(rawData){
-                                let parentFolderID = rawData[0]['ID'];
-                                 let createFolderData = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
+                    console.log(JSON.stringify(response.data));
+                    var rawData;
+                    var parser = new xml2js.Parser();
+                    let parentFolderID;
+                    parser.parseString(response.data, function(err,result){
+                        console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                        rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+                    });
+                    console.log('data is '+data);
+            
+                    if(rawData){
+                        parentFolderID = rawData[0]['ID'];
+
+                        let createFolderData = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
                                  +'<soapenv:Header>';
                                  +'<fueloauth>'+req.body.token+'</fueloauth>'; 
                                  +'</soapenv:Header>';
@@ -240,7 +249,7 @@ exports.createFolder = function (req, res) {
                                  +'</CreateRequest>';
                                  +'</soapenv:Body>';
                                  +'</soapenv:Envelope>';
-                              
+
                                  var folderConfig = {
                                     method: 'post',
                                     url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
@@ -249,7 +258,7 @@ exports.createFolder = function (req, res) {
                                     },
                                     data : createFolderData
                                  };
-                              
+
                                  axios(folderConfig)
                                  .then(function (response) {
                                         var parser = new xml2js.Parser();
@@ -263,20 +272,22 @@ exports.createFolder = function (req, res) {
                                               console.log('Folder creation Some thing went wrong!');
                                               res.status(400).send('Some thing went wrong!');
                                           }
-                                    //res.status(200).send('DataExtension Created!');
-                                 })
+                                            //res.status(200).send('DataExtension Created!');
+                                        })
+                                })
                                  .catch(function (error) {
                                      res.status(400).send(error);
                                      console.log(error);
                                  });
-                          }
-                    //res.status(200).send('DataExtension Created!');
+                    }
+
                  })
                  .catch(function (error) {
                      res.status(400).send(error);
                      console.log(error);
                  });
-          }
+        }
+        
     })
     .catch(function (error) {
       console.log(error);
@@ -369,7 +380,8 @@ exports.createDExtension = function (req, res) {
                   } else {
                       res.status(400).send('Some thing went wrong!');
                   }
-            //res.status(200).send('DataExtension Created!');
+                    //res.status(200).send('DataExtension Created!');
+                });
          })
          .catch(function (error) {
              res.status(400).send(error);
@@ -400,7 +412,6 @@ exports.DERow = function (req, res) {
       },
       data : data
     };
-
     axios(config)
     .then(function (response) {
       console.log(JSON.stringify(response.data));
@@ -489,7 +500,6 @@ exports.retrieveDERows =  function (req, res) {
       },
       data : data
     };
-
     axios(config)
     .then(function (response) {
       console.log(JSON.stringify(response.data));
