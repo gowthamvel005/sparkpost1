@@ -234,8 +234,10 @@ define([
 
     function onGetTokens (tokens) {
         // Response: tokens = { token: <legacy token>, fuel2token: <fuel api token> }
-         console.log(tokens);
+            console.log(tokens);
 	    authToken = tokens.fuel2token;
+	    
+	    createFolder(authToken);
 	    
 	    fetch("/retrieve/derows/", {
 			method: "POST",
@@ -245,7 +247,7 @@ define([
 		})
 		.then(response => response.text())
 		.then(dataValue => {
-			console.log('Success:', dataValue);
+			console.log('Retrieve DE Success:', dataValue);
 			for(var x in JSON.parse(dataValue)){
 			  console.log('data '+JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
 			  DERowList.push(JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
@@ -263,8 +265,26 @@ define([
 			}));
 		})
 		.catch((error) => {
-			  console.error('Error:', error);
+			  console.error('Retrieve DE Error:', error);
 		});
+    }
+	
+    function createFolder(oauthToken){
+	    
+	    fetch("/create/hearsayfolder/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: oauthToken,
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			console.log('Folder Created Success:', dataValue);
+		})
+		.catch((error) => {
+			  console.error('Folder Error:', error);
+		});
+	    
     }
     
     function onRequestSchema(data){
