@@ -193,7 +193,8 @@ exports.createDExtension = function (req, res) {
 
          axios(config)
          .then(function (response) {
-                var parser = new xml2js.Parser();
+                console.log('data extension responsed '+JSON.stringify(response.data));
+                /*var parser = new xml2js.Parser();
                 parser.parseString(response.data, function(err,result){
                   console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
                   let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
@@ -203,7 +204,7 @@ exports.createDExtension = function (req, res) {
                       res.status(400).send('Some thing went wrong!');
                   }
                     //res.status(200).send('DataExtension Created!');
-                });
+                });*/
          })
          .catch(function (error) {
              res.status(400).send(error);
