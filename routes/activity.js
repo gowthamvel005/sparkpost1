@@ -193,7 +193,7 @@ exports.createDExtension = function (req, res) {
 
          axios(config)
          .then(function (response) {
-            console.log('data extension response is '+JSON.stringify(response));
+            console.log('data extension responsed '+JSON.stringify(response.data));
             //res.status(200).send('DataExtension Created!');
          })
          .catch(function (error) {
