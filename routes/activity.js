@@ -117,7 +117,7 @@ exports.insertDERows = function (req, res) {
     res.send(200, 'Publish');
 };
 
-exports.createDExtension = function (req, res) {
+/*exports.createFolder = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     //console.log( req.body );
     console.log('request DEName is '+JSON.stringify(req.body));
@@ -293,7 +293,7 @@ exports.createDExtension = function (req, res) {
       console.log(error);
     });
   
-};
+};*/
 
 exports.createDExtension = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
