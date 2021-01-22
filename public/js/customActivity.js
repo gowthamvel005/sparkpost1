@@ -93,7 +93,7 @@ define([
         });
 	
         // If there is no message selected, disable the next button
-        if (!mapfields) {
+        if (Object.keys(mapfields).length === 0 && mapfields.constructor === Object) {
             showStep(null, 1);
             connection.trigger('updateButton', { button: 'next', enabled: false });
             // If there is a intTypeValue, skip to the summary step
