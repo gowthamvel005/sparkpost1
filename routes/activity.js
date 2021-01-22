@@ -258,7 +258,7 @@ exports.createFolder = function (req, res) {
                         axios(folderConfig)
                         .then(function (response) {
                             console.log(JSON.stringify(response.data));
-                            let rawdata2 response.data;
+                            let rawdata2 = response.data;
                             let resultData;     
                             var parser = new xml2js.Parser();
                             parser.parseString(rawdata2, function(err,result){
