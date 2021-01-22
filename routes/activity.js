@@ -252,7 +252,7 @@ exports.createFolder = function (req, res) {
                             url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
                             headers: { 
                                 'Content-Type': 'text/xml',
-                                'SOAPAction' 'Create'
+                                'SOAPAction': 'Create'
                             },
                             data : createFolderData
                         };
