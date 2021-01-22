@@ -9,7 +9,7 @@
         "en-US": {
             "name": "Hearsay Custom Journey Activity",
           "description": "A Template for a custom Journey Builder activity",
-          "step1Label": "Configure Activity"
+          "step1Label": "TEMPLATE SELECTION"
         }
     },
     "arguments": {
@@ -65,9 +65,9 @@
       }
     },
     "wizardSteps": [
-       { "label": "Template Selection", "key": "step1" },
-       { "label": "Map Template Data", "key": "step2", "active": false },
-       { "label": "Review Template", "key": "step3", "active": false }
+       { "label": "TEMPLATE SELECTION", "key": "step1" },
+       { "label": "MAP TEMPLATE DATA", "key": "step2", "active": false },
+       { "label": "REVIEW TEMPLATE", "key": "step3", "active": false }
     ],
     "userInterfaces": {
         "configModal": {
