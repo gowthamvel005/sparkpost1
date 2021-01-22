@@ -73,19 +73,6 @@ define([
         if (data) {
             payload = data;
         }
-	/*var dataOptions = new Array("firstName","lastName","name","email","title","phone","birthdate","preferredName","sourceId","sourceOwnerId","sourceOrganizationId");
-	    
-	for (var i=0; i < dataOptions.length;++i){
-		addOption($('#select-hearsay1'), dataOptions[i], dataOptions[i]);
-		addOption($('#select-hearsay2'), dataOptions[i], dataOptions[i]);
-		addOption($('#select-hearsay3'), dataOptions[i], dataOptions[i]);
-		addOption($('#select-hearsay4'), dataOptions[i], dataOptions[i]);
-		addOption($('#select-hearsay5'), dataOptions[i], dataOptions[i]);
-		addOption($('#select-hearsay6'), dataOptions[i], dataOptions[i]);
-		addOption($('#select-hearsay7'), dataOptions[i], dataOptions[i]);
-		addOption($('#select-hearsay8'), dataOptions[i], dataOptions[i]);
-		addOption($('#select-hearsay9'), dataOptions[i], dataOptions[i]);
-	}*/
         
         var mapfields;
         var hasInArguments = Boolean(
@@ -104,30 +91,6 @@ define([
                 }
             });
         });
-	    
-	/*$("#select-hearsay1 option").filter(function() {
-		return this.text == 'Name';
-	}).attr('selected', true);
-	    
-	$("#select-hearsay2 option").filter(function() {
-		intializeSelectHearsay('select-hearsay2');
-		return this.text == 'SourceId'; 
-	}).attr('selected', true);
-	    
-	$("#select-hearsay3 option").filter(function() {
-		intializeSelectHearsay('select-hearsay3');
-		return this.text == 'SourceOwnerId'; 
-	}).attr('selected', true);
-		
-	$("#select-hearsay4 option").filter(function() {
-		intializeSelectHearsay('select-hearsay4');
-		return this.text == 'SourceOrganizationId'; 
-	}).attr('selected', true);
-	    
-	$("#select-hearsay5 option").filter(function() {
-		intializeSelectHearsay('select-hearsay5');
-		return this.text == 'Phone'; 
-	}).attr('selected', true);*/
 
         // If there is no message selected, disable the next button
         if (!mapfields) {
@@ -357,11 +320,6 @@ define([
 				return this.text == 'Phone'; 
 			}).attr('selected', true);
 			
-			intializeSelectHearsay('select-hearsay1');
-			intializeSelectHearsay('select-hearsay2');
-			intializeSelectHearsay('select-hearsay3');
-			intializeSelectHearsay('select-hearsay4');
-			intializeSelectHearsay('select-hearsay5');
 			intializeSelectJourney('select-journey1');
 			intializeSelectJourney('select-journey2');
 			intializeSelectJourney('select-journey3');
@@ -373,35 +331,35 @@ define([
         } else if(currentStep.key === 'step2'){
 	    hearsayfields = {};
 		
-            if(getIntegrationName('#select-journey1') != '--Select--' && getIntegrationName('#select-hearsay1') != '--Select--') {
-		    hearsayfields [getIntegrationName('#select-hearsay1')] = getIntegrationType('#select-journey1');
-		    inArgumentList [getIntegrationType('#select-hearsay1')] = getIntegrationType('#select-journey1');
+        if(getIntegrationName('#select-journey1') != '--Select--') {
+		    hearsayfields [getInputValue('#hearsay-input-id-1','')] = getIntegrationType('#select-journey1');
+		    inArgumentList [getInputValue('#hearsay-input-id-1','dataset')] = getIntegrationType('#select-journey1');
 	    }
-            if(getIntegrationName('#select-journey2') != '--Select--' && getIntegrationName('#select-hearsay2') != '--Select--') {
-		    hearsayfields [getIntegrationName('#select-hearsay2')] = getIntegrationType('#select-journey2');
-		    inArgumentList [getIntegrationType('#select-hearsay2')] = getIntegrationType('#select-journey2');
+        if(getIntegrationName('#select-journey2') != '--Select--') {
+		    hearsayfields [getInputValue('#hearsay-input-id-2','')] = getIntegrationType('#select-journey2');
+		    inArgumentList [getInputValue('#hearsay-input-id-2','dataset')] = getIntegrationType('#select-journey2');
 	    }
-            if(getIntegrationName('#select-journey3') != '--Select--' && getIntegrationName('#select-hearsay3') != '--Select--') {
-		    hearsayfields [getIntegrationName('#select-hearsay3')] = getIntegrationType('#select-journey3');
-		    inArgumentList [getIntegrationType('#select-hearsay3')] = getIntegrationType('#select-journey3');
+        if(getIntegrationName('#select-journey3') != '--Select--') {
+		    hearsayfields [getInputValue('#hearsay-input-id-3','')] = getIntegrationType('#select-journey3');
+		    inArgumentList [getInputValue('#hearsay-input-id-3','dataset')] = getIntegrationType('#select-journey3');
 	    }
-            if(getIntegrationName('#select-journey4') != '--Select--' && getIntegrationName('#select-hearsay4') != '--Select--') {
-		    hearsayfields [getIntegrationName('#select-hearsay4')] = getIntegrationType('#select-journey4');
-		    inArgumentList [getIntegrationType('#select-hearsay4')] = getIntegrationType('#select-journey4');
+        if(getIntegrationName('#select-journey4') != '--Select--') {
+		    hearsayfields [getInputValue('#hearsay-input-id-4','')] = getIntegrationType('#select-journey4');
+		    inArgumentList [getInputValue('#hearsay-input-id-4','dataset')] = getIntegrationType('#select-journey4');
 	    }
-            if(getIntegrationName('#select-journey5') != '--Select--' && getIntegrationName('#select-hearsay5') != '--Select--') {
-		    hearsayfields [getIntegrationName('#select-hearsay5')] = getIntegrationType('#select-journey5');
-		    inArgumentList [getIntegrationType('#select-hearsay5')] = getIntegrationType('#select-journey5');
+        if(getIntegrationName('#select-journey5') != '--Select--') {
+		    hearsayfields [getInputValue('#hearsay-input-id-5','')] = getIntegrationType('#select-journey5');
+		    inArgumentList [getInputValue('#hearsay-input-id-5','dataset')] = getIntegrationType('#select-journey5');
 	    }
-            if(getIntegrationName('#select-journey6') != '--Select--' && getIntegrationName('#select-hearsay6') != '--Select--') {
+        if(getIntegrationName('#select-journey6') != '--Select--' && getIntegrationName('#select-hearsay6') != '--Select--') {
 		    hearsayfields [getIntegrationName('#select-hearsay6')] = getIntegrationType('#select-journey6');
 		    inArgumentList [getIntegrationType('#select-hearsay6')] = getIntegrationType('#select-journey6');
 	    }
-            if(getIntegrationName('#select-journey7') != '--Select--' && getIntegrationName('#select-hearsay7') != '--Select--') {
+        if(getIntegrationName('#select-journey7') != '--Select--' && getIntegrationName('#select-hearsay7') != '--Select--') {
 		    hearsayfields [getIntegrationName('#select-hearsay7')] = getIntegrationType('#select-journey7');
 		    inArgumentList [getIntegrationType('#select-hearsay7')] = getIntegrationType('#select-journey7');
 	    }
-            if(getIntegrationName('#select-journey8') != '--Select--' && getIntegrationName('#select-hearsay8') != '--Select--') {
+        if(getIntegrationName('#select-journey8') != '--Select--' && getIntegrationName('#select-hearsay8') != '--Select--') {
 		    hearsayfields [getIntegrationName('#select-hearsay8')] = getIntegrationType('#select-journey8');
 		    inArgumentList [getIntegrationType('#select-hearsay8')] = getIntegrationType('#select-journey8');
 	    }
@@ -417,7 +375,7 @@ define([
 		    hearsayfields [getIntegrationName('#select-hearsay11')] = getIntegrationType('#select-journey11');
 		    inArgumentList [getIntegrationType('#select-hearsay11')] = getIntegrationType('#select-journey11');
 	    }
-            console.log('hearsayfields '+hearsayfields);
+        console.log('hearsayfields '+hearsayfields);
 	    console.log('inArgumentList '+inArgumentList);
 	    var div_data = '';
 	    for (var key in hearsayfields) {
@@ -647,6 +605,10 @@ define([
 	payload.metaData['selectedOption'] = name;
 	    
         connection.trigger('updateActivity', payload);
+    }
+
+    function getInputValue(elementID, valueType){
+        return valueType == 'dataset' ? $(elementID)[0].dataset.id.trim() : $(elementID).val().trim();
     }
 
     function getIntegrationType(elementID) {
