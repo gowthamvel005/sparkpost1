@@ -10,11 +10,12 @@ define([
     var authToken;
     var DERowList = []
     var hearsayfields = {};
+    var inArgumentList = {};
     var lastStepEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
-        { "label": "Template Selection", "key": "step1" },
-        { "label": "Map the Template Field", "key": "step2", "active": false},
-        { "label": "Review Template Field", "key": "step3", "active": false}
+        { "label": "TEMPLATE SELECTION", "key": "step1" },
+        { "label": "MAP TEMPLATE DATA", "key": "step2", "active": false},
+        { "label": "REVIEW TEMPLATE", "key": "step3", "active": false}
     ];
     var currentStep = steps[0].key;
     var eventDefKey;
@@ -372,16 +373,52 @@ define([
         } else if(currentStep.key === 'step2'){
 	    hearsayfields = {};
 		
-            if(getIntegrationName('#select-journey1') != '--Select--' && getIntegrationName('#select-hearsay1') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay1')] = getIntegrationType('#select-journey1');
-            if(getIntegrationName('#select-journey2') != '--Select--' && getIntegrationName('#select-hearsay2') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay2')] = getIntegrationType('#select-journey2');
-            if(getIntegrationName('#select-journey3') != '--Select--' && getIntegrationName('#select-hearsay3') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay3')] = getIntegrationType('#select-journey3');
-            if(getIntegrationName('#select-journey4') != '--Select--' && getIntegrationName('#select-hearsay4') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay4')] = getIntegrationType('#select-journey4');
-            if(getIntegrationName('#select-journey5') != '--Select--' && getIntegrationName('#select-hearsay5') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay5')] = getIntegrationType('#select-journey5');
-            if(getIntegrationName('#select-journey6') != '--Select--' && getIntegrationName('#select-hearsay6') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay6')] = getIntegrationType('#select-journey6');
-            if(getIntegrationName('#select-journey7') != '--Select--' && getIntegrationName('#select-hearsay7') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay7')] = getIntegrationType('#select-journey7');
-            if(getIntegrationName('#select-journey8') != '--Select--' && getIntegrationName('#select-hearsay8') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay8')] = getIntegrationType('#select-journey8');
-	    if(getIntegrationName('#select-journey9') != '--Select--' && getIntegrationName('#select-hearsay9') != '--Select--') hearsayfields [getIntegrationType('#select-hearsay9')] = getIntegrationType('#select-journey9');
+            if(getIntegrationName('#select-journey1') != '--Select--' && getIntegrationName('#select-hearsay1') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay1')] = getIntegrationType('#select-journey1');
+		    inArgumentList [getIntegrationType('#select-hearsay1')] = getIntegrationType('#select-journey1');
+	    }
+            if(getIntegrationName('#select-journey2') != '--Select--' && getIntegrationName('#select-hearsay2') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay2')] = getIntegrationType('#select-journey2');
+		    inArgumentList [getIntegrationType('#select-hearsay2')] = getIntegrationType('#select-journey2');
+	    }
+            if(getIntegrationName('#select-journey3') != '--Select--' && getIntegrationName('#select-hearsay3') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay3')] = getIntegrationType('#select-journey3');
+		    inArgumentList [getIntegrationType('#select-hearsay3')] = getIntegrationType('#select-journey3');
+	    }
+            if(getIntegrationName('#select-journey4') != '--Select--' && getIntegrationName('#select-hearsay4') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay4')] = getIntegrationType('#select-journey4');
+		    inArgumentList [getIntegrationType('#select-hearsay4')] = getIntegrationType('#select-journey4');
+	    }
+            if(getIntegrationName('#select-journey5') != '--Select--' && getIntegrationName('#select-hearsay5') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay5')] = getIntegrationType('#select-journey5');
+		    inArgumentList [getIntegrationType('#select-hearsay5')] = getIntegrationType('#select-journey5');
+	    }
+            if(getIntegrationName('#select-journey6') != '--Select--' && getIntegrationName('#select-hearsay6') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay6')] = getIntegrationType('#select-journey6');
+		    inArgumentList [getIntegrationType('#select-hearsay6')] = getIntegrationType('#select-journey6');
+	    }
+            if(getIntegrationName('#select-journey7') != '--Select--' && getIntegrationName('#select-hearsay7') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay7')] = getIntegrationType('#select-journey7');
+		    inArgumentList [getIntegrationType('#select-hearsay7')] = getIntegrationType('#select-journey7');
+	    }
+            if(getIntegrationName('#select-journey8') != '--Select--' && getIntegrationName('#select-hearsay8') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay8')] = getIntegrationType('#select-journey8');
+		    inArgumentList [getIntegrationType('#select-hearsay8')] = getIntegrationType('#select-journey8');
+	    }
+	    if(getIntegrationName('#select-journey9') != '--Select--' && getIntegrationName('#select-hearsay9') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay9')] = getIntegrationType('#select-journey9');
+		    inArgumentList [getIntegrationType('#select-hearsay9')] = getIntegrationType('#select-journey9');
+	    }
+	    if(getIntegrationName('#select-journey10') != '--Select--' && getIntegrationName('#select-hearsay10') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay10')] = getIntegrationType('#select-journey10');
+		    inArgumentList [getIntegrationType('#select-hearsay10')] = getIntegrationType('#select-journey10');
+	    }
+	    if(getIntegrationName('#select-journey11') != '--Select--' && getIntegrationName('#select-hearsay11') != '--Select--') {
+		    hearsayfields [getIntegrationName('#select-hearsay11')] = getIntegrationType('#select-journey11');
+		    inArgumentList [getIntegrationType('#select-hearsay11')] = getIntegrationType('#select-journey11');
+	    }
             console.log('hearsayfields '+hearsayfields);
+	    console.log('inArgumentList '+inArgumentList);
 	    var div_data = '';
 	    for (var key in hearsayfields) {
 	    	if (hearsayfields.hasOwnProperty(key)) {
@@ -396,7 +433,7 @@ define([
 		
 	} else if(currentStep.key === 'step1' && selectOption != 'CurrentJourney'){
 		var div_data = '';
-		hearsayfields = {};
+		inArgumentList = {};
 		const templateName = { DEName: selectOption }
 		fetch("/dataextension/row/", {
 			method: "POST",
@@ -413,12 +450,12 @@ define([
 			      var NameValue = JSON.parse(dataValue)[x]['Properties'][0]['Property'][y]['Name'].toString();
 			      var DataValue = JSON.parse(dataValue)[x]['Properties'][0]['Property'][y]['Value'].toString();
 				if(DataValue){
-				   hearsayfields [NameValue] = DataValue;
+				   inArgumentList [NameValue] = DataValue;
 				}
 			   }
 			}
 		
-		    for (var key in hearsayfields) {
+		    for (var key in inArgumentList) {
 			if (hearsayfields.hasOwnProperty(key)) {
 				var val = hearsayfields[key];
 				console.log('key '+key);
@@ -518,8 +555,8 @@ define([
 	if(name == 'Current Journey'){
 		   inputValue = $('#text-input-id-1').val().toString();
 		   let fieldName = '';
-		   for(var x in hearsayfields){
-			fieldName =  hearsayfields[x].toString();
+		   for(var x in inArgumentList){
+			fieldName =  inArgumentList[x].toString();
 			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("cust") || fieldName.toLowerCase().includes("agent") || fieldName.toLowerCase().includes("org") || fieldName.toLowerCase().includes("phone")){
 			   	fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
@@ -538,7 +575,7 @@ define([
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>'	
 			}
-			hearsayfields[x] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
+			inArgumentList[x] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
 		   }
 		fieldListString += '<Field>'
 				+'<CustomerKey>Email</CustomerKey>'
@@ -602,8 +639,8 @@ define([
 	}
 	    
 	payload.name = inputValue;
-	console.log('hearsayfields '+hearsayfields);
-        payload['arguments'].execute.inArguments = [{ "hearsayfields": hearsayfields }];
+	console.log('inArugmentList '+inArgumentList);
+        payload['arguments'].execute.inArguments = [{ "hearsayfields": inArgumentList }];
 
         payload['metaData'].isConfigured = true;
 	payload.metaData['selectedOption'] = name;
