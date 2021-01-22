@@ -456,8 +456,8 @@ define([
 			}
 		
 		    for (var key in inArgumentList) {
-			if (hearsayfields.hasOwnProperty(key)) {
-				var val = hearsayfields[key];
+			if (inArgumentList.hasOwnProperty(key)) {
+				var val = inArgumentList[key];
 				console.log('key '+key);
 				console.log('value '+val);
 				div_data += "<li>"+key+' : '+val+"</li>";
