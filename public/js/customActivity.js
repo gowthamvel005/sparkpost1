@@ -87,11 +87,11 @@ define([
         $.each(inArguments, function(index, inArgument) {
             $.each(inArgument, function(key, val) {
                 if (key === 'hearsayfields') {
-                    mapfields = val;
+                    mapfields = payload.metaData.hearsayData ? payload.metaData.hearsayData : {};
                 }
             });
         });
-
+	
         // If there is no message selected, disable the next button
         if (!mapfields) {
             showStep(null, 1);
@@ -603,6 +603,7 @@ define([
 
         payload['metaData'].isConfigured = true;
 	payload.metaData['selectedOption'] = name;
+	payload.metaData['hearsayData'] = hearsayfields;    
 	    
         connection.trigger('updateActivity', payload);
     }
