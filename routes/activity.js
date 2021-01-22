@@ -220,31 +220,31 @@ exports.createFolder = function (req, res) {
                     
                     if(parentData){
                         console.log('parent ID '+parentData[0]['ID']);
-                        let createFolderData = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
-                                 +'<soapenv:Header>';
-                                 +'<fueloauth>'+req.body.token+'</fueloauth>'; 
-                                 +'</soapenv:Header>';
-                                 +'<soapenv:Body>';
-                                 +'<CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">';
-                                 +'<Options/>';
-                                 +'<ns1:Objects xmlns:ns1="http://exacttarget.com/wsdl/partnerAPI" xsi:type="ns1:DataFolder">';
-                                 +'<ns1:ModifiedDate xsi:nil="true"/>';
-                                 +'<ns1:ObjectID xsi:nil="true"/>';
-                                 +'<ns1:CustomerKey>Hearsay Integrations</ns1:CustomerKey>';
-                                 +'<ns1:ParentFolder>';
-                                 +'<ns1:ModifiedDate xsi:nil="true"/>';
-                                 +'<ns1:ID>'+parentData[0]['ID']+'</ns1:ID>';
-                                 +'<ns1:ObjectID xsi:nil="true"/>';
-                                 +'</ns1:ParentFolder>';
-                                 +'<ns1:Name>Hearsay Integrations</ns1:Name>';
-                                 +'<ns1:Description>Hearsay Integrations Folder</ns1:Description>';
-                                 +'<ns1:ContentType>dataextension</ns1:ContentType>';
-                                 +'<ns1:IsActive>true</ns1:IsActive>';
-                                 +'<ns1:IsEditable>true</ns1:IsEditable>';
-                                 +'<ns1:AllowChildren>true</ns1:AllowChildren>';
-                                 +'</ns1:Objects>';
-                                 +'</CreateRequest>';
-                                 +'</soapenv:Body>';
+                        let createFolderData = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+                                 +'<soapenv:Header>'
+                                 +'<fueloauth>'+req.body.token+'</fueloauth>'
+                                 +'</soapenv:Header>'
+                                 +'<soapenv:Body>'
+                                 +'<CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+                                 +'<Options/>'
+                                 +'<ns1:Objects xmlns:ns1="http://exacttarget.com/wsdl/partnerAPI" xsi:type="ns1:DataFolder">'
+                                 +'<ns1:ModifiedDate xsi:nil="true"/>'
+                                 +'<ns1:ObjectID xsi:nil="true"/>'
+                                 +'<ns1:CustomerKey>Hearsay Integrations</ns1:CustomerKey>'
+                                 +'<ns1:ParentFolder>'
+                                 +'<ns1:ModifiedDate xsi:nil="true"/>'
+                                 +'<ns1:ID>'+parentData[0]['ID']+'</ns1:ID>'
+                                 +'<ns1:ObjectID xsi:nil="true"/>'
+                                 +'</ns1:ParentFolder>'
+                                 +'<ns1:Name>Hearsay Integrations</ns1:Name>'
+                                 +'<ns1:Description>Hearsay Integrations Folder</ns1:Description>'
+                                 +'<ns1:ContentType>dataextension</ns1:ContentType>'
+                                 +'<ns1:IsActive>true</ns1:IsActive>'
+                                 +'<ns1:IsEditable>true</ns1:IsEditable>'
+                                 +'<ns1:AllowChildren>true</ns1:AllowChildren>'
+                                 +'</ns1:Objects>'
+                                 +'</CreateRequest>'
+                                 +'</soapenv:Body>'
                                  +'</soapenv:Envelope>';
                         
                         var folderConfig = {
