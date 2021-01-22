@@ -463,6 +463,7 @@ define([
 				div_data += "<li>"+key+' : '+val+"</li>";
 			}
 		    }
+		    $('#DELabel').html('<b>TEMPLATE SELECTED : '+selectOption+'</b>');
 		    $('#intTypeValues').html(div_data);
 		    connection.trigger('nextStep');
 			
