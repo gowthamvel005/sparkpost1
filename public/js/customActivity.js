@@ -74,7 +74,7 @@ define([
             payload = data;
         }
         
-        var mapfields;
+        var mapfields = {};
         var hasInArguments = Boolean(
             payload['arguments'] &&
             payload['arguments'].execute &&
