@@ -206,7 +206,7 @@ exports.createFolder = function (req, res) {
                     },
                     data : folderData
                  };
-                
+                console.log('folder Data '+folderData);
                 axios(configData)
                 .then(function (response) {
                     console.log(JSON.stringify(response.data));
@@ -214,11 +214,12 @@ exports.createFolder = function (req, res) {
                     let parentData;     
                     var parser = new xml2js.Parser();
                     parser.parseString(rawdata1, function(err,result){
-                        console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                        console.log('result rawdata1 body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
                         parentData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
                     });
                     
                     if(parentData){
+                        console.log('parent ID '+parentData[0]['ID']);
                         let createFolderData = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
                                  +'<soapenv:Header>';
                                  +'<fueloauth>'+req.body.token+'</fueloauth>'; 
@@ -250,19 +251,20 @@ exports.createFolder = function (req, res) {
                             method: 'post',
                             url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
                             headers: { 
-                                'Content-Type': 'text/xml'
+                                'Content-Type': 'text/xml',
+                                'SOAPAction' 'Create'
                             },
                             data : createFolderData
                         };
-                        
+                        console.log('create folder Data '+createFolderData);
                         axios(folderConfig)
                         .then(function (response) {
-                            console.log(JSON.stringify(response.data));
+                            console.log('rawdata2 response '+JSON.stringify(response.data));
                             let rawdata2 = response.data;
                             let resultData;     
                             var parser = new xml2js.Parser();
                             parser.parseString(rawdata2, function(err,result){
-                                console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                                console.log('result rawdata2 body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
                                 resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
                             });
                             
