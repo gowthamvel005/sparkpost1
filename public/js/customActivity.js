@@ -497,7 +497,7 @@ define([
 		   let subfieldName = '';
 		   for(var x in inArgumentList){
 			fieldName =  inArgumentList[x].toString();
-			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("subOwnerID") || fieldName.toLowerCase().includes("sourceOrganizationId") || fieldName.toLowerCase().includes("phone")){
+			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("org") || fieldName.toLowerCase().includes("agent") || fieldName.toLowerCase().includes("phone")){
 			   	fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
 				+'<Name>'+fieldName+'</Name>'
@@ -512,9 +512,24 @@ define([
 				+'<Name>'+fieldName+'</Name>'
 				+'<FieldType>EmailAddress</FieldType>'
 				+'<MaxLength>250</MaxLength>'
-				+'<IsRequired>true</IsRequired>'
+				+'<IsRequired>false</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
+			} else if(fieldName.toLowerCase().includes("cid")) {
+				subfieldName += '<SendableDataExtensionField>'
+				+'    <CustomerKey>'+fieldName+'</CustomerKey>'
+				+'    <Name>'+fieldName+'</Name>'
+				+'    <FieldType>Text</FieldType>'
+				+'</SendableDataExtensionField>';
+				
+				fieldListString += '<Field>'
+				+'<CustomerKey>'+fieldName+'</CustomerKey>'
+				+'<Name>'+fieldName+'</Name>'
+				+'<FieldType>Text</FieldType>'
+				+'<IsRequired>true</IsRequired>'
+				+'<IsPrimaryKey>true</IsPrimaryKey>'
+				+'</Field>';
+				
 			} else {
 				fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
@@ -527,21 +542,7 @@ define([
 			}
 			inArgumentList[x] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
 		   }
-		var subfieldValue = getIntegrationType('#select-journey3');
-		subfieldName += '<SendableDataExtensionField>'
-				+'    <CustomerKey>'+subfieldValue.trim()+'</CustomerKey>'
-				+'    <Name>'+subfieldValue.trim()+'</Name>'
-				+'    <FieldType>Text</FieldType>'
-				+'</SendableDataExtensionField>';
-		
-		fieldListString += '<Field>'
-				+'<CustomerKey>'+subfieldValue+'</CustomerKey>'
-				+'<Name>'+subfieldValue+'</Name>'
-				+'<FieldType>Text</FieldType>'
-				+'<IsRequired>true</IsRequired>'
-				+'<IsPrimaryKey>false</IsPrimaryKey>'
-				+'</Field>';
-		
+				
 		console.log('fieldListString '+fieldListString);
 		let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
 		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
