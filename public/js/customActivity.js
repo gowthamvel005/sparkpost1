@@ -526,6 +526,7 @@ define([
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
 				+'<Name>'+fieldName+'</Name>'
 				+'<FieldType>Text</FieldType>'
+				+'<MaxLength>50</MaxLength>'
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>true</IsPrimaryKey>'
 				+'</Field>';
