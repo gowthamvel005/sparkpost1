@@ -497,7 +497,7 @@ define([
 		   let subfieldName = '';
 		   for(var x in inArgumentList){
 			fieldName =  inArgumentList[x].toString();
-			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("agent") || fieldName.toLowerCase().includes("org") || fieldName.toLowerCase().includes("phone")){
+			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("subOwnerID") || fieldName.toLowerCase().includes("sourceOrganizationId") || fieldName.toLowerCase().includes("phone")){
 			   	fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
 				+'<Name>'+fieldName+'</Name>'
@@ -505,7 +505,7 @@ define([
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
-			} else if (fieldName.toLowerCase().includes("cust") ){
+			} else if (fieldName.toLowerCase().includes("sourceId") ){
 				subfieldName += '<SendableDataExtensionField>'
 				+'    <CustomerKey>'+fieldName+'</CustomerKey>'
 				+'    <Name>'+fieldName+'</Name>'
