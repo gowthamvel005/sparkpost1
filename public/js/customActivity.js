@@ -223,14 +223,14 @@ define([
 					text: option
 				}));
 			});
-			$('#select-01').append($('<option>', {
-				value: 'CurrentJourney',
-				text: 'Current Journey'
-			}));
 		})
 		.catch((error) => {
-			  console.error('Retrieve DE Error:', error);
+			  console.log('Retrieve DE Error: ', error);
 		});
+	    $('#select-01').append($('<option>', {
+		value: 'CurrentJourney',
+		text: 'Current Journey'
+	    }));
     }
 	
     function createFolder(oauthToken){
@@ -243,10 +243,10 @@ define([
 		})
 		.then(response => response.text())
 		.then(dataValue => {
-			console.log('Folder Created Success:', dataValue);
+			console.log('Folder Created Success: ', dataValue);
 		})
 		.catch((error) => {
-			  console.error('Folder Error:', error);
+			  console.log('Folder Error:', error);
 		});
 	    
     }
@@ -300,31 +300,6 @@ define([
 			showStep(null, 1);
 			connection.trigger('ready');
 		} else {
-			$("#select-journey1 option").filter(function() {
-				return this.text == 'Hearsay Org ID';
-			}).attr('selected', true);
-
-			$("#select-journey2 option").filter(function() {
-				return this.text == 'Agent ID';
-			}).attr('selected', true);
-
-			$("#select-journey3 option").filter(function() {
-				return this.text == 'Cust ID'; 
-			}).attr('selected', true);
-
-			$("#select-journey4 option").filter(function() {
-				return this.text == 'Name'; 
-			}).attr('selected', true);
-
-			$("#select-journey5 option").filter(function() {
-				return this.text == 'Phone'; 
-			}).attr('selected', true);
-			
-			intializeSelectJourney('select-journey1');
-			intializeSelectJourney('select-journey2');
-			intializeSelectJourney('select-journey3');
-			intializeSelectJourney('select-journey4');
-			intializeSelectJourney('select-journey5');
 			connection.trigger('nextStep');	
 		}
             }
