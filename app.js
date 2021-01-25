@@ -45,6 +45,7 @@ app.post('/retrieve/derows/', activity.retrieveDERows);
 app.post('/create/dextension/', activity.createDExtension);
 app.post('/insert/derows/', activity.insertDERows);
 app.post('/create/hearsayfolder/', activity.createFolder);
+app.post('/create/staticde/', activity.staticDataExtension);
 
 
 http.createServer(app).listen(app.get('port'), function(){
