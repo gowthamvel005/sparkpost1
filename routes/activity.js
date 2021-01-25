@@ -150,19 +150,19 @@ exports.staticDataExtension = function (req, res) {
       data : soapMessage
     };
     
-    axios(config)
+    axios(dataconfig)
     .then(function (response) {
         console.log(JSON.stringify(response.data));
         let rawdata = response.data;
-        var soapMessage = '';
+        var soapMsg = '';
         var parser = new xml2js.Parser();
         
-        soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
+        soapMsg = '<?xml version="1.0" encoding="UTF-8"?>'
 		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
 		+'    <s:Header>'
 		+'        <a:Action s:mustUnderstand="1">Create</a:Action>'
 		+'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
-		+'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
+		+'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
 		+'    </s:Header>'
 		+'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
 		+'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
@@ -181,111 +181,209 @@ exports.staticDataExtension = function (req, res) {
         +'    <Value></Value>'
         +'</SendableSubscriberField>'
 		+'<Fields>'
-        +'<Field>'
+		+'<Field>'
 		+'<CustomerKey>Template Name</CustomerKey>'
 		+'<Name>Template Name</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+		+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>true</IsRequired>'
 		+'<IsPrimaryKey>true</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+	    	+'<Field>'
 		+'<CustomerKey>Hearsay Org ID</CustomerKey>'
 		+'<Name>Hearsay Org ID</Name>'
 		+'<FieldType>Text</FieldType>'
-        \+'<MaxLength>50</MaxLength>'
+		+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>true</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+	    	+'<Field>'
 		+'<CustomerKey>Hearsay User Reference ID</CustomerKey>'
 		+'<Name>Hearsay User Reference ID</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+		+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>true</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+	    	+'<Field>'
 		+'<CustomerKey>Customer Unique ID</CustomerKey>'
 		+'<Name>Customer Unique ID</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+		+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>true</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+	    	+'<Field>'
 		+'<CustomerKey>Name</CustomerKey>'
 		+'<Name>Name</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+		+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>true</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+	    	+'<Field>'
 		+'<CustomerKey>Phone</CustomerKey>'
 		+'<Name>Phone</Name>'
 		+'<FieldType>Phone</FieldType>'
-        +'<IsRequired>true</IsRequired>'
+		+'<IsRequired>true</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+	    	+'<Field>'
 		+'<CustomerKey>Option 1</CustomerKey>'
 		+'<Name>Option 1</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+		+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+	    	+'<Field>'
 		+'<CustomerKey>Option 2</CustomerKey>'
 		+'<Name>Option 2</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+		+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+	    	+'<Field>'
 		+'<CustomerKey>Option 3</CustomerKey>'
 		+'<Name>Option 3</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+		+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
-        +'<Field>'
+		+'</Field>'
+        	+'<Field>'
 		+'<CustomerKey>Option 4</CustomerKey>'
 		+'<Name>Option 4</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+        	+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
 		+'</Field>';
-        +'<Field>'
+        	+'<Field>'
 		+'<CustomerKey>Option 5</CustomerKey>'
 		+'<Name>Option 5</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+        	+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
 		+'</Field>';
-        +'<Field>'
+        	+'<Field>'
 		+'<CustomerKey>Option 6</CustomerKey>'
 		+'<Name>Option 6</Name>'
 		+'<FieldType>Text</FieldType>'
-        +'<MaxLength>50</MaxLength>'
+        	+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
 		+'</Field>';
-        parser.parseString(rawdata, function(err,result){
-            //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-            let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-            if(rawData){
-                let categoryID = rawData[0]['ID'];
-                if(categoryID) data = data.replace('cateID',categoryID);
-            } else {
-                data = data.replace('<CategoryID>cateID</CategoryID>','');
-            } 
-        });
+	   	+'</Fields>'
+		+'</Objects>'
+		+'        </CreateRequest>'
+		+'    </s:Body>'
+		+'</s:Envelope>';
+	    parser.parseString(rawdata, function(err,result){
+		    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+		    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+		    if(rawData){
+			let categoryID = rawData[0]['ID'];
+			if(categoryID) soapMsg = soapMsg.replace('cateID',categoryID);
+		    } 
+            });
+	    
+	    var dataconfg = {
+	      method: 'post',
+	      url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
+	      headers: { 
+		'Content-Type': 'text/xml'
+	      },
+	      data : soapMsg
+	    };
+	    
+	    axios(dataconfg)
+		.then(function (response) {
+		  console.log(JSON.stringify(response.data));
+		})
+		.catch(function (error) {
+		  console.log(error);
+	    });
+	    
+	    var OrgMsg = '<?xml version="1.0" encoding="UTF-8"?>'
+		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
+		+'    <s:Header>'
+		+'        <a:Action s:mustUnderstand="1">Create</a:Action>'
+		+'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
+		+'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
+		+'    </s:Header>'
+		+'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+		+'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+		+'<Objects xsi:type="DataExtension">'
+		+'<CategoryID>cateID</CategoryID>'
+		+'<CustomerKey>Org_Setup</CustomerKey>'
+        	+'<Name>Org Setup</Name>'
+        	+'<IsSendable>true</IsSendable>'
+        	+'<SendableDataExtensionField>'
+		+'    <CustomerKey>Hearsay User Reference ID</CustomerKey>'
+		+'    <Name>Hearsay User Reference ID</Name>'
+		+'    <FieldType>Text</FieldType>'
+		+'</SendableDataExtensionField>'
+        	+'<SendableSubscriberField>'
+        	+'    <Name>Subscriber Key</Name>'
+        	+'    <Value></Value>'
+        	+'</SendableSubscriberField>'
+		+'<Fields>'
+		+'<CustomerKey>Hearsay Org ID</CustomerKey>'
+		+'<Name>Hearsay Org ID</Name>'
+		+'<FieldType>Text</FieldType>'
+		+'<MaxLength>50</MaxLength>'
+		+'<IsRequired>true</IsRequired>'
+		+'<IsPrimaryKey>false</IsPrimaryKey>'
+		+'</Field>'
+	    	+'<Field>'
+		+'<CustomerKey>Hearsay User Reference ID</CustomerKey>'
+		+'<Name>Hearsay User Reference ID</Name>'
+		+'<FieldType>Text</FieldType>'
+		+'<MaxLength>50</MaxLength>'
+		+'<IsRequired>true</IsRequired>'
+		+'<IsPrimaryKey>true</IsPrimaryKey>'
+		+'</Field>'
+	    	+'<Field>'
+		+'<CustomerKey>Customer Unique ID</CustomerKey>'
+		+'<Name>Customer Unique ID</Name>'
+		+'<FieldType>Text</FieldType>'
+		+'<MaxLength>50</MaxLength>'
+		+'<IsRequired>true</IsRequired>'
+		+'<IsPrimaryKey>false</IsPrimaryKey>'
+		+'</Field>'
+	    	+'</Fields>'
+		+'</Objects>'
+		+'        </CreateRequest>'
+		+'    </s:Body>'
+		+'</s:Envelope>';
+	    parser.parseString(rawdata, function(err,result){
+		    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+		    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+		    if(rawData){
+			let categoryID = rawData[0]['ID'];
+			if(categoryID) OrgMsg = OrgMsg.replace('cateID',categoryID);
+		    } 
+            });
+	    
+	    var dataconfg = {
+	      method: 'post',
+	      url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
+	      headers: { 
+		'Content-Type': 'text/xml'
+	      },
+	      data : soapMsg
+	    };
+	    
+	    axios(dataconfg)
+		.then(function (response) {
+		  console.log(JSON.stringify(response.data));
+		})
+		.catch(function (error) {
+		  console.log(error);
+	    });
     })
     .catch(function (error) {
       console.log(error);
