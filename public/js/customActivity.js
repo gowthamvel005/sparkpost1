@@ -228,10 +228,6 @@ define([
 		.catch((error) => {
 			  console.log('Retrieve DE Error: ', error);
 		});
-	    $('#select-01').append($('<option>', {
-		value: 'CurrentJourney',
-		text: 'Current Journey'
-	    }));
     }
 	
     function createFolder(oauthToken){
@@ -498,16 +494,31 @@ define([
 	if(name == 'Current Journey'){
 		   inputValue = $('#text-input-id-1').val().toString();
 		   let fieldName = '';
+		   let subfieldName = '';
 		   for(var x in inArgumentList){
 			fieldName =  inArgumentList[x].toString();
-			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("cust") || fieldName.toLowerCase().includes("agent") || fieldName.toLowerCase().includes("org") || fieldName.toLowerCase().includes("phone")){
+			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("agent") || fieldName.toLowerCase().includes("org") || fieldName.toLowerCase().includes("phone")){
 			   	fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
 				+'<Name>'+fieldName+'</Name>'
 				+'<FieldType>Text</FieldType>'
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
-				+'</Field>'
+				+'</Field>';
+			} else if (fieldName.toLowerCase().includes("cust") ){
+				subfieldName += '<SendableDataExtensionField>'
+				+'    <CustomerKey>'+fieldName+'</CustomerKey>'
+				+'    <Name>'+fieldName+'</Name>'
+				+'    <FieldType>Text</FieldType>'
+				+'</SendableDataExtensionField>';
+				
+				fieldListString += '<Field>'
+				+'<CustomerKey>'+fieldName+'</CustomerKey>'
+				+'<Name>'+fieldName+'</Name>'
+				+'<FieldType>Text</FieldType>'
+				+'<IsRequired>true</IsRequired>'
+				+'<IsPrimaryKey>false</IsPrimaryKey>'
+				+'</Field>';
 			} else {
 				fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
@@ -516,18 +527,18 @@ define([
 				+'<MaxLength>50</MaxLength>'
 				+'<IsRequired>false</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
-				+'</Field>'	
+				+'</Field>';
 			}
 			inArgumentList[x] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
 		   }
-		fieldListString += '<Field>'
+		/*fieldListString += '<Field>'
 				+'<CustomerKey>Email</CustomerKey>'
 				+'<Name>Email</Name>'
 				+'<FieldType>EmailAddress</FieldType>'
 				+'<MaxLength>250</MaxLength>'
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>true</IsPrimaryKey>'
-				+'</Field>'
+				+'</Field>'*/
 		console.log('fieldListString '+fieldListString);
 		let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
 		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
@@ -543,11 +554,7 @@ define([
 		+'<CustomerKey>DEKey</CustomerKey>'
                 +'<Name>DEName</Name>'
                 +'<IsSendable>true</IsSendable>'
-                +'<SendableDataExtensionField>'
-                +'    <CustomerKey>Email</CustomerKey>'
-                +'    <Name>Email</Name>'
-                +'    <FieldType>EmailAddress</FieldType>'
-                +'</SendableDataExtensionField>'
+                +subfieldName
                 +'<SendableSubscriberField>'
                 +'    <Name>Subscriber Key</Name>'
                 +'    <Value></Value>'
