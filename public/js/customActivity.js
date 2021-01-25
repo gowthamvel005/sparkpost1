@@ -32,7 +32,6 @@ define([
 
     function onRender() {
         $('#inputField-01').hide();
-	$('#error-msg').hide();
         // JB will respond the first time 'ready' is called with 'initActivity'
         connection.trigger('requestTokens');
 	connection.trigger('requestEndpoints');
@@ -45,6 +44,7 @@ define([
 	});
 
 	$('.slds-select.journey').on('change', function(event) {
+		$('#error-msg').hide();
 		$('.slds-select.journey').find('option').show();
 		intializeSelectJourney(event.target.id);
 	});
@@ -417,6 +417,7 @@ define([
     }
 
     function onClickedBack () {
+	    $('#error-msg').hide();
 	    if(payload){
 		var intTypeValue = payload.metaData.selectedOption;
 		if (intTypeValue) {
