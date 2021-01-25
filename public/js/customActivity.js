@@ -505,17 +505,13 @@ define([
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
-			} else if (fieldName.toLowerCase().includes("sourceId") ){
-				subfieldName += '<SendableDataExtensionField>'
-				+'    <CustomerKey>'+fieldName+'</CustomerKey>'
-				+'    <Name>'+fieldName+'</Name>'
-				+'    <FieldType>Text</FieldType>'
-				+'</SendableDataExtensionField>';
-				
+			} else if (fieldName.toLowerCase().includes("email") ){
+								
 				fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
 				+'<Name>'+fieldName+'</Name>'
-				+'<FieldType>Text</FieldType>'
+				+'<FieldType>EmailAddress</FieldType>'
+				+'<MaxLength>250</MaxLength>'
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
@@ -531,14 +527,21 @@ define([
 			}
 			inArgumentList[x] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
 		   }
-		/*fieldListString += '<Field>'
-				+'<CustomerKey>Email</CustomerKey>'
-				+'<Name>Email</Name>'
-				+'<FieldType>EmailAddress</FieldType>'
-				+'<MaxLength>250</MaxLength>'
+		var subfieldValue = getIntegrationType('#select-journey3');
+		subfieldName += '<SendableDataExtensionField>'
+				+'    <CustomerKey>'+subfieldValue.trim()+'</CustomerKey>'
+				+'    <Name>'+subfieldValue.trim()+'</Name>'
+				+'    <FieldType>Text</FieldType>'
+				+'</SendableDataExtensionField>';
+		
+		fieldListString += '<Field>'
+				+'<CustomerKey>'+subfieldValue+'</CustomerKey>'
+				+'<Name>'+subfieldValue+'</Name>'
+				+'<FieldType>Text</FieldType>'
 				+'<IsRequired>true</IsRequired>'
-				+'<IsPrimaryKey>true</IsPrimaryKey>'
-				+'</Field>'*/
+				+'<IsPrimaryKey>false</IsPrimaryKey>'
+				+'</Field>';
+		
 		console.log('fieldListString '+fieldListString);
 		let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
 		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
