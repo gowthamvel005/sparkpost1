@@ -283,7 +283,7 @@ exports.staticDataExtension = function (req, res) {
 		+'</s:Envelope>';
 	    parser.parseString(rawdata, function(err,result){
 		    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-		    let rawData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
+		    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveRequestMsg'][0]['Results'];
 		    if(rawData){
 			let categoryID = rawData[0]['ID'];
 			if(categoryID) soapMsg = soapMsg.replace('cateID',categoryID);
@@ -369,7 +369,7 @@ exports.staticDataExtension = function (req, res) {
 		+'</s:Envelope>';
 	    parser.parseString(rawdata, function(err,result){
 		    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-		    let rawData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
+		    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveRequestMsg'][0]['Results'];
 		    if(rawData){
 			let categoryID = rawData[0]['ID'];
 			if(categoryID) OrgMsg = OrgMsg.replace('cateID',categoryID);
@@ -555,12 +555,12 @@ exports.createFolder = function (req, res) {
                             var parser = new xml2js.Parser();
                             parser.parseString(rawdata2, function(err,result){
                                 console.log('result rawdata2 body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
-                                resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+                                resultData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
                             });
                             
                             if(resultData){
-                                console.log('Folder creation '+resultData[0]['StatusMessage']);
-                                res.status(resultData[0]['StatusCode']).send(resultData[0]['StatusMessage']);
+                                console.log('Folder creation '+rawdata[0].StatusMessage);
+                                res.status(rawdata[0].StatusCode).send(rawdata[0].StatusMessage);
                             } else {
                                 console.log('Folder creation Some thing went wrong!');
                                 res.status(400).send('Some thing went wrong!');
@@ -664,9 +664,9 @@ exports.createDExtension = function (req, res) {
                 var parser = new xml2js.Parser();
                 parser.parseString(rawdata, function(err,result){
                     console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
-                    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+                    let rawData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
                     if(rawData){
-                        res.status(rawData[0]['StatusCode']).send(rawData[0]['StatusMessage']);
+                        res.status(rawdata[0].StatusCode).send(rawdata[0].StatusMessage);
                     } else {
                         res.status(400).send('Some thing went wrong!');
                     }
