@@ -382,7 +382,7 @@ exports.staticDataExtension = function (req, res) {
 	      headers: { 
 		'Content-Type': 'text/xml'
 	      },
-	      data : soapMsg
+	      data : OrgMsg
 	    };
 	    
 	    axios(dataconfg)
@@ -559,8 +559,8 @@ exports.createFolder = function (req, res) {
                             });
                             
                             if(resultData){
-                                console.log('Folder creation '+rawdata[0].StatusMessage);
-                                res.status(rawdata[0].StatusCode).send(rawdata[0].StatusMessage);
+                                console.log('Folder creation '+resultData[0].StatusMessage);
+                                res.status(resultData[0].StatusCode).send(resultData[0].StatusMessage);
                             } else {
                                 console.log('Folder creation Some thing went wrong!');
                                 res.status(400).send('Some thing went wrong!');
@@ -664,9 +664,9 @@ exports.createDExtension = function (req, res) {
                 var parser = new xml2js.Parser();
                 parser.parseString(rawdata, function(err,result){
                     console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
-                    let rawData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
+                    let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
                     if(rawData){
-                        res.status(rawdata[0].StatusCode).send(rawdata[0].StatusMessage);
+                        res.status(resData[0].StatusCode).send(resData[0].StatusMessage);
                     } else {
                         res.status(400).send('Some thing went wrong!');
                     }
