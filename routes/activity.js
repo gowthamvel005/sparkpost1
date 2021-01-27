@@ -259,7 +259,7 @@ exports.staticDataExtension = function (req, res) {
         	+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
+		+'</Field>'
         	+'<Field>'
 		+'<CustomerKey>Option 5</CustomerKey>'
 		+'<Name>Option 5</Name>'
@@ -267,7 +267,7 @@ exports.staticDataExtension = function (req, res) {
         	+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
+		+'</Field>'
         	+'<Field>'
 		+'<CustomerKey>Option 6</CustomerKey>'
 		+'<Name>Option 6</Name>'
@@ -275,7 +275,7 @@ exports.staticDataExtension = function (req, res) {
         	+'<MaxLength>50</MaxLength>'
 		+'<IsRequired>false</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
-		+'</Field>';
+		+'</Field>'
 	   	+'</Fields>'
 		+'</Objects>'
 		+'        </CreateRequest>'
@@ -345,6 +345,7 @@ exports.staticDataExtension = function (req, res) {
         	+'    <Value></Value>'
         	+'</SendableSubscriberField>'
 		+'<Fields>'
+	    	+'<Field>'
 		+'<CustomerKey>Hearsay Org ID</CustomerKey>'
 		+'<Name>Hearsay Org ID</Name>'
 		+'<FieldType>Text</FieldType>'
