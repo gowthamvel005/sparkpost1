@@ -583,8 +583,8 @@ exports.createFolder = function (req, res) {
                             });
                             
                             if(resultData){
-                                console.log('Folder creation '+resultData[0].StatusMessage);
-                                res.status(resultData[0].StatusCode).send(resultData[0].StatusMessage);
+                                console.log('Folder creation success '+resultData[0].StatusMessage);
+                                res.status(200).send(resultData[0].StatusMessage);
                             } else {
                                 console.log('Folder creation Some thing went wrong!');
                                 res.status(400).send('Some thing went wrong!');
@@ -690,22 +690,11 @@ exports.createDExtension = function (req, res) {
                     console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
                     let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
                     if(rawData){
-                        res.status(resData[0].StatusCode).send(resData[0].StatusMessage);
+                        res.status(200).send(resData[0].StatusMessage);
                     } else {
                         res.status(400).send('Some thing went wrong!');
                     }
                 });
-                /*var parser = new xml2js.Parser();
-                parser.parseString(response.data, function(err,result){
-                  console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-                  let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-                  if(rawData){
-                      res.status(rawData[0]['StatusCode']).send(rawData[0]['StatusMessage']);
-                  } else {
-                      res.status(400).send('Some thing went wrong!');
-                  }
-                    //res.status(200).send('DataExtension Created!');
-                });*/
          })
          .catch(function (error) {
              res.status(400).send(error);
