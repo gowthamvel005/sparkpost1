@@ -10,6 +10,7 @@ define([
     var authToken;
     var DERowList = []
     var hearsayfields = {};
+    var dynTemplate = {};
     var inArgumentList = {};
     var lastStepEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
@@ -337,46 +338,57 @@ define([
 			if(getIntegrationName('#select-journey1') != '--Select--') {
 			    hearsayfields [getInputValue('#hearsay-input-id-1','')] = getIntegrationType('#select-journey1');
 			    inArgumentList [getInputValue('#hearsay-input-id-1','dataset')] = getIntegrationType('#select-journey1');
+			    dynTemplate ['Hearsay Org ID'] = getIntegrationType('#select-journey1');
 			}
 			if(getIntegrationName('#select-journey2') != '--Select--') {
 			    hearsayfields [getInputValue('#hearsay-input-id-2','')] = getIntegrationType('#select-journey2');
 			    inArgumentList [getInputValue('#hearsay-input-id-2','dataset')] = getIntegrationType('#select-journey2');
+			    dynTemplate ['Hearsay User Reference ID'] = getIntegrationType('#select-journey2');
 			}
 			if(getIntegrationName('#select-journey3') != '--Select--') {
 			    hearsayfields [getInputValue('#hearsay-input-id-3','')] = getIntegrationType('#select-journey3');
 			    inArgumentList [getInputValue('#hearsay-input-id-3','dataset')] = getIntegrationType('#select-journey3');
+			    dynTemplate ['Customer Unique ID'] = getIntegrationType('#select-journey3');
 			}
 			if(getIntegrationName('#select-journey4') != '--Select--') {
 			    hearsayfields [getInputValue('#hearsay-input-id-4','')] = getIntegrationType('#select-journey4');
 			    inArgumentList [getInputValue('#hearsay-input-id-4','dataset')] = getIntegrationType('#select-journey4');
+			    dynTemplate ['Name'] = getIntegrationType('#select-journey4');
 			}
 			if(getIntegrationName('#select-journey5') != '--Select--') {
 			    hearsayfields [getInputValue('#hearsay-input-id-5','')] = getIntegrationType('#select-journey5');
 			    inArgumentList [getInputValue('#hearsay-input-id-5','dataset')] = getIntegrationType('#select-journey5');
+			    dynTemplate ['Phone'] = getIntegrationType('#select-journey5');
 			}
 			if(getIntegrationName('#select-journey6') != '--Select--' && getIntegrationName('#select-hearsay6') != '--Select--') {
 			    hearsayfields [getIntegrationName('#select-hearsay6')] = getIntegrationType('#select-journey6');
 			    inArgumentList [getIntegrationType('#select-hearsay6')] = getIntegrationType('#select-journey6');
+			    dynTemplate ['Option 1'] = getIntegrationType('#select-journey6');
 			}
 			if(getIntegrationName('#select-journey7') != '--Select--' && getIntegrationName('#select-hearsay7') != '--Select--') {
 			    hearsayfields [getIntegrationName('#select-hearsay7')] = getIntegrationType('#select-journey7');
 			    inArgumentList [getIntegrationType('#select-hearsay7')] = getIntegrationType('#select-journey7');
+			    dynTemplate ['Option 2'] = getIntegrationType('#select-journey7');
 			}
 			if(getIntegrationName('#select-journey8') != '--Select--' && getIntegrationName('#select-hearsay8') != '--Select--') {
 			    hearsayfields [getIntegrationName('#select-hearsay8')] = getIntegrationType('#select-journey8');
 			    inArgumentList [getIntegrationType('#select-hearsay8')] = getIntegrationType('#select-journey8');
+			    dynTemplate ['Option 3'] = getIntegrationType('#select-journey8');
 			}
 			if(getIntegrationName('#select-journey9') != '--Select--' && getIntegrationName('#select-hearsay9') != '--Select--') {
 			    hearsayfields [getIntegrationName('#select-hearsay9')] = getIntegrationType('#select-journey9');
 			    inArgumentList [getIntegrationType('#select-hearsay9')] = getIntegrationType('#select-journey9');
+			    dynTemplate ['Option 4'] = getIntegrationType('#select-journey9');
 			}
 			if(getIntegrationName('#select-journey10') != '--Select--' && getIntegrationName('#select-hearsay10') != '--Select--') {
 			    hearsayfields [getIntegrationName('#select-hearsay10')] = getIntegrationType('#select-journey10');
 			    inArgumentList [getIntegrationType('#select-hearsay10')] = getIntegrationType('#select-journey10');
+			    dynTemplate ['Option 5'] = getIntegrationType('#select-journey10');
 			}
 			if(getIntegrationName('#select-journey11') != '--Select--' && getIntegrationName('#select-hearsay11') != '--Select--') {
 			    hearsayfields [getIntegrationName('#select-hearsay11')] = getIntegrationType('#select-journey11');
 			    inArgumentList [getIntegrationType('#select-hearsay11')] = getIntegrationType('#select-journey11');
+			    dynTemplate ['Option 6'] = getIntegrationType('#select-journey11');
 			}
 			console.log('hearsayfields '+hearsayfields);
 			console.log('inArgumentList '+inArgumentList);
@@ -568,50 +580,10 @@ define([
 		   }
 				
 		console.log('fieldListString '+fieldListString);
-		let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
-		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-		+'    <s:Header>'
-		+'        <a:Action s:mustUnderstand="1">Create</a:Action>'
-		+'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
-		+'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
-		+'    </s:Header>'
-		+'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-		+'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-		+'<Objects xsi:type="DataExtension">'
-		+'<CategoryID>cateID</CategoryID>'
-		+'<CustomerKey>DEKey</CustomerKey>'
-                +'<Name>DEName</Name>'
-                +'<IsSendable>true</IsSendable>'
-                +subfieldName
-                +'<SendableSubscriberField>'
-                +'    <Name>Subscriber Key</Name>'
-                +'    <Value></Value>'
-                +'</SendableSubscriberField>'
-		+'<Fields>'
-		+fieldListString
-		+'</Fields>'
-		+'</Objects>'
-		+'        </CreateRequest>'
-		+'    </s:Body>'
-		+'</s:Envelope>';
+		createDataExtension(subfieldName, fieldListString, inputValue);
+		console.log('recordData '+dynTemplate);
+		insertDERecords(dynTemplate);
 		
-		console.log('soapMessage '+soapMessage);
-		
-		fetch("/create/dextension/", {
-			method: "POST",
-			body: JSON.stringify({
-			    name: inputValue,
-			    token: authToken,
-			    xmlData: soapMessage
-			}),
-		})
-		.then(response => response.text())
-		.then(dataValue => {
-			console.log('Success:', dataValue);	
-		})
-		.catch((error) => {
-			console.log('error:', error);
-		});
 	} else {
 	   inputValue = name;
 	}
@@ -625,6 +597,72 @@ define([
 	payload.metaData['hearsayData'] = hearsayfields;    
 	    
         connection.trigger('updateActivity', payload);
+    }
+	
+    function createDataExtension(subFieldData, fieldListData, DEName){
+	    
+	    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
+		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
+		+'    <s:Header>'
+		+'        <a:Action s:mustUnderstand="1">Create</a:Action>'
+		+'        <a:To s:mustUnderstand="1">{process.env.mcEndpoint}/Service.asmx</a:To>'
+		+'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
+		+'    </s:Header>'
+		+'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+		+'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+		+'<Objects xsi:type="DataExtension">'
+		+'<CategoryID>cateID</CategoryID>'
+		+'<CustomerKey>DEKey</CustomerKey>'
+                +'<Name>DEName</Name>'
+                +'<IsSendable>true</IsSendable>'
+                +subFieldData
+                +'<SendableSubscriberField>'
+                +'    <Name>Subscriber Key</Name>'
+                +'    <Value></Value>'
+                +'</SendableSubscriberField>'
+		+'<Fields>'
+		+fieldListData
+		+'</Fields>'
+		+'</Objects>'
+		+'        </CreateRequest>'
+		+'    </s:Body>'
+		+'</s:Envelope>';
+		
+		console.log('soapMessage '+soapMessage);
+		
+		fetch("/create/dextension/", {
+			method: "POST",
+			body: JSON.stringify({
+			    name: DEName,
+			    token: authToken,
+			    xmlData: soapMessage
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			console.log('Success:', dataValue);	
+		})
+		.catch((error) => {
+			console.log('error:', error);
+		});
+    }
+    
+    function insertDERecords(recordData){
+	    
+	    fetch("/insert/derows/", {
+			method: "POST",
+			body: JSON.stringify({
+			    token: authToken,
+			    xmlData: recordData
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			console.log('Insert Record Success:', dataValue);	
+		})
+		.catch((error) => {
+			console.log('Insert Record error:', error);
+		});
     }
 
     function getInputValue(elementID, valueType){
