@@ -518,9 +518,9 @@ define([
 		   inputValue = $('#text-input-id-1').val().toString();
 		   let fieldName = '';
 		   let subfieldName = '';
-		   for(var x in inArgumentList){
+		   for(var fieldKey in inArgumentList){
 			fieldName =  inArgumentList[x].toString();
-			if(fieldName.toLowerCase().includes("name") || fieldName.toLowerCase().includes("org") || fieldName.toLowerCase().includes("agent") || fieldName.toLowerCase().includes("phone")){
+			if(fieldKey.toLowerCase().includes("name") || fieldName.toLowerCase().includes("sourceOrganizationId") || fieldName.toLowerCase().includes("subOwnerID") || fieldName.toLowerCase().includes("phone")){
 			   	fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
 				+'<Name>'+fieldName+'</Name>'
@@ -528,7 +528,7 @@ define([
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
-			} else if (fieldName.toLowerCase().includes("email") ){
+			} else if (fieldKey.toLowerCase().includes("email") ){
 								
 				fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
@@ -538,7 +538,7 @@ define([
 				+'<IsRequired>false</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
-			} else if(fieldName.toLowerCase().includes("cid")) {
+			} else if(fieldKey.toLowerCase().includes("sourceId")) {
 				subfieldName += '<SendableDataExtensionField>'
 				+'    <CustomerKey>'+fieldName+'</CustomerKey>'
 				+'    <Name>'+fieldName+'</Name>'
@@ -564,7 +564,7 @@ define([
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
 			}
-			inArgumentList[x] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
+			inArgumentList[fieldKey] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
 		   }
 				
 		console.log('fieldListString '+fieldListString);
