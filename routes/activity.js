@@ -283,7 +283,7 @@ exports.staticDataExtension = function (req, res) {
 		+'</s:Envelope>';
 	    parser.parseString(rawdata, function(err,result){
 		    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-		    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+		    let rawData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
 		    if(rawData){
 			let categoryID = rawData[0]['ID'];
 			if(categoryID) soapMsg = soapMsg.replace('cateID',categoryID);
@@ -369,7 +369,7 @@ exports.staticDataExtension = function (req, res) {
 		+'</s:Envelope>';
 	    parser.parseString(rawdata, function(err,result){
 		    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-		    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+		    let rawData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
 		    if(rawData){
 			let categoryID = rawData[0]['ID'];
 			if(categoryID) OrgMsg = OrgMsg.replace('cateID',categoryID);
@@ -554,7 +554,7 @@ exports.createFolder = function (req, res) {
                             let resultData;     
                             var parser = new xml2js.Parser();
                             parser.parseString(rawdata2, function(err,result){
-                                console.log('result rawdata2 body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                                console.log('result rawdata2 body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
                                 resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
                             });
                             
@@ -663,7 +663,7 @@ exports.createDExtension = function (req, res) {
 
                 var parser = new xml2js.Parser();
                 parser.parseString(rawdata, function(err,result){
-                    console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                    console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
                     let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
                     if(rawData){
                         res.status(rawData[0]['StatusCode']).send(rawData[0]['StatusMessage']);
