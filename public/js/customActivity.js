@@ -242,6 +242,28 @@ define([
 		.then(dataValue => {
 			//console.log('Folder Created status: ', response.status);
 		    	console.log('Folder Created Success: ', dataValue);
+		    	if(dataValue != 'Already have folder'){
+			   createStaticDE(oauthToken);
+			}
+		})
+		.catch((error) => {
+			  console.log('Folder Error:', error);
+		});
+	    
+    }
+	
+    function createStaticDE(oauthToken){
+	    
+	    fetch("/create/staticde/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: oauthToken,
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			//console.log('Folder Created status: ', response.status);
+		    	console.log('Folder Created Success: ', dataValue);
 		})
 		.catch((error) => {
 			  console.log('Folder Error:', error);
