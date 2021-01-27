@@ -152,7 +152,7 @@ exports.staticDataExtension = function (req, res) {
     
     axios(dataconfig)
     .then(function (response) {
-        console.log(JSON.stringify(response.data));
+        console.log('286 log data '+response.data);
         let rawdata = response.data;
         var soapMsg = '';
         var parser = new xml2js.Parser();
@@ -281,14 +281,16 @@ exports.staticDataExtension = function (req, res) {
 		+'        </CreateRequest>'
 		+'    </s:Body>'
 		+'</s:Envelope>';
-	    parser.parseString(rawdata, function(err,result){
-		    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-		    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveRequestMsg'][0]['Results'];
-		    if(rawData){
-			let categoryID = rawData[0]['ID'];
-			if(categoryID) soapMsg = soapMsg.replace('cateID',categoryID);
-		    } 
-            });
+		
+	    	parser.parseString(rawdata, function(err,result){
+		    	console.log('result static body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+		    	let resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+			console.log('resultData '+resultData);
+			if(resultData){
+				let categoryID = resultData[0]['ID'];
+				if(categoryID) soapMsg = soapMsg.replace('cateID',categoryID);
+			} 
+		});
 	    
 	    var dataconfg = {
 	      method: 'post',
@@ -379,13 +381,15 @@ exports.staticDataExtension = function (req, res) {
 		+'        </CreateRequest>'
 		+'    </s:Body>'
 		+'</s:Envelope>';
+	    
 	    parser.parseString(rawdata, function(err,result){
-		    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-		    let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveRequestMsg'][0]['Results'];
-		    if(rawData){
-			let categoryID = rawData[0]['ID'];
-			if(categoryID) OrgMsg = OrgMsg.replace('cateID',categoryID);
-		    } 
+		    console.log('result static 2 body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+		    let resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+		    console.log('resultData second '+resultData);
+		    if(resultData){
+			    let categoryID = resultData[0]['ID'];
+			    if(categoryID) OrgMsg = OrgMsg.replace('cateID',categoryID);
+		    }  
             });
 	    
 	    var dataconfg = {
