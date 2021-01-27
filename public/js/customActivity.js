@@ -532,7 +532,7 @@ define([
 		   let subfieldName = '';
 		   for(var fieldKey in inArgumentList){
 			fieldName =  inArgumentList[fieldKey].toString();
-			if(fieldKey.toLowerCase().includes("name") || fieldName.toLowerCase().includes("sourceOrganizationId") || fieldName.toLowerCase().includes("subOwnerID") || fieldName.toLowerCase().includes("phone")){
+			if(fieldKey.toLowerCase().includes("name") || fieldName.toLowerCase().includes("sourceorganizationid") || fieldName.toLowerCase().includes("subownerid") || fieldName.toLowerCase().includes("phone")){
 			   	fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
 				+'<Name>'+fieldName+'</Name>'
@@ -550,7 +550,7 @@ define([
 				+'<IsRequired>false</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
-			} else if(fieldKey.toLowerCase().includes("sourceId")) {
+			} else if(fieldKey.toLowerCase().includes("sourceid")) {
 				subfieldName += '<SendableDataExtensionField>'
 				+'    <CustomerKey>'+fieldName+'</CustomerKey>'
 				+'    <Name>'+fieldName+'</Name>'
@@ -579,9 +579,9 @@ define([
 			inArgumentList[fieldKey] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
 		   }
 				
-		console.log('fieldListString '+fieldListString);
+		console.log('fieldListString '+JSON.stringify(fieldListString));
 		createDataExtension(subfieldName, fieldListString, inputValue);
-		console.log('recordData '+dynTemplate);
+		console.log('recordData '+JSON.stringify(dynTemplate));
 		insertDERecords(dynTemplate);
 		
 	} else {
