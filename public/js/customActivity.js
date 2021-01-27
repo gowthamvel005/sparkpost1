@@ -240,7 +240,8 @@ define([
 		})
 		.then(response => response.text())
 		.then(dataValue => {
-			console.log('Folder Created Success: ', dataValue);
+			//console.log('Folder Created status: ', response.status);
+		    	console.log('Folder Created Success: ', dataValue);
 		})
 		.catch((error) => {
 			  console.log('Folder Error:', error);
