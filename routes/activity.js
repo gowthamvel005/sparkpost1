@@ -301,7 +301,19 @@ exports.staticDataExtension = function (req, res) {
 	    
 	    axios(dataconfg)
 		.then(function (response) {
-		  console.log(JSON.stringify(response.data));
+		  	console.log(JSON.stringify(response.data));
+		    	let rawdata = response.data;
+
+			var parser = new xml2js.Parser();
+			parser.parseString(rawdata, function(err,result){
+			    console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
+			    let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
+			    if(resData){
+				 console.log('StatusCode '+resData[0].StatusCode+'StatusMessage '+resData[0].StatusMessage);
+			    } else {
+				res.status(400).send('Some thing went wrong!');
+			    }
+			});
 		})
 		.catch(function (error) {
 		  console.log(error);
@@ -387,7 +399,19 @@ exports.staticDataExtension = function (req, res) {
 	    
 	    axios(dataconfg)
 		.then(function (response) {
-		  console.log(JSON.stringify(response.data));
+		  	console.log(JSON.stringify(response.data));
+		    	let rawdata = response.data;
+
+			var parser = new xml2js.Parser();
+			parser.parseString(rawdata, function(err,result){
+			    console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
+			    let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
+			    if(resData){
+				 console.log('StatusCode '+resData[0].StatusCode+'StatusMessage '+resData[0].StatusMessage);
+			    } else {
+				res.status(400).send('Some thing went wrong!');
+			    }
+			});
 		})
 		.catch(function (error) {
 		  console.log(error);
