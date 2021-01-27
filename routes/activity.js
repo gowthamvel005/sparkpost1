@@ -457,7 +457,7 @@ exports.insertDERows = function (req, res) {
     var xml2js = require('xml2js');
     let items = [];
     items.push(req.body.xmlData);
-    console.log('items pushed '+items);
+    console.log('items pushed '+JSON.stringify(items));
 	
     var dataconfig = {
       method: 'post',
@@ -466,7 +466,7 @@ exports.insertDERows = function (req, res) {
         'Content-Type': 'application/json', 
     	'Authorization': 'Bearer '+req.body.token
       },
-      data : items
+      data : {"items": items}
     };
     
     axios(dataconfig)
@@ -734,7 +734,7 @@ exports.createDExtension = function (req, res) {
                 parser.parseString(rawdata, function(err,result){
                     console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
                     let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
-                    if(rawData){
+                    if(resData){
                         res.status(200).send(resData[0].StatusMessage);
                     } else {
                         res.status(400).send('Some thing went wrong!');
