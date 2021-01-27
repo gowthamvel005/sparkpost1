@@ -531,7 +531,7 @@ define([
 		   let fieldName = '';
 		   let subfieldName = '';
 		   for(var fieldKey in inArgumentList){
-			fieldName =  inArgumentList[x].toString();
+			fieldName =  inArgumentList[fieldKey].toString();
 			if(fieldKey.toLowerCase().includes("name") || fieldName.toLowerCase().includes("sourceOrganizationId") || fieldName.toLowerCase().includes("subOwnerID") || fieldName.toLowerCase().includes("phone")){
 			   	fieldListString += '<Field>'
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
