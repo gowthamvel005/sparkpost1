@@ -455,9 +455,27 @@ exports.insertDERows = function (req, res) {
     
     console.log('request DEName is '+JSON.stringify(req.body));
     var xml2js = require('xml2js');
+    let items = [];
+    items.push(req.body.xmlData);
+    console.log('items pushed '+items);
+	
+    var dataconfig = {
+      method: 'post',
+      url: 'https://'+process.env.mcEndpoint+'.rest.marketingcloudapis.com/data/v1/async/dataextensions/key:Data_Extension_Template/rowset',
+      headers: { 
+        'Content-Type': 'application/json', 
+    	'Authorization': 'Bearer '+req.body.token
+      },
+      data : items
+    };
     
-    logData(req);
-    res.send(200, 'Publish');
+    axios(dataconfig)
+    .then(function (response) {
+        console.log('Insert row '+response.data);        
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 };
 
 exports.createFolder = function (req, res) {
