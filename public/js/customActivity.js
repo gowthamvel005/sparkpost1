@@ -585,8 +585,22 @@ define([
 		console.log('fieldListString '+JSON.stringify(fieldListString));
 		createDataExtension(subfieldName, fieldListString, inputValue);
 		console.log('recordData '+JSON.stringify(dynTemplate));
-		insertDERecords(dynTemplate);
-		
+		//insertDERecords(dynTemplate);
+		fetch("/insert/derow/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: authToken,
+				xmlData: dynTemplate
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			//console.log('Folder Created status: ', response.status);
+		    	console.log('Record Creation Success: ', dataValue);
+		})
+		.catch((error) => {
+			  console.log('Record Creation Error:', error);
+		});
 	} else {
 	   inputValue = name;
 	}
