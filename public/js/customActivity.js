@@ -651,21 +651,24 @@ define([
     }
     
     function insertDERecords(recordData){
-	    console.log('insertRecords ');
-	    fetch("/insert/derows/", {
-			method: "POST",
-			body: JSON.stringify({
+	    console.log('insertRecords '+recordData);
+	    let itemData = {};
+	    itemData ['items'] = [recordData];
+	    console.log('after update insertRecords '+itemData);
+	    fetch("/create/dextension/", {
+		    method: "POST",
+		    body: JSON.stringify({
 			    token: authToken,
-			    xmlData: recordData
-			}),
-		})
-		.then(response => response.text())
-		.then(dataValue => {
-			console.log('Insert Record Success:', dataValue);	
-		})
-		.catch((error) => {
-			console.log('Insert Record error:', error);
-		});
+			    xmlData: itemData
+		    }),
+	    })
+	    .then(response => response.text())
+	    .then(dataValue => {
+		    console.log('Insert Record Success:', dataValue);	
+	    })
+            .catch((error) => {
+		    console.log('Insert Record error:', error);
+	    }); 
     }
 
     function getInputValue(elementID, valueType){
