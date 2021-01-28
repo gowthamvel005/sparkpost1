@@ -328,7 +328,7 @@ define([
             }
         } else if(currentStep.key === 'step2'){
 	    	hearsayfields = {};
-		dynTemplate ['Template Name'] = selectOption;
+		dynTemplate ['Template Name'] = $('#text-input-id-1').val().toString();
 		if(getIntegrationName('#select-journey1') == '--Select--' || getIntegrationName('#select-journey2') == '--Select--' || getIntegrationName('#select-journey3') == '--Select--' || getIntegrationName('#select-journey4') == '--Select--' || getIntegrationName('#select-journey5') == '--Select--'){
 			$('#error-msg').show();
 			showStep(null, 2);
@@ -539,6 +539,7 @@ define([
 				+'<CustomerKey>'+fieldName+'</CustomerKey>'
 				+'<Name>'+fieldName+'</Name>'
 				+'<FieldType>Text</FieldType>'
+				+'<MaxLength>50</MaxLength>'
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
@@ -614,8 +615,8 @@ define([
 		+'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
 		+'<Objects xsi:type="DataExtension">'
 		+'<CategoryID>cateID</CategoryID>'
-		+'<CustomerKey>DEKey</CustomerKey>'
-                +'<Name>DEName</Name>'
+		+'<CustomerKey>'+DEName+'</CustomerKey>'
+                +'<Name>'+DEName+'</Name>'
                 +'<IsSendable>true</IsSendable>'
                 +subFieldData
                 +'<SendableSubscriberField>'
