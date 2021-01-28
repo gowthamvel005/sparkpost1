@@ -545,8 +545,8 @@ define([
 			} else if (fieldKey.toLowerCase().includes("email") && fieldName.toLowerCase().includes("option")){
 								
 				fieldListString += '<Field>'
-				+'<CustomerKey>'+fieldKey+'</CustomerKey>'
-				+'<Name>'+fieldKey+'</Name>'
+				+'<CustomerKey>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</CustomerKey>'
+				+'<Name>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</Name>'
 				+'<FieldType>EmailAddress</FieldType>'
 				+'<MaxLength>250</MaxLength>'
 				+'<IsRequired>false</IsRequired>'
@@ -570,8 +570,8 @@ define([
 				
 			} else if (fieldName.toLowerCase().includes("option")){
 				fieldListString += '<Field>'
-				+'<CustomerKey>'+fieldKey+'</CustomerKey>'
-				+'<Name>'+fieldKey+'</Name>'
+				+'<CustomerKey>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</CustomerKey>'
+				+'<Name>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</Name>'
 				+'<FieldType>Text</FieldType>'
 				+'<MaxLength>50</MaxLength>'
 				+'<IsRequired>false</IsRequired>'
@@ -650,7 +650,7 @@ define([
     }
     
     function insertDERecords(recordData){
-	    
+	    console.log('insertRecords ');
 	    fetch("/insert/derows/", {
 			method: "POST",
 			body: JSON.stringify({
