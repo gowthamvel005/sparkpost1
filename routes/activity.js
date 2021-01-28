@@ -457,7 +457,8 @@ exports.insertDERows = function (req, res) {
     var xml2js = require('xml2js');
     let items = [];
     items.push(req.body.xmlData);
-    console.log('items pushed '+JSON.stringify(items));
+    console.log('items pushed JSON strigify '+JSON.stringify(items));
+    console.log('items pushed '+items);
 	
     var dataconfig = {
       method: 'post',
@@ -466,9 +467,7 @@ exports.insertDERows = function (req, res) {
         'Content-Type': 'application/json', 
     	'Authorization': 'Bearer '+req.body.token
       },
-      data : JSON.stringify({
-	    items: items
-      })
+      data : { "items": items}
     };
     
     axios(dataconfig)
