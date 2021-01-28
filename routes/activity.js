@@ -483,9 +483,27 @@ exports.staticDataExtension = function (req, res) {
 
 exports.insertDERow = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
-    console.log( 'insert data '+JSON.stringify(req.body));
-    logData(req);
-    res.status(200).send('insertDERow');
+    	
+	console.log( 'insert data '+JSON.stringify(req.body));
+	var config = {
+	    method: 'post',
+            url: 'https://'+process.env.mcEndpoint+'.rest.marketingcloudapis.com/data/v1/async/dataextensions/key:Data_Extension_Template/rows',
+            headers: { 
+		    'Content-Type': 'application/json',
+		    'Authorization': 'Bearer '+req.body.token;
+            },
+            data : JSON.stringify(req.body.xmlData);
+    	};
+	
+	axios(config)
+	.then(function (response) {
+	  	console.log('Insert data '+JSON.stringify(response.data));
+		res.status(202).send('Accepted!');
+	})
+	.catch(function (error) {
+		console.log('Insert data error '+JSON.stringify(error));
+		res.status(500).send('Something went wrong!!!');
+	});
 };
 
 exports.createFolder = function (req, res) {
