@@ -487,7 +487,7 @@ exports.insertDERow = function (req, res) {
 	console.log( 'insert data '+JSON.stringify(req.body));
 	//console.log( 'insert body data '+[req.body.xmlData]);
 	var insData = JSON.stringify([{"keys":req.body.xmlData.keys,"values":req.body.xmlData.values}]);
-	console.log( 'insert body insData '+ JSON.stringify(insData));
+	console.log( 'insert body insData '+ insData);
 	var config = {
 	    method: 'post',
             url: 'https://'+process.env.mcEndpoint+'.rest.marketingcloudapis.com/hub/v1/dataevents/key:Data_Extension_Template/rowset',
