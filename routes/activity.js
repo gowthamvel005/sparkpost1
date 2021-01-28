@@ -451,7 +451,7 @@ exports.staticDataExtension = function (req, res) {
     });
 };
 
-exports.insertDERows = function (req, res) {
+/*exports.insertDERows = function (req, res) {
     
     console.log('request DEName is '+JSON.stringify(req.body));
     var xml2js = require('xml2js');
@@ -479,6 +479,13 @@ exports.insertDERows = function (req, res) {
 	    console.log('Insert row '+error);
 	    res.status(400).send('Some thing went wrong!');
     });
+};*/
+
+exports.insertDERow = function (req, res) {
+    // Data from the req and put it in an array accessible to the main app.
+    console.log( req.body );
+    logData(req);
+    res.status(200).send('insertDERow');
 };
 
 exports.createFolder = function (req, res) {
