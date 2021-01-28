@@ -660,7 +660,7 @@ define([
 		method: "POST",
 		body: JSON.stringify({
 			token: authToken,
-			xmlData: dynTemplate
+			xmlData: itemData
 		}),
 	    })
 	    .then(response => response.text())
