@@ -492,7 +492,7 @@ exports.insertDERow = function (req, res) {
 		    'Content-Type': 'application/json',
 		    'Authorization': 'Bearer '+req.body.token
             },
-            data : JSON.stringify(req.body.xmlData);
+            data : JSON.stringify(req.body.xmlData)
     	};
 	
 	axios(config)
