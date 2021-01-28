@@ -602,7 +602,7 @@ define([
         connection.trigger('updateActivity', payload);
     }
 	
-    function createDataExtension(subFieldData, fieldListData, DEName){
+    function createDataExtension(subFieldData, fieldListData, deName){
 	    
 	    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
 		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
@@ -615,8 +615,8 @@ define([
 		+'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
 		+'<Objects xsi:type="DataExtension">'
 		+'<CategoryID>cateID</CategoryID>'
-		+'<CustomerKey>'+DEName+'</CustomerKey>'
-                +'<Name>'+DEName+'</Name>'
+		+'<CustomerKey>'+deName+'</CustomerKey>'
+                +'<Name>'+deName+'</Name>'
                 +'<IsSendable>true</IsSendable>'
                 +subFieldData
                 +'<SendableSubscriberField>'
@@ -636,7 +636,7 @@ define([
 		fetch("/create/dextension/", {
 			method: "POST",
 			body: JSON.stringify({
-			    name: DEName,
+			    name: deName,
 			    token: authToken,
 			    xmlData: soapMessage
 			}),
