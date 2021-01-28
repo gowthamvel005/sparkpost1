@@ -485,7 +485,7 @@ exports.insertDERow = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     	
 	console.log( 'insert data '+JSON.stringify(req.body));
-	console.log( 'insert body data '+[req.body.xmlData]);
+	//console.log( 'insert body data '+[req.body.xmlData]);
 	var config = {
 	    method: 'post',
             url: 'https://'+process.env.mcEndpoint+'.rest.marketingcloudapis.com/hub/v1/dataevents/key:Data_Extension_Template/rowset',
@@ -493,7 +493,7 @@ exports.insertDERow = function (req, res) {
 		    'Content-Type': 'application/json',
 		    'Authorization': 'Bearer '+req.body.token
             },
-            data : [req.body.xmlData]
+            data : JSON.stringify(req.body.xmlData)
     	};
 	
 	axios(config)
