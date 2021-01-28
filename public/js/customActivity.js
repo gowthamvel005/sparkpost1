@@ -584,7 +584,7 @@ define([
 		console.log('recordData '+JSON.stringify(dynTemplate));
 		insertDERecord(dynTemplate);
 		console.log('fieldListString '+JSON.stringify(fieldListString));
-		createDataExtension(subfieldName, fieldListString, inputValue, dynTemplate);
+		createDataExtension(subfieldName, fieldListString, inputValue);
 		
 	} else {
 	   inputValue = name;
@@ -631,7 +631,6 @@ define([
 		+'</s:Envelope>';
 		
 		console.log('soapMessage '+soapMessage);
-		console.log('deRecord '+JSON.stringify(deRecord));
 	    
 		fetch("/create/dextension/", {
 			method: "POST",
