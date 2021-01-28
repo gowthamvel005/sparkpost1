@@ -40,12 +40,12 @@ app.post('/journeybuilder/save/', activity.save );
 app.post('/journeybuilder/validate/', activity.validate );
 app.post('/journeybuilder/publish/', activity.publish );
 app.post('/journeybuilder/execute/', activity.execute );
+app.post('/create/hearsayfolder/', activity.createFolder);
+app.post('/create/staticde/', activity.staticDataExtension);
 app.post('/dataextension/row/', activity.DERow);
 app.post('/retrieve/derows/', activity.retrieveDERows);
 app.post('/create/dextension/', activity.createDExtension);
-app.post('/insert/derows/', activity.insertDERows);
-app.post('/create/hearsayfolder/', activity.createFolder);
-app.post('/create/staticde/', activity.staticDataExtension);
+app.post('/insert/derow/', activity.insertDERow);
 
 
 http.createServer(app).listen(app.get('port'), function(){
