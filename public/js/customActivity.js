@@ -542,11 +542,11 @@ define([
 				+'<IsRequired>true</IsRequired>'
 				+'<IsPrimaryKey>false</IsPrimaryKey>'
 				+'</Field>';
-			} else if (fieldKey.toLowerCase().includes("email") ){
+			} else if (fieldKey.toLowerCase().includes("email") && fieldName.toLowerCase().includes("option")){
 								
 				fieldListString += '<Field>'
-				+'<CustomerKey>'+fieldName+'</CustomerKey>'
-				+'<Name>'+fieldName+'</Name>'
+				+'<CustomerKey>'+fieldKey+'</CustomerKey>'
+				+'<Name>'+fieldKey+'</Name>'
 				+'<FieldType>EmailAddress</FieldType>'
 				+'<MaxLength>250</MaxLength>'
 				+'<IsRequired>false</IsRequired>'
