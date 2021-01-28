@@ -327,7 +327,8 @@ define([
 		}
             }
         } else if(currentStep.key === 'step2'){
-	    hearsayfields = {};
+	    	hearsayfields = {};
+		dynTemplate ['Template Name'] = selectOption;
 		if(getIntegrationName('#select-journey1') == '--Select--' || getIntegrationName('#select-journey2') == '--Select--' || getIntegrationName('#select-journey3') == '--Select--' || getIntegrationName('#select-journey4') == '--Select--' || getIntegrationName('#select-journey5') == '--Select--'){
 			$('#error-msg').show();
 			showStep(null, 2);
@@ -390,8 +391,9 @@ define([
 			    inArgumentList [getIntegrationType('#select-hearsay11')] = getIntegrationType('#select-journey11');
 			    dynTemplate ['Option 6'] = getIntegrationType('#select-hearsay11');
 			}
-			console.log('hearsayfields '+hearsayfields);
-			console.log('inArgumentList '+inArgumentList);
+			console.log('hearsayfields '+JSON.stringify(hearsayfields));
+			console.log('inArgumentList '+JSON.stringify(inArgumentList));
+			console.log('dynTemplate '+JSON.stringify(dynTemplate));
 			var div_data = '';
 			for (var key in hearsayfields) {
 				if (hearsayfields.hasOwnProperty(key)) {
