@@ -581,11 +581,10 @@ define([
 			}
 			inArgumentList[fieldKey] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
 		   }
-				
-		console.log('fieldListString '+JSON.stringify(fieldListString));
-		createDataExtension(subfieldName, fieldListString, inputValue, dynTemplate);
 		console.log('recordData '+JSON.stringify(dynTemplate));
 		insertDERecord(dynTemplate);
+		console.log('fieldListString '+JSON.stringify(fieldListString));
+		createDataExtension(subfieldName, fieldListString, inputValue, dynTemplate);
 		
 	} else {
 	   inputValue = name;
