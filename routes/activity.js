@@ -490,7 +490,7 @@ exports.insertDERow = function (req, res) {
             url: 'https://'+process.env.mcEndpoint+'.rest.marketingcloudapis.com/data/v1/async/dataextensions/key:Data_Extension_Template/rows',
             headers: { 
 		    'Content-Type': 'application/json',
-		    'Authorization': 'Bearer '+req.body.token;
+		    'Authorization': 'Bearer '+req.body.token
             },
             data : JSON.stringify(req.body.xmlData);
     	};
