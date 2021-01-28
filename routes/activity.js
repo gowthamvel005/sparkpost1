@@ -455,10 +455,10 @@ exports.insertDERows = function (req, res) {
     
     console.log('request DEName is '+JSON.stringify(req.body));
     var xml2js = require('xml2js');
-    let items = [];
-    items.push(req.body.xmlData);
-    console.log('items pushed JSON strigify '+JSON.stringify(items));
-    console.log('items pushed '+items);
+    //let items = [];
+    //items.push(req.body.xmlData);
+    console.log('items pushed JSON strigify '+JSON.stringify(req.body.xmlData));
+    //console.log('items pushed '+items);
 	
     var dataconfig = {
       method: 'post',
@@ -467,15 +467,17 @@ exports.insertDERows = function (req, res) {
         'Content-Type': 'application/json', 
     	'Authorization': 'Bearer '+req.body.token
       },
-      data : { "items": items}
+      data : req.body.xmlData
     };
     
     axios(dataconfig)
     .then(function (response) {
-        console.log('Insert row '+response.data);        
+	    console.log('Insert row '+response.data);
+	    res.status(202).send('Accepted!');
     })
     .catch(function (error) {
-      console.log(error);
+	    console.log('Insert row '+error);
+	    res.status(400).send('Some thing went wrong!');
     });
 };
 
