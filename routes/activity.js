@@ -483,7 +483,7 @@ exports.staticDataExtension = function (req, res) {
 
 exports.insertDERow = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
-    console.log( req.body );
+    console.log( 'insert data '+JSON.stringify(req.body));
     logData(req);
     res.status(200).send('insertDERow');
 };
