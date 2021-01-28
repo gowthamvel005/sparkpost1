@@ -583,24 +583,10 @@ define([
 		   }
 				
 		console.log('fieldListString '+JSON.stringify(fieldListString));
-		createDataExtension(subfieldName, fieldListString, inputValue);
+		createDataExtension(subfieldName, fieldListString, inputValue, dynTemplate);
 		console.log('recordData '+JSON.stringify(dynTemplate));
 		//insertDERecords(dynTemplate);
-		fetch("/insert/derow/", {
-			method: "POST",
-			body: JSON.stringify({
-				token: authToken,
-				xmlData: dynTemplate
-			}),
-		})
-		.then(response => response.text())
-		.then(dataValue => {
-			//console.log('Folder Created status: ', response.status);
-		    	console.log('Record Creation Success: ', dataValue);
-		})
-		.catch((error) => {
-			  console.log('Record Creation Error:', error);
-		});
+		
 	} else {
 	   inputValue = name;
 	}
@@ -616,7 +602,7 @@ define([
         connection.trigger('updateActivity', payload);
     }
 	
-    function createDataExtension(subFieldData, fieldListData, deName){
+    function createDataExtension(subFieldData, fieldListData, deName, deRecord){
 	    
 	    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
 		+'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
@@ -646,7 +632,8 @@ define([
 		+'</s:Envelope>';
 		
 		console.log('soapMessage '+soapMessage);
-		
+		console.log('deRecord '+JSON.stringify(deRecord));
+	    
 		fetch("/create/dextension/", {
 			method: "POST",
 			body: JSON.stringify({
@@ -657,32 +644,36 @@ define([
 		})
 		.then(response => response.text())
 		.then(dataValue => {
-			console.log('Success:', dataValue);	
+			console.log('Success:', dataValue);
+			insertDERecord(deRecord);
 		})
 		.catch((error) => {
 			console.log('error:', error);
 		});
     }
     
-    function insertDERecords(recordData){
-	    console.log('insertRecords '+recordData);
+    function insertDERecord(recordData){
+	    
+	    console.log('insertRecords '+JSON.stringify(recordData));
 	    let itemData = {};
 	    itemData ['items'] = [recordData];
-	    console.log('after update insertRecords '+itemData);
-	    fetch("/create/dextension/", {
-		    method: "POST",
-		    body: JSON.stringify({
-			    token: authToken,
-			    xmlData: itemData
-		    }),
+	    console.log('after update insertRecords '+JSON.stringify(itemData));
+	    
+	    fetch("/insert/derow/", {
+		method: "POST",
+		body: JSON.stringify({
+			token: authToken,
+			xmlData: dynTemplate
+		}),
 	    })
 	    .then(response => response.text())
 	    .then(dataValue => {
-		    console.log('Insert Record Success:', dataValue);	
+		//console.log('Folder Created status: ', response.status);
+		  console.log('Record Creation Success: ', dataValue);
 	    })
-            .catch((error) => {
-		    console.log('Insert Record error:', error);
-	    }); 
+	    .catch((error) => {
+		  console.log('Record Creation Error:', error);
+	    });
     }
 
     function getInputValue(elementID, valueType){
