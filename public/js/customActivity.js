@@ -657,17 +657,17 @@ define([
     function insertDERecord(recordData){
 	    
 	    console.log('insertRecords '+JSON.stringify(recordData));
-	    let itemData = '['+recordData+']';
+	    //let itemData = '['+recordData+']';
 	    //let itemData1 = JSON.parse([recordData]);
 	    //itemData ['items'] = [recordData];
 	    //console.log('after update itemData1 '+JSON.stringify(itemData1));
-	    console.log('after update insertRecords '+JSON.stringify(itemData));
+	    //console.log('after update insertRecords '+JSON.stringify(itemData));
 	    
 	    fetch("/insert/derow/", {
 		method: "POST",
 		body: JSON.stringify({
 			token: authToken,
-			xmlData: itemData
+			xmlData: recordData
 		}),
 	    })
 	    .then(response => response.text())
