@@ -485,7 +485,7 @@ exports.insertDERow = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     	
 	console.log( 'insert data '+JSON.stringify(req.body));
-	var insertData = req.body.xmlData;
+	var insertData = JSON.stringify([req.body.xmlData]);
 	console.log('req.body.data '+insertData);
 	var rawdata = JSON.stringify([{"keys":{"Template Name":"Testing5623"},"values":{"Hearsay Org ID":"9837","Hearsay User Reference ID":"672389","Customer Unique ID":"CID897","Name":"Balaji","Phone":"9876543210","Option 1":"email"}}]);
 	//console.log( 'insert body data '+[req.body.xmlData]);
