@@ -224,7 +224,7 @@ exports.staticDataExtension = function (req, res) {
 	    	+'<Field>'
 		+'<CustomerKey>Phone</CustomerKey>'
 		+'<Name>Phone</Name>'
-		+'<FieldType>Phone</FieldType>'
+		+'<FieldType>Text</FieldType>'
 		+'<IsRequired>true</IsRequired>'
 		+'<IsPrimaryKey>false</IsPrimaryKey>'
 		+'</Field>'
@@ -485,12 +485,12 @@ exports.insertDERow = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     	
 	console.log( 'insert data '+JSON.stringify(req.body));
-	var insertData = JSON.stringify([req.body.xmlData]);
-	console.log('req.body.data '+insertData);
-	var rawdata = JSON.stringify([{"keys":{"Template Name":"Testing5623"},"values":{"Hearsay Org ID":"9837","Hearsay User Reference ID":"672389","Customer Unique ID":"CID897","Name":"Balaji","Phone":"9876543210","Option 1":"email"}}]);
+	//var insertData = JSON.stringify([req.body.xmlData]);
+	//console.log('req.body.data '+insertData);
+	//var rawdata = JSON.stringify([{"keys":{"Template Name":"Testing5623"},"values":{"Hearsay Org ID":"9837","Hearsay User Reference ID":"672389","Customer Unique ID":"CID897","Name":"Balaji","Phone":"9876543210","Option 1":"email"}}]);
 	//console.log( 'insert body data '+[req.body.xmlData]);
-	//var insData = JSON.stringify([{"keys":req.body.xmlData.keys,"values":req.body.xmlData.values}]);
-	//console.log( 'insert body insData '+ insData);
+	var insData = JSON.stringify([{"keys":req.body.xmlData.keys,"values":req.body.xmlData.values}]);
+	console.log( 'insert body insData '+ insData);
 	var config = {
 	    method: 'post',
             url: 'https://'+process.env.mcEndpoint+'.rest.marketingcloudapis.com/hub/v1/dataevents/key:Data_Extension_Template/rowset',
@@ -498,7 +498,7 @@ exports.insertDERow = function (req, res) {
 		    'Content-Type': 'application/json',
 		    'Authorization': 'Bearer '+req.body.token
             },
-            data : insertData
+            data : insData
     	};
 	
 	axios(config)
