@@ -657,7 +657,7 @@ define([
     function insertDERecord(recordData){
 	    
 	    console.log('insertRecords '+JSON.stringify(recordData));
-	    let itemData = JSON.parse('['+recordData+']');
+	    let itemData = '['+recordData+']';
 	    //let itemData1 = JSON.parse([recordData]);
 	    //itemData ['items'] = [recordData];
 	    //console.log('after update itemData1 '+JSON.stringify(itemData1));
