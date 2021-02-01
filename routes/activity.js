@@ -582,7 +582,7 @@ exports.createFolder = function (req, res) {
         
         if(resData){
                 console.log('Already have folder');
-                res.status(200).send(resData[0].ID);
+                res.status(200).send(resData[0].ID.replace('["').replace('"]').toString());
         } else {
             
             let folderData = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -683,7 +683,7 @@ exports.createFolder = function (req, res) {
                             
                             if(resultData){
                                 console.log('Folder creation success '+resultData[0].StatusMessage);
-                                res.status(200).send(resultData[0].NewID);
+                                res.status(200).send(resData[0].NewID.replace('["').replace('"]').toString());
                             } else {
                                 console.log('Folder creation Some thing went wrong!');
                                 res.status(400).send('Some thing went wrong!');
@@ -937,6 +937,9 @@ exports.retrieveDERows =  function (req, res) {
         
 };
 
+/*
+ * POST Handler for /validate/ route of Activity.
+ */
 exports.validate = function (req, res) {
     // Data from the req and put it in an array accessible to the main app.
     //console.log( req.body );
