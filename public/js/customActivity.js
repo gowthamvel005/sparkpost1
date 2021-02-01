@@ -1,958 +1,664 @@
-'use strict';
-var util = require('util');
+define([
+    'postmonger'
+], function(
+    Postmonger
+) {
+    'use strict';
 
-// Deps
-const Path = require('path');
-const JWT = require(Path.join(__dirname, '..', 'lib', 'jwtDecoder.js'));
-var util = require('util');
-var http = require('https');
-var axios = require('axios');
+    var connection = new Postmonger.Session();
+    var payload = {};
+    var authToken;
+    var DERowList = []
+    var hearsayfields = {};
+    var dynTemplate = {};
+    var inArgumentList = {};
+    var lastStepEnabled = false;
+    var steps = [ // initialize to the same value as what's set in config.json for consistency
+        { "label": "TEMPLATE SELECTION", "key": "step1" },
+        { "label": "MAP TEMPLATE DATA", "key": "step2", "active": false},
+        { "label": "REVIEW TEMPLATE", "key": "step3", "active": false}
+    ];
+    var currentStep = steps[0].key;
+    var eventDefKey;
+    $(window).ready(onRender);
 
-exports.logExecuteData = [];
+    connection.on('requestedTokens', onGetTokens);
+    connection.on('requestedEndpoints', onGetEndpoints);
+    connection.on('initActivity', initialize);
+    connection.on('requestedSchema', onRequestSchema);
 
-function logData(req) {
-    exports.logExecuteData.push({
-        body: req.body,
-        headers: req.headers,
-        trailers: req.trailers,
-        method: req.method,
-        url: req.url,
-        params: req.params,
-        query: req.query,
-        route: req.route,
-        cookies: req.cookies,
-        ip: req.ip,
-        path: req.path,
-        host: req.host,
-        fresh: req.fresh,
-        stale: req.stale,
-        protocol: req.protocol,
-        secure: req.secure,
-        originalUrl: req.originalUrl
-    });
-    console.log("body: " + util.inspect(req.body));
-    console.log("headers: " + req.headers);
-    console.log("trailers: " + req.trailers);
-    console.log("method: " + req.method);
-    console.log("url: " + req.url);
-    console.log("params: " + util.inspect(req.params));
-    console.log("query: " + util.inspect(req.query));
-    console.log("route: " + req.route);
-    console.log("cookies: " + req.cookies);
-    console.log("ip: " + req.ip);
-    console.log("path: " + req.path);
-    console.log("host: " + req.host);
-    console.log("fresh: " + req.fresh);
-    console.log("stale: " + req.stale);
-    console.log("protocol: " + req.protocol);
-    console.log("secure: " + req.secure);
-    console.log("originalUrl: " + req.originalUrl);
-}
+    function onRender() {
+        $('#inputField-01').hide();
+        // JB will respond the first time 'ready' is called with 'initActivity'
+        connection.trigger('requestTokens');
+	    connection.trigger('requestEndpoints');
+	    connection.trigger('ready');
+        connection.trigger('requestSchema');
 
-/*
- * POST Handler for / route of Activity (this is the edit route).
- */
-exports.edit = function (req, res) {
-    // Data from the req and put it in an array accessible to the main app.
-    //console.log( req.body );
-    logData(req);
-    res.send(200, 'Edit');
-};
-
-/*
- * POST Handler for /save/ route of Activity.
- */
-exports.save = function (req, res) {
-    // Data from the req and put it in an array accessible to the main app.
-    //console.log( req.body );
-    logData(req);
-    res.send(200, 'Save');
-};
-
-/*
- * POST Handler for /execute/ route of Activity.
- */
-exports.execute = function (req, res) {
-
-    // example on how to decode JWT
-    JWT(req.body, process.env.jwtSecret, (err, decoded) => {
-
-        // verification error -> unauthorized request
-        if (err) {
-            console.error(err);
-            return res.status(401).end();
-        }
-
-        if (decoded && decoded.inArguments && decoded.inArguments.length > 0) {
-            
-            // decoded in arguments
-            var decodedArgs = decoded.inArguments[0];
-            console.log('arguments values are '+JSON.stringify(decodedArgs));
-            logData(req);
-            res.send(200, 'Execute');
-        } else {
-            console.error('inArguments invalid.');
-            return res.status(400).end();
-        }
-    });
-};
-
-
-/*
- * POST Handler for /publish/ route of Activity.
- */
-exports.publish = function (req, res) {
-    // Data from the req and put it in an array accessible to the main app.
-    //console.log( req.body );
-    logData(req);
-    res.send(200, 'Publish');
-};
-
-/*
- * Creating Static Data Extension Template Handler for / route of Activity (this is executed when Custom Activity opening).
- */
-exports.staticDataExtension = function (req, res) {
-    
-    //console.log('request DEName is '+JSON.stringify(req.body));
-    var xml2js = require('xml2js');
-    
-    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
-    +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-    +'    <s:Header>'
-    +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-    +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
-    +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
-    +'    </s:Header>'
-    +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-    +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-    +'            <RetrieveRequest>'
-    +'                <ObjectType>DataExtension</ObjectType>'
-    +'                <Properties>ObjectID</Properties>'
-    +'                <Properties>CustomerKey</Properties>'
-    +'                <Properties>Name</Properties>'
-    +'                <Properties>IsSendable</Properties>'
-    +'                <Properties>SendableSubscriberField.Name</Properties>'
-    +'                <Filter xsi:type="SimpleFilterPart">'
-    +'                    <Property>CustomerKey</Property>'
-    +'                    <SimpleOperator>equals</SimpleOperator>'
-    +'                    <Value>Data_Extension_Template</Value>'
-    +'                </Filter>'
-    +'            </RetrieveRequest>'
-    +'        </RetrieveRequestMsg>'
-    +'    </s:Body>'
-    +'</s:Envelope>';
-    
-    var dataconfig = {
-      method: 'post',
-      url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-      headers: { 
-        'Content-Type': 'text/xml'
-      },
-      data : soapMessage
-    };
-    
-    axios(dataconfig)
-    .then(function (response) {
-        
-        let rawdata = response.data;
-        var soapMsg = '';
-        var parser = new xml2js.Parser();
-        let resultData;
-        parser.parseString(rawdata, function(err,result){
-            //console.log('result static body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-            resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-        });
-
-        if(!resultData){
-            
-            soapMsg = '<?xml version="1.0" encoding="UTF-8"?>'
-            +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-            +'    <s:Header>'
-            +'        <a:Action s:mustUnderstand="1">Create</a:Action>'
-            +'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
-            +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
-            +'    </s:Header>'
-            +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-            +'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-            +'<Objects xsi:type="DataExtension">'
-            +'<CategoryID>'+req.body.catID+'</CategoryID>'
-            +'<CustomerKey>Data_Extension_Template</CustomerKey>'
-            +'<Name>Data Extension Template</Name>'
-            +'<IsSendable>true</IsSendable>'
-            +'<SendableDataExtensionField>'
-            +'    <CustomerKey>Template Name</CustomerKey>'
-            +'    <Name>Template Name</Name>'
-            +'    <FieldType>Text</FieldType>'
-            +'</SendableDataExtensionField>'
-            +'<SendableSubscriberField>'
-            +'    <Name>Subscriber Key</Name>'
-            +'    <Value></Value>'
-            +'</SendableSubscriberField>'
-            +'<Fields>'
-            +'<Field>'
-            +'<CustomerKey>Template Name</CustomerKey>'
-            +'<Name>Template Name</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>true</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Hearsay Org ID</CustomerKey>'
-            +'<Name>Hearsay Org ID</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Hearsay User Reference ID</CustomerKey>'
-            +'<Name>Hearsay User Reference ID</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Customer Unique ID</CustomerKey>'
-            +'<Name>Customer Unique ID</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Name</CustomerKey>'
-            +'<Name>Name</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Phone</CustomerKey>'
-            +'<Name>Phone</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Option 1</CustomerKey>'
-            +'<Name>Option 1</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Option 2</CustomerKey>'
-            +'<Name>Option 2</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Option 3</CustomerKey>'
-            +'<Name>Option 3</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Option 4</CustomerKey>'
-            +'<Name>Option 4</Name>'
-            +'<FieldType>Text</FieldType>'
-                +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Option 5</CustomerKey>'
-            +'<Name>Option 5</Name>'
-            +'<FieldType>Text</FieldType>'
-                +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Option 6</CustomerKey>'
-            +'<Name>Option 6</Name>'
-            +'<FieldType>Text</FieldType>'
-                +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-            +'<Field>'
-            +'<CustomerKey>Option 7</CustomerKey>'
-            +'<Name>Option 7</Name>'
-            +'<FieldType>Text</FieldType>'
-                +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-            +'<Field>'
-            +'<CustomerKey>Option 8</CustomerKey>'
-            +'<Name>Option 8</Name>'
-            +'<FieldType>Text</FieldType>'
-                +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-            +'<Field>'
-            +'<CustomerKey>Option 9</CustomerKey>'
-            +'<Name>Option 9</Name>'
-            +'<FieldType>Text</FieldType>'
-                +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>false</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-            +'</Fields>'
-            +'</Objects>'
-            +'        </CreateRequest>'
-            +'    </s:Body>'
-            +'</s:Envelope>';
-            
-            
-            var dataconfg = {
-            method: 'post',
-            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-            headers: { 
-            'Content-Type': 'text/xml'
-            },
-            data : soapMsg
-            };
-            
-            axios(dataconfg)
-            .then(function (response) {
-                
-                let rawdata = response.data;
-
-                var parser = new xml2js.Parser();
-                parser.parseString(rawdata, function(err,result){
-                    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
-                    let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
-                    if(resData){
-                        //console.log('StatusCode '+resData[0].StatusCode+'StatusMessage '+resData[0].StatusMessage);
-                        res.status(200).send('Data Extension Template '+resData[0].StatusMessage);
-                    } else {
-                        res.status(400).send('Data Extension Template Some thing went wrong!');
-                    }
-                });
-            })
-            .catch(function (error) {
-                console.log('Creating Data Extension Template error '+error);
-                res.status(500).send('Something went wrong for creating Data Extension Template!!!'+error);
-            });
-        } else {
-		    res.status(202).send('Already created Data Extension Template');
-	    }
-    })
-    .catch(function (error) {
-        res.status(500).send('Something went wrong for checking Data Extension Template available or not!!!'+error);
-        console.log('Exist Data Extension Template error '+error);
-    });
-};
-
-/*
- * Creating Static Org Setup DE Handler for / route of Activity (this is executed when Custom Activity opening).
- */
-exports.staticOrgDataExtension = function (req, res) {
-    
-    var xml2js = require('xml2js');
-    
-    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
-    +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-    +'    <s:Header>'
-    +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-    +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
-    +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
-    +'    </s:Header>'
-    +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-    +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-    +'            <RetrieveRequest>'
-    +'                <ObjectType>DataExtension</ObjectType>'
-    +'                <Properties>ObjectID</Properties>'
-    +'                <Properties>CustomerKey</Properties>'
-    +'                <Properties>Name</Properties>'
-    +'                <Properties>IsSendable</Properties>'
-    +'                <Properties>SendableSubscriberField.Name</Properties>'
-    +'                <Filter xsi:type="SimpleFilterPart">'
-    +'                    <Property>CustomerKey</Property>'
-    +'                    <SimpleOperator>equals</SimpleOperator>'
-    +'                    <Value>Org_Setup</Value>'
-    +'                </Filter>'
-    +'            </RetrieveRequest>'
-    +'        </RetrieveRequestMsg>'
-    +'    </s:Body>'
-    +'</s:Envelope>';
-    
-    var dataconfig = {
-      method: 'post',
-      url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-      headers: { 
-        'Content-Type': 'text/xml'
-      },
-      data : soapMessage
-    };
-    
-    axios(dataconfig)
-    .then(function (response) {
-        
-        let rawdata = response.data;
-        var soapMsg = '';
-        var parser = new xml2js.Parser();
-        let resultData;
-        parser.parseString(rawdata, function(err,result){
-            resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-        });
-
-        if(!resultData){
-            
-            var OrgMsg = '<?xml version="1.0" encoding="UTF-8"?>'
-            +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-            +'    <s:Header>'
-            +'        <a:Action s:mustUnderstand="1">Create</a:Action>'
-            +'        <a:To s:mustUnderstand="1">https://mc4f63jqqhfc51yw6d1h0n1ns1-m.soap.marketingcloudapis.com/Service.asmx</a:To>'
-            +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
-            +'    </s:Header>'
-            +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-            +'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-            +'<Objects xsi:type="DataExtension">'
-            +'<CategoryID>'+req.body.catID+'</CategoryID>'
-            +'<CustomerKey>Org_Setup</CustomerKey>'
-                +'<Name>Org Setup</Name>'
-                +'<IsSendable>true</IsSendable>'
-                +'<SendableDataExtensionField>'
-            +'    <CustomerKey>Hearsay User Reference ID</CustomerKey>'
-            +'    <Name>Hearsay User Reference ID</Name>'
-            +'    <FieldType>Text</FieldType>'
-            +'</SendableDataExtensionField>'
-                +'<SendableSubscriberField>'
-                +'    <Name>Subscriber Key</Name>'
-                +'    <Value></Value>'
-                +'</SendableSubscriberField>'
-            +'<Fields>'
-                +'<Field>'
-            +'<CustomerKey>Hearsay Org ID</CustomerKey>'
-            +'<Name>Hearsay Org ID</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Hearsay User Reference ID</CustomerKey>'
-            +'<Name>Hearsay User Reference ID</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>true</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Customer Unique ID</CustomerKey>'
-            +'<Name>Customer Unique ID</Name>'
-            +'<FieldType>Text</FieldType>'
-            +'<MaxLength>50</MaxLength>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'<Field>'
-            +'<CustomerKey>Created or Modified Date</CustomerKey>'
-            +'<Name>Created or Modified Date</Name>'
-            +'<FieldType>Date</FieldType>'
-                +'<DefaultValue>GetDate()</DefaultValue>'
-            +'<IsRequired>true</IsRequired>'
-            +'<IsPrimaryKey>false</IsPrimaryKey>'
-            +'</Field>'
-                +'</Fields>'
-            +'</Objects>'
-            +'        </CreateRequest>'
-            +'    </s:Body>'
-            +'</s:Envelope>';
-
-            var dataconfg = {
-            method: 'post',
-            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-            headers: { 
-            'Content-Type': 'text/xml'
-            },
-            data : OrgMsg
-            };
-            
-            axios(dataconfg)
-            .then(function (response) {
-                
-                let rawdata = response.data;
-
-                var parser = new xml2js.Parser();
-                parser.parseString(rawdata, function(err,result){
-        
-                    let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
-                    if(resData){
-                        res.status(200).send('Org Setup '+resData[0].StatusMessage);
-                    } else {
-                        res.status(400).send('Org Setup DE some thing went wrong!');
-                    }
-                });
-            })
-            .catch(function (error) {
-                console.log('Org Setup error '+error);
-                res.status(500).send('Something went wrong for creating the Org Setup DE!!!'+error);
-            });
-        } else {
-		    res.status(202).send('Already created Org Setup DE');
-	    }
-    })
-    .catch(function (error) {
-        console.log('Org Setup Extension error '+error);
-        res.status(500).send('Something went wrong for checking Org Setup available or not!!!'+error);
-    });
-};
-
-/*
- * Inserting row into Data Extension Template Handler for / route of Activity (this is executed after Custom Activity saved).
- */
-exports.insertDERow = function (req, res) {
-    	
-	var insData = JSON.stringify([{"keys":req.body.xmlData.keys,"values":req.body.xmlData.values}]);
-	var config = {
-	    method: 'post',
-            url: 'https://'+process.env.mcEndpoint+'.rest.marketingcloudapis.com/hub/v1/dataevents/key:Data_Extension_Template/rowset',
-            headers: { 
-		    'Content-Type': 'application/json',
-		    'Authorization': 'Bearer '+req.body.token
-            },
-            data : insData
-    	};
-	
-	axios(config)
-	.then(function (response) {
-	  	res.status(202).send('Accepted!');
-	})
-	.catch(function (error) {
-        console.log('insert rows error '+error);
-		res.status(500).send('Something went wrong for inserting row into Data Extension Template!!!'+error);
-	});
-};
-
-/*
- * Creating Static Hearsay Integration folder Handler for / route of Activity (this is executed when Custom Activity opening).
- */
-exports.createFolder = function (req, res) {
-    
-    var xml2js = require('xml2js');
-    
-    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
-    +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-    +'    <s:Header>'
-    +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-    +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
-    +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
-    +'    </s:Header>'
-    +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-    +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-    +'            <RetrieveRequest>'
-    +'                <ObjectType>DataFolder</ObjectType>'
-    +'                <Properties>ID</Properties>'
-    +'                <Properties>CustomerKey</Properties>'
-    +'                <Properties>Name</Properties>'
-    +'                <Properties>ParentFolder.ID</Properties>'
-    +'                <Properties>ParentFolder.Name</Properties>'
-    +'                <Filter xsi:type="SimpleFilterPart">'
-    +'                    <Property>Name</Property>'
-    +'                    <SimpleOperator>equals</SimpleOperator>'
-    +'                    <Value>Hearsay Integrations</Value>'
-    +'                </Filter>'
-    +'            </RetrieveRequest>'
-    +'        </RetrieveRequestMsg>'
-    +'    </s:Body>'
-    +'</s:Envelope>';
-    
-    var dataconfig = {
-      method: 'post',
-      url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-      headers: { 
-        'Content-Type': 'text/xml'
-      },
-      data : soapMessage
-    };
-    
-    axios(dataconfig)
-    .then(function (response) {
-        
-        let rawdata = response.data;
-        let resData;     
-        var parser = new xml2js.Parser();
-        parser.parseString(rawdata, function(err,result){
-            resData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
+        $('.slds-select.hearsay').on('change', function(event) {
+            $('.slds-select.hearsay').find('option').show();
+            intializeSelectHearsay(event.target.id);
         });
         
-        if(resData){
-                res.status(200).send(resData[0].ID);
-        } else {
-            
-            let folderData = '<?xml version="1.0" encoding="UTF-8"?>'
-                +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-                +'    <s:Header>'
-                +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-                +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
-                +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
-                +'    </s:Header>'
-                +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-                +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-                +'            <RetrieveRequest>'
-                +'                <ObjectType>DataFolder</ObjectType>'
-                +'                <Properties>ID</Properties>'
-                +'                <Properties>CustomerKey</Properties>'
-                +'                <Properties>Name</Properties>'
-                +'                <Properties>ParentFolder.ID</Properties>'
-                +'                <Properties>ParentFolder.Name</Properties>'
-                +'                <Filter xsi:type="SimpleFilterPart">'
-                +'                    <Property>Name</Property>'
-                +'                    <SimpleOperator>equals</SimpleOperator>'
-                +'                    <Value>Data Extensions</Value>'
-                +'                </Filter>'
-                +'            </RetrieveRequest>'
-                +'        </RetrieveRequestMsg>'
-                +'    </s:Body>'
-                +'</s:Envelope>';
-                
-                var configData = {
-                    method: 'post',
-                    url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-                    headers: { 
-                        'Content-Type': 'text/xml'
-                    },
-                    data : folderData
-                 };
-                
-                axios(configData)
-                .then(function (response) {
-                    
-                    let rawdata1 = response.data;
-                    let parentData;     
-                    var parser = new xml2js.Parser();
-                    parser.parseString(rawdata1, function(err,result){
-                        parentData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-                    });
-                    
-                    if(parentData){
-                        
-                        let createFolderData = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-                                 +'<soapenv:Header>'
-                                 +'<fueloauth>'+req.body.token+'</fueloauth>'
-                                 +'</soapenv:Header>'
-                                 +'<soapenv:Body>'
-                                 +'<CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-                                 +'<Options/>'
-                                 +'<ns1:Objects xmlns:ns1="http://exacttarget.com/wsdl/partnerAPI" xsi:type="ns1:DataFolder">'
-                                 +'<ns1:ModifiedDate xsi:nil="true"/>'
-                                 +'<ns1:ObjectID xsi:nil="true"/>'
-                                 +'<ns1:CustomerKey>Hearsay Integrations</ns1:CustomerKey>'
-                                 +'<ns1:ParentFolder>'
-                                 +'<ns1:ModifiedDate xsi:nil="true"/>'
-                                 +'<ns1:ID>'+parentData[0]['ID']+'</ns1:ID>'
-                                 +'<ns1:ObjectID xsi:nil="true"/>'
-                                 +'</ns1:ParentFolder>'
-                                 +'<ns1:Name>Hearsay Integrations</ns1:Name>'
-                                 +'<ns1:Description>Hearsay Integrations Folder</ns1:Description>'
-                                 +'<ns1:ContentType>dataextension</ns1:ContentType>'
-                                 +'<ns1:IsActive>true</ns1:IsActive>'
-                                 +'<ns1:IsEditable>true</ns1:IsEditable>'
-                                 +'<ns1:AllowChildren>true</ns1:AllowChildren>'
-                                 +'</ns1:Objects>'
-                                 +'</CreateRequest>'
-                                 +'</soapenv:Body>'
-                                 +'</soapenv:Envelope>';
-                        
-                        var folderConfig = {
-                            method: 'post',
-                            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-                            headers: { 
-                                'Content-Type': 'text/xml',
-                                'SOAPAction': 'Create'
-                            },
-                            data : createFolderData
-                        };
-                        
-                        axios(folderConfig)
-                        .then(function (response) {
-                            
-                            let rawdata2 = response.data;
-                            let resultData;     
-                            var parser = new xml2js.Parser();
-                            parser.parseString(rawdata2, function(err,result){
-                                resultData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
-                            });
-                            
-                            if(resultData){
-                                res.status(200).send(resultData[0].NewID);
-                            } else {
-                                res.status(400).send('Some thing went wrong!');
-                            }
-                        })
-                        .catch(function (error) {
-                            console.log('Creating Hearsay Integration error '+error);
-                            res.status(500).send('Something went wrong for creating Hearsay Integration folder!!!'+error);
-                        });                        
-                    }
-                })
-                .catch(function (error) {
-                    console.log('Data Extension parent folder ID error :'+error);
-                    res.status(500).send('Something went wrong for getting Data Extension parent folder ID!!!'+error);
-                });
-        }
-    })
-    .catch(function (error) {
-        console.log('Hearsay Integration retrieve error '+error);
-        res.status(500).send('Something went wrong for getting Hearsay Integration folder ID!!!'+error);
-    });
-    
-};
+        $('.slds-select.journey').on('change', function(event) {
+            $('#error-msg').hide();
+            $('.slds-select.journey').find('option').show();
+            intializeSelectJourney(event.target.id);
+        });
 
-/*
- * Creating Dynamic Data Extension into Hearsay Integration folder Handler for / route of Activity (this is executed once Custom Activity saved).
- */
-exports.createDExtension = function (req, res) {
-    
-    var xml2js = require('xml2js');
-    
-    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
-    +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-    +'    <s:Header>'
-    +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-    +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
-    +'        <fueloauth xmlns="http://exacttarget.com">'+req.body.token+'</fueloauth>'
-    +'    </s:Header>'
-    +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-    +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-    +'            <RetrieveRequest>'
-    +'                <ObjectType>DataFolder</ObjectType>'
-    +'                <Properties>ID</Properties>'
-    +'                <Properties>CustomerKey</Properties>'
-    +'                <Properties>Name</Properties>'
-    +'                <Properties>ParentFolder.ID</Properties>'
-    +'                <Properties>ParentFolder.Name</Properties>'
-    +'                <Filter xsi:type="SimpleFilterPart">'
-    +'                    <Property>Name</Property>'
-    +'                    <SimpleOperator>equals</SimpleOperator>'
-    +'                    <Value>Hearsay Integrations</Value>'
-    +'                </Filter>'
-    +'            </RetrieveRequest>'
-    +'        </RetrieveRequestMsg>'
-    +'    </s:Body>'
-    +'</s:Envelope>';
-    
-    var dataconfig = {
-      method: 'post',
-      url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-      headers: { 
-        'Content-Type': 'text/xml'
-      },
-      data : soapMessage
-    };
-    
-    axios(dataconfig)
-    .then(function (response) {
-        
-        let rawdata = response.data;
-        var data = '';
-        var parser = new xml2js.Parser();
-        
-        if(req.body.xmlData) data = req.body.xmlData.replace('{process.env.mcEndpoint}','https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com');
-        if(req.body.name) data = data.replace('DEKey', req.body.name+'Key').replace('DEName', req.body.name);
-        
-        parser.parseString(rawdata, function(err,result){
-            //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
-            let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-            if(rawData){
-                let categoryID = rawData[0]['ID'];
-                if(categoryID) data = data.replace('cateID',categoryID);
+        $('#select-01').change(function() {
+            var message = getIntegrationName('#select-01');
+            
+            if(message == 'Current Journey'){
+                lastStepEnabled = !lastStepEnabled; // toggle status
+                steps[1].active = true;
+                steps[2].active = true; // toggle active
+                $('#inputField-01').show();
+                connection.trigger('updateSteps', steps);
             } else {
-                data = data.replace('<CategoryID>cateID</CategoryID>','');
-            } 
+                //reviewPageEnabled = false; // toggle status
+                steps[2].active = true;
+                steps[1].active = false; // toggle active
+                $('#inputField-01').hide();
+                connection.trigger('updateSteps', steps);
+            }
+            //$('#message').html(message);
         });
+    }
+
+    function initialize (data) {
+
+        if (data) {
+            payload = data;
+        }
         
-        var config = {
-            method: 'post',
-            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-            headers: { 
-                'Content-Type': 'text/xml'
-            },
-            data : data
-         };
+        var mapfields = {};
+        var hasInArguments = Boolean(
+            payload['arguments'] &&
+            payload['arguments'].execute &&
+            payload['arguments'].execute.inArguments &&
+            payload['arguments'].execute.inArguments.length > 0
+        );
+            
+        var inArguments = hasInArguments ? payload['arguments'].execute.inArguments : {};
 
-         axios(config)
-         .then(function (response) {
+        $.each(inArguments, function(index, inArgument) {
+            $.each(inArgument, function(key, val) {
+                if (key === 'hearsayfields') {
+                    mapfields = payload.metaData.hearsayData ? payload.metaData.hearsayData : {};
+                }
+            });
+        });
+    
+            // If there is no message selected, disable the next button
+        if (Object.keys(mapfields).length === 0 && mapfields.constructor === Object) {
+            showStep(null, 1);
+            connection.trigger('updateButton', { button: 'next', enabled: false });
+                // If there is a intTypeValue, skip to the summary step
+        } else {
+            var div_data = '';
+            for (var key in mapfields) {
+                if (mapfields.hasOwnProperty(key)) {
+                    var val = mapfields[key].split('.').pop().replace('}}','');
+                    div_data += "<li>"+key+' : '+val+"</li>";
+                }
+            }
+            
+            $('#intTypeValues').html(div_data);
+            showStep(null, 3);
+        }
+    }
+    
+    function intializeSelectJourney(targetId) {
+        
+        // this "initializes the boxes"
+        $('.slds-select.journey').each(function(box) {
+            var value = $('.slds-select.journey')[box].value;
+            var thisElement = this.id;
+            if (value) {
+                $('.slds-select.journey').not(this).find('option[value="' + value + '"]').hide();
+            }
+    
+            if ((targetId === thisElement) && value) {
+                const div_data = '<div class="slds-progress-ring slds-progress-ring_complete">' +
+                '<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">' +
+                '<svg viewBox="-1 -1 2 2">' +
+                '<circle class="slds-progress-ring__path" id="slds-progress-ring-path-44" cx="0" cy="0" r="1"></circle>' +
+                '</svg>' +
+                '</div>' +
+                '<div class="slds-progress-ring__content">' +
+                '<span class="slds-icon_container slds-icon-utility-check" title="Complete">' +
+                '<svg class="slds-icon" aria-hidden="true">'+
+                '<use xlink:href="assets/styles/icons/utility-sprite/svg/symbols.svg#check"></use>'+
+                '</svg>'+
+                '<span class="slds-assistive-text">Complete</span>' +
+                '</span>' +
+                '</div>' +
+                '</div>'
+                $('#' + thisElement + '-ring').html(div_data);
+            } else if ((targetId === thisElement) && !value) {
+                const div_data = '<div class="slds-progress-ring slds-progress-ring_expired">'+
+                '<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">'+
+                '<svg viewBox="-1 -1 2 2">'+
+                '<path class="slds-progress-ring__path" id="slds-progress-ring-path-46" d="M 1 0 A 1 1 0 0 1 1.00 0.00 L 0 0"></path>'+
+                '</svg>'+
+                '</div>'+
+                '<div class="slds-progress-ring__content">'+thisElement.charAt(thisElement.length - 1)+'</div>'+
+                '</div>'
+                $('#' + thisElement + '-ring').html(div_data);
+            }
+        });
+    };
 
-                let rawdata = response.data;
+    function intializeSelectHearsay(targetId) {
+        // this "initializes the boxes"
+        $('.slds-select.hearsay').each(function(box) {
+            var value = $('.slds-select.hearsay')[box].value;
+            var thisElement = this.id;
+            if (value) {
+                $('.slds-select.hearsay').not(this).find('option[value="' + value + '"]').hide();
+            }
+    
+            if ((targetId === thisElement) && value) {
+                const div_data = '<div class="slds-progress-ring slds-progress-ring_complete">' +
+                '<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">' +
+                '<svg viewBox="-1 -1 2 2">' +
+                '<circle class="slds-progress-ring__path" id="slds-progress-ring-path-44" cx="0" cy="0" r="1"></circle>' +
+                '</svg>' +
+                '</div>' +
+                '<div class="slds-progress-ring__content">' +
+                '<span class="slds-icon_container slds-icon-utility-check" title="Complete">' +
+                '<svg class="slds-icon" aria-hidden="true">'+
+                '<use xlink:href="assets/styles/icons/utility-sprite/svg/symbols.svg#check"></use>'+
+                '</svg>'+
+                '<span class="slds-assistive-text">Complete</span>' +
+                '</span>' +
+                '</div>' +
+                '</div>'
+                $('#' + thisElement + '-ring').html(div_data);
+            } else if ((targetId === thisElement) && !value) {
+                const div_data = '<div class="slds-progress-ring slds-progress-ring_expired">' +
+                '<div class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
+                '<svg viewBox="-1 -1 2 2">' +
+                '<path class="slds-progress-ring__path" id="slds-progress-ring-path-46" d="M 1 0 A 1 1 0 0 1 1.00 0.00 L 0 0"></path>' +
+                '</svg>' +
+                '</div>' +
+                '<div class="slds-progress-ring__content" style="background: gray"></div>' +
+                '</div>'
+                $('#' + thisElement + '-ring').html(div_data);
+            }
+        });
+    }
 
-                var parser = new xml2js.Parser();
-                parser.parseString(rawdata, function(err,result){
-                    
-                    let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
-                    if(resData){
-                        res.status(200).send(resData[0].StatusMessage);
+    function onGetTokens (tokens) {
+        // Response: tokens = { token: <legacy token>, fuel2token: <fuel api token> }
+	    authToken = tokens.fuel2token;
+
+	    createFolder(authToken);
+
+	    fetch("/retrieve/derows/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: authToken,
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			console.log('Retrieve DE Success:', dataValue);
+			for(var x in JSON.parse(dataValue)){
+			  DERowList.push(JSON.parse(dataValue)[x]['Properties'][0]['Property'][0]['Value']);
+			}
+	
+			DERowList.forEach((option) => {
+				$('#select-01').append($('<option>', {
+					value: option,
+					text: option
+				}));
+			});
+		})
+		.catch((error) => {
+			  console.log('Retrieve DE Error: ', error);
+		});
+    }
+
+    function createFolder(oauthToken){
+
+	    fetch("/create/hearsayfolder/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: oauthToken,
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			console.log('Folder Created Success: ', dataValue);
+			createStaticDE(oauthToken, dataValue.replace('["','').replace('"]','').toString());
+			createStaticOrgDE(oauthToken, dataValue.replace('["','').replace('"]','').toString());
+		})
+		.catch((error) => {
+			  console.log('Folder Error:', error);
+		});
+
+    }
+
+    function createStaticDE(oauthToken, folderID){
+
+	    fetch("/create/staticde/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: oauthToken,
+				catID: folderID
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+		    console.log('Static DE Success: ', dataValue);
+		})
+		.catch((error) => {
+			console.log('Static DE Error:', error);
+		});
+
+	}
+
+	function createStaticOrgDE(oauthToken, folderID){
+
+	    fetch("/create/staticorgde/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: oauthToken,
+				catID: folderID
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+		    console.log('Org DE Success: ', dataValue);
+		})
+		.catch((error) => {
+			console.log('Org DE Error:', error);
+		});
+
+    }
+
+    function onRequestSchema(data){
+        
+        for (var x in data['schema']) {
+            eventDefKey = data['schema'][x].key.substr(0, data['schema'][x].key.lastIndexOf("."));
+            var keyfield = data['schema'][x].key.split('.').pop();
+            if(keyfield != 'endDate'){
+                $('#select-journey1').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey2').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey3').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey4').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey5').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');	
+                $('#select-journey6').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey7').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey8').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey9').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey10').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+                $('#select-journey11').append('<option value="'+keyfield+'">'+keyfield.charAt(0).toUpperCase() + keyfield.slice(1)+'</option>');
+            }
+        }
+    }
+
+    function onGetEndpoints (endpoints) {
+         //console.log(endpoints);
+    }
+
+    function onClickedNext () {
+            var selectOption = getIntegrationType('#select-01');
+            if (currentStep.key === 'step3') {
+                save();
+            } else if(currentStep.key === 'step1' && selectOption == 'CurrentJourney'){
+                var input = $('#text-input-id-1')[0];
+                var validityState_object = input.validity;
+                if (validityState_object.valueMissing){
+                    input.setCustomValidity('Must enter your template name!');
+                    input.reportValidity();
+                    showStep(null, 1);
+                    connection.trigger('ready');
+                } else {
+                    const sameCaseArray = DERowList.map(value => value.toString().toLowerCase());
+                    var inputValue = $('#text-input-id-1').val().toString().toLowerCase();
+                    if(sameCaseArray.includes(inputValue)){
+                        input.setCustomValidity('Template name already exist!');
+                        input.reportValidity();
+                        showStep(null, 1);
+                        connection.trigger('ready');
                     } else {
-                        res.status(400).send('Some thing went wrong!');
+                        connection.trigger('nextStep');	
                     }
-                });
-         })
-         .catch(function (error) {
-             res.status(500).send('Something went wrong for getting Hearsay Integration folder ID!!!'+error);
-             console.log('Dynamic DE while creating '+error);
-         });
-    })
-    .catch(function (error) {
-        res.status(500).send('Something went wrong for getting Hearsay Integration folder ID!!!'+error);
-        console.log('Dynamic DE while creating '+error);
-    });
-  
-};
+                }
+                
+            } else if(currentStep.key === 'step2'){
+                
+                hearsayfields = {};
+                var keyData = {};
+                keyData ['Template Name'] = $('#text-input-id-1').val().toString();
+                dynTemplate ['keys'] = keyData;
+                var valData = {};
+                if(getIntegrationName('#select-journey1') == '--Select--' || getIntegrationName('#select-journey2') == '--Select--' || getIntegrationName('#select-journey3') == '--Select--' || getIntegrationName('#select-journey4') == '--Select--' || getIntegrationName('#select-journey5') == '--Select--'){
+                    $('#error-msg').show();
+                    showStep(null, 2);
+                    connection.trigger('ready');	 	 
+                } else {
+                    $('#error-msg').hide();
 
-/*
- * Retrieve specific from static Data Extension Template Handler for / route of Activity (this is executed when the user has selected the existing template then click next).
- */
-exports.DERow = function (req, res) {
-   
-    var templateName = req.body.DEName;
-    var authToken = req.body.token;
-    var xml2js = require('xml2js');
+                    if(getIntegrationName('#select-journey1') != '--Select--') {
+                        hearsayfields [getInputValue('#hearsay-input-id-1','')] = getIntegrationType('#select-journey1');
+                        inArgumentList [getInputValue('#hearsay-input-id-1','dataset')] = getIntegrationType('#select-journey1');
+                        valData ['Hearsay Org ID'] = getIntegrationType('#select-journey1');
+                    }
+                    if(getIntegrationName('#select-journey2') != '--Select--') {
+                        hearsayfields [getInputValue('#hearsay-input-id-2','')] = getIntegrationType('#select-journey2');
+                        inArgumentList [getInputValue('#hearsay-input-id-2','dataset')] = getIntegrationType('#select-journey2');
+                        valData ['Hearsay User Reference ID'] = getIntegrationType('#select-journey2');
+                    }
+                    if(getIntegrationName('#select-journey3') != '--Select--') {
+                        hearsayfields [getInputValue('#hearsay-input-id-3','')] = getIntegrationType('#select-journey3');
+                        inArgumentList [getInputValue('#hearsay-input-id-3','dataset')] = getIntegrationType('#select-journey3');
+                        valData ['Customer Unique ID'] = getIntegrationType('#select-journey3');
+                    }
+                    if(getIntegrationName('#select-journey4') != '--Select--') {
+                        hearsayfields [getInputValue('#hearsay-input-id-4','')] = getIntegrationType('#select-journey4');
+                        inArgumentList [getInputValue('#hearsay-input-id-4','dataset')] = getIntegrationType('#select-journey4');
+                        valData ['Name'] = getIntegrationType('#select-journey4');
+                    }
+                    if(getIntegrationName('#select-journey5') != '--Select--') {
+                        hearsayfields [getInputValue('#hearsay-input-id-5','')] = getIntegrationType('#select-journey5');
+                        inArgumentList [getInputValue('#hearsay-input-id-5','dataset')] = getIntegrationType('#select-journey5');
+                        valData ['Phone'] = getIntegrationType('#select-journey5');
+                    }
+                    if(getIntegrationName('#select-journey6') != '--Select--' && getIntegrationName('#select-hearsay6') != '--Select--') {
+                        hearsayfields [getIntegrationName('#select-hearsay6')] = getIntegrationType('#select-journey6');
+                        inArgumentList [getIntegrationType('#select-hearsay6')] = getIntegrationType('#select-journey6');
+                        valData ['Option 1'] = getIntegrationType('#select-hearsay6');
+                    }
+                    if(getIntegrationName('#select-journey7') != '--Select--' && getIntegrationName('#select-hearsay7') != '--Select--') {
+                        hearsayfields [getIntegrationName('#select-hearsay7')] = getIntegrationType('#select-journey7');
+                        inArgumentList [getIntegrationType('#select-hearsay7')] = getIntegrationType('#select-journey7');
+                        valData ['Option 2'] = getIntegrationType('#select-hearsay7');
+                    }
+                    if(getIntegrationName('#select-journey8') != '--Select--' && getIntegrationName('#select-hearsay8') != '--Select--') {
+                        hearsayfields [getIntegrationName('#select-hearsay8')] = getIntegrationType('#select-journey8');
+                        inArgumentList [getIntegrationType('#select-hearsay8')] = getIntegrationType('#select-journey8');
+                        valData ['Option 3'] = getIntegrationType('#select-hearsay8');
+                    }
+                    if(getIntegrationName('#select-journey9') != '--Select--' && getIntegrationName('#select-hearsay9') != '--Select--') {
+                        hearsayfields [getIntegrationName('#select-hearsay9')] = getIntegrationType('#select-journey9');
+                        inArgumentList [getIntegrationType('#select-hearsay9')] = getIntegrationType('#select-journey9');
+                        valData ['Option 4'] = getIntegrationType('#select-hearsay9');
+                    }
+                    if(getIntegrationName('#select-journey10') != '--Select--' && getIntegrationName('#select-hearsay10') != '--Select--') {
+                        hearsayfields [getIntegrationName('#select-hearsay10')] = getIntegrationType('#select-journey10');
+                        inArgumentList [getIntegrationType('#select-hearsay10')] = getIntegrationType('#select-journey10');
+                        valData ['Option 5'] = getIntegrationType('#select-hearsay10');
+                    }
+                    if(getIntegrationName('#select-journey11') != '--Select--' && getIntegrationName('#select-hearsay11') != '--Select--') {
+                        hearsayfields [getIntegrationName('#select-hearsay11')] = getIntegrationType('#select-journey11');
+                        inArgumentList [getIntegrationType('#select-hearsay11')] = getIntegrationType('#select-journey11');
+                        valData ['Option 6'] = getIntegrationType('#select-hearsay11');
+                    }
+                    
+                    dynTemplate ['values'] = valData;
+                    
+                    var div_data = '';
+                    for (var key in hearsayfields) {
+                        if (hearsayfields.hasOwnProperty(key)) {
+                            var val = hearsayfields[key];
+                            div_data += "<li>"+key+' : '+val+"</li>";
+                        }
+                    }
+                    $('#intTypeValues').html(div_data);
+                    connection.trigger('nextStep');
+                }
+
+            } else if(currentStep.key === 'step1' && selectOption != 'CurrentJourney'){
+                var div_data = '';
+                inArgumentList = {};
+                const templateName = { DEName: selectOption }
+                
+                fetch("/dataextension/row/", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        DEName: selectOption,
+                        token: authToken
+                    }),
+                })
+                .then(response => response.text())
+                .then(dataValue => {
+                    
+                    for(var x in JSON.parse(dataValue)){
+                        for(var y in JSON.parse(dataValue)[x]['Properties'][0]['Property']){
+                            var NameValue = JSON.parse(dataValue)[x]['Properties'][0]['Property'][y]['Name'].toString();
+                            var DataValue = JSON.parse(dataValue)[x]['Properties'][0]['Property'][y]['Value'].toString();
+                            if(DataValue){
+                                inArgumentList [NameValue] = DataValue;
+                            }
+                        }
+                    }
+
+                    for (var key in inArgumentList) {
+                        if (inArgumentList.hasOwnProperty(key)) {
+                            var val = inArgumentList[key];
+                            div_data += "<li>"+key+' : '+val+"</li>";
+                        }
+                    }
+                    $('#DELabel').html('<b>TEMPLATE SELECTED : '+selectOption+'</b>');
+                    $('#intTypeValues').html(div_data);
+                    connection.trigger('nextStep');
+
+                })
+                .catch((error) => {
+                    console.log('Templated Selected DE error:', error);
+                    showStep(null, 1);
+                });
+            }
+    }
+
+    function onClickedBack () {
+	    $('#error-msg').hide();
+	    if(payload){
+            var intTypeValue = payload.metaData.selectedOption;
+            if (intTypeValue) {
+                    $("#select-01 option").filter(function() {
+                    return this.text == intTypeValue; 
+                    }).attr('selected', true);
+            }  
+        }
+        connection.trigger('prevStep');
+    }
+
+    function onGotoStep (step) {
+        showStep(step);
+        connection.trigger('ready');
+    }
+
+    function showStep(step, stepIndex) {
+        if (stepIndex && !step) {
+            step = steps[stepIndex-1];
+            currentStep = step;
+        }
+
+        $('.step').hide();
+
+        switch(currentStep.key) {
+            case 'step1':
+            $('#step1').show();
+            connection.trigger('updateButton', {
+                button: 'next',
+                enabled: Boolean(getIntegrationType('#select-01'))
+            });
+            connection.trigger('updateButton', {
+                button: 'back',
+                visible: false
+            });
+            break;
+            case 'step2':
+            $('#step2').show();
+            connection.trigger('updateButton', {
+                button: 'back',
+                visible: true
+            });
+            if (lastStepEnabled) {
+                connection.trigger('updateButton', {
+                    button: 'next',
+                    text: 'next',
+                    visible: true
+                });
+            } else {
+                connection.trigger('updateButton', {
+                    button: 'next',
+                    text: 'done',
+                    visible: true
+                });
+            }
+            break;
+            case 'step3':
+            $('#step3').show();
+            connection.trigger('updateButton', {
+                button: 'back',
+                visible: true
+            });
+            connection.trigger('updateButton', {
+                button: 'next',
+                text: 'done',
+                visible: true
+            });
+            break;
+        }
+    }
+
+    function save() {
+        var name = getIntegrationName('#select-01');
+        var inputValue;
+        var fieldListString = '';
+
+        if(name == 'Current Journey'){
+            inputValue = $('#text-input-id-1').val().toString();
+            let fieldName = '';
+            let subfieldName = '';
+            for(var fieldKey in inArgumentList){
+                fieldName =  inArgumentList[fieldKey].toString();
+                if(fieldKey.toLowerCase().includes("name") || fieldKey.toLowerCase().includes("sourceorganizationid") || fieldKey.toLowerCase().includes("subownerid") || fieldKey.toLowerCase().includes("phone")){
+                    fieldListString += '<Field>'
+                    +'<CustomerKey>'+fieldName+'</CustomerKey>'
+                    +'<Name>'+fieldName+'</Name>'
+                    +'<FieldType>Text</FieldType>'
+                    +'<MaxLength>50</MaxLength>'
+                    +'<IsRequired>true</IsRequired>'
+                    +'<IsPrimaryKey>false</IsPrimaryKey>'
+                    +'</Field>';
+                } else if (fieldKey.toLowerCase().includes("email") && fieldName.toLowerCase().includes("option")){
+
+                    fieldListString += '<Field>'
+                    +'<CustomerKey>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</CustomerKey>'
+                    +'<Name>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</Name>'
+                    +'<FieldType>EmailAddress</FieldType>'
+                    +'<MaxLength>250</MaxLength>'
+                    +'<IsRequired>false</IsRequired>'
+                    +'<IsPrimaryKey>false</IsPrimaryKey>'
+                    +'</Field>';
+                } else if(fieldKey.toLowerCase().includes("sourceid")) {
+                    subfieldName += '<SendableDataExtensionField>'
+                    +'    <CustomerKey>'+fieldName+'</CustomerKey>'
+                    +'    <Name>'+fieldName+'</Name>'
+                    +'    <FieldType>Text</FieldType>'
+                    +'</SendableDataExtensionField>';
+
+                    fieldListString += '<Field>'
+                    +'<CustomerKey>'+fieldName+'</CustomerKey>'
+                    +'<Name>'+fieldName+'</Name>'
+                    +'<FieldType>Text</FieldType>'
+                    +'<MaxLength>50</MaxLength>'
+                    +'<IsRequired>true</IsRequired>'
+                    +'<IsPrimaryKey>true</IsPrimaryKey>'
+                    +'</Field>';
+
+                } else if (fieldName.toLowerCase().includes("option")){
+                    fieldListString += '<Field>'
+                    +'<CustomerKey>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</CustomerKey>'
+                    +'<Name>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</Name>'
+                    +'<FieldType>Text</FieldType>'
+                    +'<MaxLength>50</MaxLength>'
+                    +'<IsRequired>false</IsRequired>'
+                    +'<IsPrimaryKey>false</IsPrimaryKey>'
+                    +'</Field>';
+                }
+                inArgumentList[fieldKey] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
+            }
+            
+            insertDERecord(dynTemplate);
+            
+            createDataExtension(subfieldName, fieldListString, inputValue);
+
+        } else {
+            inputValue = name;
+        }
+
+        payload.name = inputValue;
+        payload['arguments'].execute.inArguments = [{ "hearsayfields": inArgumentList }];
+        payload['metaData'].isConfigured = true;
+        payload.metaData['selectedOption'] = name;
+        payload.metaData['hearsayData'] = hearsayfields;    
+
+        connection.trigger('updateActivity', payload);
+    }
+
+    function createDataExtension(subFieldData, fieldListData, deName){
         
         let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
         +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
         +'    <s:Header>'
-        +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-        +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
+        +'        <a:Action s:mustUnderstand="1">Create</a:Action>'
+        +'        <a:To s:mustUnderstand="1">{process.env.mcEndpoint}/Service.asmx</a:To>'
         +'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
         +'    </s:Header>'
         +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-        +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-        +'            <RetrieveRequest>'
-        +'                <ObjectType>DataExtensionObject[Data Extension Template]</ObjectType>'
-        +'                  <Properties>Hearsay Org ID</Properties>'
-        +'                  <Properties>Hearsay User Reference ID</Properties>'
-        +'                  <Properties>Customer Unique ID</Properties>'
-        +'                  <Properties>Hearsay User Reference ID</Properties>'
-        +'                  <Properties>Name</Properties>'
-	    +'                  <Properties>Phone</Properties>'
-        +'                  <Properties>Option 1</Properties>'
-        +'                  <Properties>Option 2</Properties>'
-        +'                  <Properties>Option 3</Properties>'
-        +'                  <Properties>Option 4</Properties>'
-	    +'                  <Properties>Option 5</Properties>'
-	    +'                  <Properties>Option 6</Properties>'
-	    +'                  <Properties>Option 7</Properties>'
-	    +'                  <Properties>Option 8</Properties>'
-	    +'                  <Properties>Option 9</Properties>'
-        +'                <Filter xsi:type="SimpleFilterPart">'
-        +'                  <Property>Template Name</Property>'
-        +'                  <SimpleOperator>equals</SimpleOperator>'
-        +'                  <Value>'+templateName+'</Value>'
-        +'                </Filter>'
-        +'            </RetrieveRequest>'
-        +'        </RetrieveRequestMsg>'
+        +'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+        +'<Objects xsi:type="DataExtension">'
+        +'<CategoryID>cateID</CategoryID>'
+        +'<CustomerKey>'+deName+'</CustomerKey>'
+        +'<Name>'+deName+'</Name>'
+        +'<IsSendable>true</IsSendable>'
+        +subFieldData
+        +'<SendableSubscriberField>'
+        +'    <Name>Subscriber Key</Name>'
+        +'    <Value></Value>'
+        +'</SendableSubscriberField>'
+        +'<Fields>'
+        +fieldListData
+        +'</Fields>'
+        +'</Objects>'
+        +'        </CreateRequest>'
         +'    </s:Body>'
         +'</s:Envelope>';
 
-        var configs = {
-            method: 'post',
-            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-                headers: { 
-                'Content-Type': 'text/xml'
-             },
-             data : soapMessage
-         };
+        fetch("/create/dextension/", {
+            method: "POST",
+            body: JSON.stringify({
+                name: deName,
+                token: authToken,
+                xmlData: soapMessage
+            }),
+        })
+        .then(response => response.text())
+        .then(dataValue => {
+            console.log('Create DE Success:', dataValue);
+        })
+        .catch((error) => {
+            console.log('Create DE error:', error);
+        });
+    }
 
-         axios(configs)
-            .then(function (response) {
-                               
-                var parser = new xml2js.Parser();
-                parser.parseString(response.data, function(err,result){
-                  let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-                  if(rawData){
-                      res.status(200).send(rawData);
-                  } else {
-                      let arrList = [];
-                      res.status(301).send(arrList);
-                  } 
-                });
-            })
-            .catch(function (error) {
-                res.status(500).send('Something went wrong for retrieving Data Extension Template rows!!!'+error);
-                console.log('Retrieving DE Template rows error '+error);
-            });
- 
-};
+    function getInputValue(elementID, valueType){
+        return valueType == 'dataset' ? $(elementID)[0].dataset.id.trim() : $(elementID).val().trim();
+    }
 
-/*
- * Retrieve all rows from Data Extension Template Handler for / route of Activity (this is executed when Custom Activity opening).
- */
-exports.retrieveDERows =  function (req, res) {
-    
-    var xml2js = require('xml2js');
-    var authToken = req.body.token;
-   
-    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
-    +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-    +'    <s:Header>'
-    +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-    +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
-    +'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
-    +'    </s:Header>'
-    +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-    +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-    +'            <RetrieveRequest>'
-    +'                <ObjectType>DataExtensionObject[Data Extension Template]</ObjectType>'
-    +'      <Properties>Template Name</Properties>'
-    +'        <Properties>Hearsay Org ID</Properties>'
-    +'        <Properties>Hearsay User Reference ID</Properties>'
-    +'            </RetrieveRequest>'
-    +'        </RetrieveRequestMsg>'
-    +'    </s:Body>'
-    +'</s:Envelope>';
+    function getIntegrationType(elementID) {
+        return $(elementID).find('option:selected').attr('value').trim();
+    }
 
-     var configs = {
-         method: 'post',
-         url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-         headers: {
-             'Content-Type': 'text/xml'
-            },
-            data : soapMessage
-        };
-
-         axios(configs)
-            .then(function (response) {
-                
-                let rawdata = response.data;
-             
-                var parser = new xml2js.Parser();
-                parser.parseString(rawdata, function(err,result){
-                  
-                  let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-                  if(rawData){
-                     res.status(200).send(rawData);
-                  } else {
-                      let empList = [];
-                      res.status(301).send(empList);
-                  }
-                });
-            })
-            .catch(function (error) {
-                res.status(500).send('Something went wrong for retrieving rows from Data Extension Template!!!'+error);
-                console.log('Retrieving all rows error '+error);
-            });
-        
-};
-
-/*
- * POST Handler for /validate/ route of Activity.
- */
-exports.validate = function (req, res) {
-    // Data from the req and put it in an array accessible to the main app.
-    //console.log( req.body );
-    logData(req);
-    res.send(200, 'Validate');
-};
+    function getIntegrationName(elementID) {
+        return $(elementID).find('option:selected').html();
+    }
+});
