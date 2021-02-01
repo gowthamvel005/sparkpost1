@@ -472,7 +472,7 @@ exports.staticOrgDataExtension = function (req, res) {
             headers: { 
             'Content-Type': 'text/xml'
             },
-            data : soapMsg
+            data : OrgMsg
             };
             
             axios(dataconfg)
