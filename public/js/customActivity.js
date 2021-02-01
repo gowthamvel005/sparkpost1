@@ -26,6 +26,9 @@ define([
     connection.on('requestedEndpoints', onGetEndpoints);
     connection.on('initActivity', initialize);
     connection.on('requestedSchema', onRequestSchema);
+    connection.on('clickedNext', onClickedNext);
+    connection.on('clickedBack', onClickedBack);
+    connection.on('gotoStep', onGotoStep);
 
     function onRender() {
         $('#inputField-01').hide();
