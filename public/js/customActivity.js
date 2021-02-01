@@ -242,7 +242,7 @@ define([
 		.then(response => response.text())
 		.then(dataValue => {
 			console.log('Folder Created Success: ', dataValue);
-			createStaticDE(oauthToken, dataValue.replace('["').replace('"]').toString());
+			createStaticDE(oauthToken, dataValue.replace('["','').replace('"]','').toString());
 			createStaticOrgDE(oauthToken, dataValue.replace('["').replace('"]').toString());
 		})
 		.catch((error) => {
