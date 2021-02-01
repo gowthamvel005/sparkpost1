@@ -98,7 +98,7 @@ exports.execute = function (req, res) {
 };
 
 
-/*/data/v1/async/dataextensions/key:'+TargetObject+'/rows
+/*
  * POST Handler for /publish/ route of Activity.
  */
 exports.publish = function (req, res) {
@@ -108,9 +108,12 @@ exports.publish = function (req, res) {
     res.send(200, 'Publish');
 };
 
+/*
+ * Creating Static Data Extension Template Handler for / route of Activity (this is executed when Custom Activity opening).
+ */
 exports.staticDataExtension = function (req, res) {
     
-    console.log('request DEName is '+JSON.stringify(req.body));
+    //console.log('request DEName is '+JSON.stringify(req.body));
     var xml2js = require('xml2js');
     
     let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -150,15 +153,14 @@ exports.staticDataExtension = function (req, res) {
     
     axios(dataconfig)
     .then(function (response) {
-        console.log('286 log data '+response.data);
+        
         let rawdata = response.data;
         var soapMsg = '';
         var parser = new xml2js.Parser();
         let resultData;
         parser.parseString(rawdata, function(err,result){
-            console.log('result static body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+            //console.log('result static body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
             resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-            console.log('resultData '+resultData);
         });
 
         if(!resultData){
@@ -324,15 +326,15 @@ exports.staticDataExtension = function (req, res) {
             
             axios(dataconfg)
             .then(function (response) {
-                console.log(JSON.stringify(response.data));
-                    let rawdata = response.data;
+                
+                let rawdata = response.data;
 
                 var parser = new xml2js.Parser();
                 parser.parseString(rawdata, function(err,result){
-                    console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
+                    //console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
                     let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
                     if(resData){
-                        console.log('StatusCode '+resData[0].StatusCode+'StatusMessage '+resData[0].StatusMessage);
+                        //console.log('StatusCode '+resData[0].StatusCode+'StatusMessage '+resData[0].StatusMessage);
                         res.status(200).send('Data Extension Template '+resData[0].StatusMessage);
                     } else {
                         res.status(400).send('Data Extension Template Some thing went wrong!');
@@ -340,20 +342,24 @@ exports.staticDataExtension = function (req, res) {
                 });
             })
             .catch(function (error) {
-            console.log(error);
+                console.log('Creating Data Extension Template error '+error);
+                res.status(500).send('Something went wrong for creating Data Extension Template!!!'+error);
             });
         } else {
-		res.status(202).send('Already created Data Extension Template');
-	}
+		    res.status(202).send('Already created Data Extension Template');
+	    }
     })
     .catch(function (error) {
-      console.log(error);
+        res.status(500).send('Something went wrong for checking Data Extension Template available or not!!!'+error);
+        console.log('Exist Data Extension Template error '+error);
     });
 };
 
+/*
+ * Creating Static Org Setup DE Handler for / route of Activity (this is executed when Custom Activity opening).
+ */
 exports.staticOrgDataExtension = function (req, res) {
     
-    console.log('request DEName is '+JSON.stringify(req.body));
     var xml2js = require('xml2js');
     
     let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -393,15 +399,13 @@ exports.staticOrgDataExtension = function (req, res) {
     
     axios(dataconfig)
     .then(function (response) {
-        console.log('286 log data '+response.data);
+        
         let rawdata = response.data;
         var soapMsg = '';
         var parser = new xml2js.Parser();
         let resultData;
         parser.parseString(rawdata, function(err,result){
-            console.log('result static body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
             resultData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
-            console.log('resultData '+resultData);
         });
 
         if(!resultData){
@@ -479,15 +483,14 @@ exports.staticOrgDataExtension = function (req, res) {
             
             axios(dataconfg)
             .then(function (response) {
-                console.log(JSON.stringify(response.data));
-                    let rawdata = response.data;
+                
+                let rawdata = response.data;
 
                 var parser = new xml2js.Parser();
                 parser.parseString(rawdata, function(err,result){
-                    console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
+        
                     let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
                     if(resData){
-                        console.log('StatusCode '+resData[0].StatusCode+'StatusMessage '+resData[0].StatusMessage);
                         res.status(200).send('Org Setup '+resData[0].StatusMessage);
                     } else {
                         res.status(400).send('Org Setup DE some thing went wrong!');
@@ -495,23 +498,25 @@ exports.staticOrgDataExtension = function (req, res) {
                 });
             })
             .catch(function (error) {
-            console.log(error);
+                console.log('Org Setup error '+error);
+                res.status(500).send('Something went wrong for creating the Org Setup DE!!!'+error);
             });
         } else {
-		res.status(202).send('Already created Org Setup DE');
-	}
+		    res.status(202).send('Already created Org Setup DE');
+	    }
     })
     .catch(function (error) {
-      console.log(error);
+        console.log('Org Setup Extension error '+error);
+        res.status(500).send('Something went wrong for checking Org Setup available or not!!!'+error);
     });
 };
 
+/*
+ * Inserting row into Data Extension Template Handler for / route of Activity (this is executed after Custom Activity saved).
+ */
 exports.insertDERow = function (req, res) {
-    // Data from the req and put it in an array accessible to the main app.
     	
-	console.log( 'insert data '+JSON.stringify(req.body));
 	var insData = JSON.stringify([{"keys":req.body.xmlData.keys,"values":req.body.xmlData.values}]);
-	console.log( 'insert body insData '+ insData);
 	var config = {
 	    method: 'post',
             url: 'https://'+process.env.mcEndpoint+'.rest.marketingcloudapis.com/hub/v1/dataevents/key:Data_Extension_Template/rowset',
@@ -524,18 +529,19 @@ exports.insertDERow = function (req, res) {
 	
 	axios(config)
 	.then(function (response) {
-	  	console.log('Insert data '+JSON.stringify(response.data));
-		res.status(202).send('Accepted!');
+	  	res.status(202).send('Accepted!');
 	})
 	.catch(function (error) {
-		console.log('Insert data error '+JSON.stringify(error));
-		res.status(500).send('Something went wrong!!!');
+        console.log('insert rows error '+error);
+		res.status(500).send('Something went wrong for inserting row into Data Extension Template!!!'+error);
 	});
 };
 
+/*
+ * Creating Static Hearsay Integration folder Handler for / route of Activity (this is executed when Custom Activity opening).
+ */
 exports.createFolder = function (req, res) {
     
-    console.log('request DEName is '+JSON.stringify(req.body));
     var xml2js = require('xml2js');
     
     let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -575,17 +581,15 @@ exports.createFolder = function (req, res) {
     
     axios(dataconfig)
     .then(function (response) {
-        console.log(JSON.stringify(response.data));
+        
         let rawdata = response.data;
         let resData;     
         var parser = new xml2js.Parser();
         parser.parseString(rawdata, function(err,result){
-            console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
             resData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
         });
         
         if(resData){
-                console.log('Already have folder');
                 res.status(200).send(resData[0].ID);
         } else {
             
@@ -623,20 +627,19 @@ exports.createFolder = function (req, res) {
                     },
                     data : folderData
                  };
-                console.log('folder Data '+folderData);
+                
                 axios(configData)
                 .then(function (response) {
-                    console.log(JSON.stringify(response.data));
+                    
                     let rawdata1 = response.data;
                     let parentData;     
                     var parser = new xml2js.Parser();
                     parser.parseString(rawdata1, function(err,result){
-                        console.log('result rawdata1 body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
                         parentData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
                     });
                     
                     if(parentData){
-                        console.log('parent ID '+parentData[0]['ID']);
+                        
                         let createFolderData = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
                                  +'<soapenv:Header>'
                                  +'<fueloauth>'+req.body.token+'</fueloauth>'
@@ -673,45 +676,47 @@ exports.createFolder = function (req, res) {
                             },
                             data : createFolderData
                         };
-                        console.log('create folder Data '+createFolderData);
+                        
                         axios(folderConfig)
                         .then(function (response) {
-                            console.log('rawdata2 response '+JSON.stringify(response.data));
+                            
                             let rawdata2 = response.data;
                             let resultData;     
                             var parser = new xml2js.Parser();
                             parser.parseString(rawdata2, function(err,result){
-                                console.log('result rawdata2 body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
                                 resultData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
                             });
                             
                             if(resultData){
-                                console.log('Folder creation success '+resultData[0].StatusMessage);
                                 res.status(200).send(resultData[0].NewID);
                             } else {
-                                console.log('Folder creation Some thing went wrong!');
                                 res.status(400).send('Some thing went wrong!');
                             }
                         })
                         .catch(function (error) {
-                          console.log(error);
+                            console.log('Creating Hearsay Integration error '+error);
+                            res.status(500).send('Something went wrong for creating Hearsay Integration folder!!!'+error);
                         });                        
                     }
                 })
                 .catch(function (error) {
-                  console.log(error);
+                    console.log('Data Extension parent folder ID error :'+error);
+                    res.status(500).send('Something went wrong for getting Data Extension parent folder ID!!!'+error);
                 });
         }
     })
     .catch(function (error) {
-      console.log(error);
+        console.log('Hearsay Integration retrieve error '+error);
+        res.status(500).send('Something went wrong for getting Hearsay Integration folder ID!!!'+error);
     });
     
 };
 
+/*
+ * Creating Dynamic Data Extension into Hearsay Integration folder Handler for / route of Activity (this is executed once Custom Activity saved).
+ */
 exports.createDExtension = function (req, res) {
     
-    console.log('request DEName is '+JSON.stringify(req.body));
     var xml2js = require('xml2js');
     
     let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -751,7 +756,7 @@ exports.createDExtension = function (req, res) {
     
     axios(dataconfig)
     .then(function (response) {
-        console.log(JSON.stringify(response.data));
+        
         let rawdata = response.data;
         var data = '';
         var parser = new xml2js.Parser();
@@ -770,8 +775,6 @@ exports.createDExtension = function (req, res) {
             } 
         });
         
-        console.log('data is '+data);
-        
         var config = {
             method: 'post',
             url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
@@ -783,12 +786,12 @@ exports.createDExtension = function (req, res) {
 
          axios(config)
          .then(function (response) {
-                console.log(JSON.stringify(response.data));
+
                 let rawdata = response.data;
 
                 var parser = new xml2js.Parser();
                 parser.parseString(rawdata, function(err,result){
-                    console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results']));
+                    
                     let resData = result['soap:Envelope']['soap:Body'][0]['CreateResponse'][0]['Results'];
                     if(resData){
                         res.status(200).send(resData[0].StatusMessage);
@@ -798,19 +801,22 @@ exports.createDExtension = function (req, res) {
                 });
          })
          .catch(function (error) {
-             res.status(400).send(error);
-             console.log(error);
+             res.status(500).send('Something went wrong for getting Hearsay Integration folder ID!!!'+error);
+             console.log('Dynamic DE while creating '+error);
          });
     })
     .catch(function (error) {
-      console.log(error);
+        res.status(500).send('Something went wrong for getting Hearsay Integration folder ID!!!'+error);
+        console.log('Dynamic DE while creating '+error);
     });
   
 };
 
+/*
+ * Retrieve specific from static Data Extension Template Handler for / route of Activity (this is executed when the user has selected the existing template then click next).
+ */
 exports.DERow = function (req, res) {
    
-    console.log('request DEName is '+JSON.stringify(req.body));
     var templateName = req.body.DEName;
     var authToken = req.body.token;
     var xml2js = require('xml2js');
@@ -831,16 +837,16 @@ exports.DERow = function (req, res) {
         +'                  <Properties>Customer Unique ID</Properties>'
         +'                  <Properties>Hearsay User Reference ID</Properties>'
         +'                  <Properties>Name</Properties>'
-	+'                  <Properties>Phone</Properties>'
+	    +'                  <Properties>Phone</Properties>'
         +'                  <Properties>Option 1</Properties>'
         +'                  <Properties>Option 2</Properties>'
         +'                  <Properties>Option 3</Properties>'
         +'                  <Properties>Option 4</Properties>'
-	+'                  <Properties>Option 5</Properties>'
-	+'                  <Properties>Option 6</Properties>'
-	+'                  <Properties>Option 7</Properties>'
-	+'                  <Properties>Option 8</Properties>'
-	+'                  <Properties>Option 9</Properties>'
+	    +'                  <Properties>Option 5</Properties>'
+	    +'                  <Properties>Option 6</Properties>'
+	    +'                  <Properties>Option 7</Properties>'
+	    +'                  <Properties>Option 8</Properties>'
+	    +'                  <Properties>Option 9</Properties>'
         +'                <Filter xsi:type="SimpleFilterPart">'
         +'                  <Property>Template Name</Property>'
         +'                  <SimpleOperator>equals</SimpleOperator>'
@@ -862,11 +868,9 @@ exports.DERow = function (req, res) {
 
          axios(configs)
             .then(function (response) {
-                console.log(JSON.stringify(response.data));
-               
+                               
                 var parser = new xml2js.Parser();
                 parser.parseString(response.data, function(err,result){
-                  console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
                   let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
                   if(rawData){
                       res.status(200).send(rawData);
@@ -877,54 +881,56 @@ exports.DERow = function (req, res) {
                 });
             })
             .catch(function (error) {
-                console.log(error);
-                res.status(500).send(error);
+                res.status(500).send('Something went wrong for retrieving Data Extension Template rows!!!'+error);
+                console.log('Retrieving DE Template rows error '+error);
             });
  
 };
 
+/*
+ * Retrieve all rows from Data Extension Template Handler for / route of Activity (this is executed when Custom Activity opening).
+ */
 exports.retrieveDERows =  function (req, res) {
-    console.log('request DEName is '+JSON.stringify(req.body));
+    
     var xml2js = require('xml2js');
     var authToken = req.body.token;
-    console.log('variable value '+process.env.mcEndpoint);
    
-        let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
-        +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
-        +'    <s:Header>'
-        +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
-        +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
-        +'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
-        +'    </s:Header>'
-        +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
-        +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
-        +'            <RetrieveRequest>'
-        +'                <ObjectType>DataExtensionObject[Data Extension Template]</ObjectType>'
-        +'      <Properties>Template Name</Properties>'
-        +'        <Properties>Hearsay Org ID</Properties>'
-        +'        <Properties>Hearsay User Reference ID</Properties>'
-        +'            </RetrieveRequest>'
-        +'        </RetrieveRequestMsg>'
-        +'    </s:Body>'
-        +'</s:Envelope>';
+    let soapMessage = '<?xml version="1.0" encoding="UTF-8"?>'
+    +'<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">'
+    +'    <s:Header>'
+    +'        <a:Action s:mustUnderstand="1">Retrieve</a:Action>'
+    +'        <a:To s:mustUnderstand="1">https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx</a:To>'
+    +'        <fueloauth xmlns="http://exacttarget.com">'+authToken+'</fueloauth>'
+    +'    </s:Header>'
+    +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+    +'        <RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">'
+    +'            <RetrieveRequest>'
+    +'                <ObjectType>DataExtensionObject[Data Extension Template]</ObjectType>'
+    +'      <Properties>Template Name</Properties>'
+    +'        <Properties>Hearsay Org ID</Properties>'
+    +'        <Properties>Hearsay User Reference ID</Properties>'
+    +'            </RetrieveRequest>'
+    +'        </RetrieveRequestMsg>'
+    +'    </s:Body>'
+    +'</s:Envelope>';
 
-        var configs = {
-            method: 'post',
-            url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
-                headers: { 
-                'Content-Type': 'text/xml'
-             },
-             data : soapMessage
-         };
+     var configs = {
+         method: 'post',
+         url: 'https://'+process.env.mcEndpoint+'.soap.marketingcloudapis.com/Service.asmx',
+         headers: {
+             'Content-Type': 'text/xml'
+            },
+            data : soapMessage
+        };
 
          axios(configs)
             .then(function (response) {
-                console.log(JSON.stringify(response.data));
+                
                 let rawdata = response.data;
              
                 var parser = new xml2js.Parser();
                 parser.parseString(rawdata, function(err,result){
-                  console.log('result res body'+JSON.stringify(result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results']));
+                  
                   let rawData = result['soap:Envelope']['soap:Body'][0]['RetrieveResponseMsg'][0]['Results'];
                   if(rawData){
                      res.status(200).send(rawData);
@@ -935,8 +941,8 @@ exports.retrieveDERows =  function (req, res) {
                 });
             })
             .catch(function (error) {
-                console.log(error);
-                res.status(500).send(error);
+                res.status(500).send('Something went wrong for retrieving rows from Data Extension Template!!!'+error);
+                console.log('Retrieving all rows error '+error);
             });
         
 };
