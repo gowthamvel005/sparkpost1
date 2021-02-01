@@ -582,7 +582,7 @@ exports.createFolder = function (req, res) {
         
         if(resData){
                 console.log('Already have folder');
-                res.status(200).send(resData[0].ID.replace('["').replace('"]').toString());
+                res.status(200).send(resData[0].ID);
         } else {
             
             let folderData = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -683,7 +683,7 @@ exports.createFolder = function (req, res) {
                             
                             if(resultData){
                                 console.log('Folder creation success '+resultData[0].StatusMessage);
-                                res.status(200).send(resData[0].NewID.replace('["').replace('"]').toString());
+                                res.status(200).send(resData[0].NewID);
                             } else {
                                 console.log('Folder creation Some thing went wrong!');
                                 res.status(400).send('Some thing went wrong!');
