@@ -342,7 +342,9 @@ exports.staticDataExtension = function (req, res) {
             .catch(function (error) {
             console.log(error);
             });
-        }
+        } else {
+		res.status(202).send('Already created Data Extension Template');
+	}
     })
     .catch(function (error) {
       console.log(error);
@@ -414,7 +416,7 @@ exports.staticOrgDataExtension = function (req, res) {
             +'    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
             +'        <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">'
             +'<Objects xsi:type="DataExtension">'
-            +'<CategoryID>'+req.body.cateID+'</CategoryID>'
+            +'<CategoryID>'+req.body.catID+'</CategoryID>'
             +'<CustomerKey>Org_Setup</CustomerKey>'
                 +'<Name>Org Setup</Name>'
                 +'<IsSendable>true</IsSendable>'
@@ -495,7 +497,9 @@ exports.staticOrgDataExtension = function (req, res) {
             .catch(function (error) {
             console.log(error);
             });
-        }
+        } else {
+		res.status(202).send('Already created Org Setup DE');
+	}
     })
     .catch(function (error) {
       console.log(error);
