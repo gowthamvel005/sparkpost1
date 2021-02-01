@@ -687,7 +687,7 @@ exports.createFolder = function (req, res) {
                             
                             if(resultData){
                                 console.log('Folder creation success '+resultData[0].StatusMessage);
-                                res.status(200).send(resData[0].NewID);
+                                res.status(200).send(resultData[0].NewID);
                             } else {
                                 console.log('Folder creation Some thing went wrong!');
                                 res.status(400).send('Some thing went wrong!');
