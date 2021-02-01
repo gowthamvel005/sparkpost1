@@ -241,11 +241,9 @@ define([
 		})
 		.then(response => response.text())
 		.then(dataValue => {
-			//console.log('Folder Created status: ', response.status);
-		    	console.log('Folder Created Success: ', dataValue);
-		    	if(dataValue != 'Already have folder'){
-			   createStaticDE(oauthToken);
-			}
+			console.log('Folder Created Success: ', dataValue);
+			createStaticDE(oauthToken, dataValue);
+			createStaticOrgDE(oauthToken, dataValue);
 		})
 		.catch((error) => {
 			  console.log('Folder Error:', error);
@@ -253,21 +251,42 @@ define([
 	    
     }
 	
-    function createStaticDE(oauthToken){
+    function createStaticDE(oauthToken, folderID){
 	    
 	    fetch("/create/staticde/", {
 			method: "POST",
 			body: JSON.stringify({
 				token: oauthToken,
+				catID: folderID
 			}),
 		})
 		.then(response => response.text())
 		.then(dataValue => {
 			//console.log('Folder Created status: ', response.status);
-		    	console.log('Folder Created Success: ', dataValue);
+		    	console.log('Static DE Success: ', dataValue);
 		})
 		.catch((error) => {
-			  console.log('Folder Error:', error);
+			  console.log('Static DE Error:', error);
+		});
+	    
+	}
+	
+	function createStaticOrgDE(oauthToken, folderID){
+	    
+	    fetch("/create/staticorgde/", {
+			method: "POST",
+			body: JSON.stringify({
+				token: oauthToken,
+				catID: folderID
+			}),
+		})
+		.then(response => response.text())
+		.then(dataValue => {
+			//console.log('Folder Created status: ', response.status);
+		    	console.log('Org DE Success: ', dataValue);
+		})
+		.catch((error) => {
+			  console.log('Org DE Error:', error);
 		});
 	    
     }
