@@ -29,7 +29,7 @@
                 }
 	   ],
           "outArguments": [],
-          "url": "https://hearsayleadactivity.herokuapp.com/journeybuilder/execute",
+          "url": "https://hearsayjourneybuilder.herokuapp.com/journeybuilder/execute",
            "verb": "POST",
             "body": "",
             "header": "",
@@ -44,22 +44,22 @@
     "configurationArguments": {
       "applicationExtensionKey": "53ea4ec0-43ec-4a2e-9f04-945a9f731547",
       "save": {
-        "url": "https://hearsayleadactivity.herokuapp.com/journeybuilder/save",
+        "url": "https://hearsayjourneybuilder.herokuapp.com/journeybuilder/save",
           "verb": "POST",
         "useJwt": true
        },
        "publish": {
-        "url": "https://hearsayleadactivity.herokuapp.com/journeybuilder/publish",
+        "url": "https://hearsayjourneybuilder.herokuapp.com/journeybuilder/publish",
            "verb": "POST",
         "useJwt": true
        },
       "stop": {
-        "url": "https://hearsayleadactivity.herokuapp.com/journeybuilder/stop",
+        "url": "https://hearsayjourneybuilder.herokuapp.com/journeybuilder/stop",
            "verb": "POST",
         "useJwt": true
       },
       "validate": {
-        "url": "https://hearsayleadactivity.herokuapp.com/journeybuilder/validate",
+        "url": "https://hearsayjourneybuilder.herokuapp.com/journeybuilder/validate",
         "verb": "POST",
         "useJwt": true
       }
