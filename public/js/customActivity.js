@@ -591,7 +591,7 @@ define([
                         +'<IsPrimaryKey>true</IsPrimaryKey>'
                         +'</Field>';
                         
-                    } else if(fieldKey.toLowerCase().includes("cus_name")) {
+                    } else if(fieldKey.toLowerCase().includes("cus_phone")) {
                                                 
                         fieldListString += '<Field>'
                         +'<CustomerKey>'+fieldName+'</CustomerKey>'
