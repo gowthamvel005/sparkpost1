@@ -566,6 +566,24 @@ define([
                         +'<IsRequired>false</IsRequired>'
                         +'<IsPrimaryKey>false</IsPrimaryKey>'
                         +'</Field>';
+                    } else if (fieldKey.toLowerCase().includes("phone") && fieldName.toLowerCase().includes("option")){
+                                        
+                        fieldListString += '<Field>'
+                        +'<CustomerKey>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</CustomerKey>'
+                        +'<Name>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</Name>'
+                        +'<FieldType>Phone</FieldType>'
+                        +'<IsRequired>false</IsRequired>'
+                        +'<IsPrimaryKey>false</IsPrimaryKey>'
+                        +'</Field>';
+                    } else if (fieldKey.toLowerCase().includes("date") && fieldName.toLowerCase().includes("option")){
+                                        
+                        fieldListString += '<Field>'
+                        +'<CustomerKey>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</CustomerKey>'
+                        +'<Name>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</Name>'
+                        +'<FieldType>Date</FieldType>'
+                        +'<IsRequired>false</IsRequired>'
+                        +'<IsPrimaryKey>false</IsPrimaryKey>'
+                        +'</Field>';
                     } else if(fieldKey.toLowerCase().includes("sourceid")) {
                         subfieldName += '<SendableDataExtensionField>'
                         +'    <CustomerKey>'+fieldName+'</CustomerKey>'
