@@ -598,7 +598,7 @@ define([
                         +'<Name>'+fieldName+'</Name>'
                         +'<FieldType>Phone</FieldType>'
                         +'<IsRequired>true</IsRequired>'
-                        +'<IsPrimaryKey>true</IsPrimaryKey>'
+                        +'<IsPrimaryKey>false</IsPrimaryKey>'
                         +'</Field>';
                         
                     } else if (fieldName.toLowerCase().includes("option")){
