@@ -54,13 +54,13 @@ define([
             var message = getIntegrationName('#select-01');
             
             if(message == 'Current Journey'){
-                lastStepEnabled = !lastStepEnabled; // toggle status
+                lastStepEnabled = true; // toggle status
                 steps[1].active = true;
                 steps[2].active = true; // toggle active
                 $('#inputField-01').show();
                 connection.trigger('updateSteps', steps);
             } else {
-                //reviewPageEnabled = false; // toggle status
+                lastStepEnabled = false; // toggle status
                 steps[2].active = true;
                 steps[1].active = false; // toggle active
                 $('#inputField-01').hide();
@@ -566,15 +566,6 @@ define([
                         +'<IsRequired>false</IsRequired>'
                         +'<IsPrimaryKey>false</IsPrimaryKey>'
                         +'</Field>';
-                    } else if (fieldKey.toLowerCase().includes("phone") && fieldName.toLowerCase().includes("option")){
-                                        
-                        fieldListString += '<Field>'
-                        +'<CustomerKey>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</CustomerKey>'
-                        +'<Name>'+fieldKey.charAt(0).toUpperCase() + fieldKey.slice(1)+'</Name>'
-                        +'<FieldType>Phone</FieldType>'
-                        +'<IsRequired>false</IsRequired>'
-                        +'<IsPrimaryKey>false</IsPrimaryKey>'
-                        +'</Field>';
                     } else if (fieldKey.toLowerCase().includes("date") && fieldName.toLowerCase().includes("option")){
                                         
                         fieldListString += '<Field>'
@@ -596,6 +587,16 @@ define([
                         +'<Name>'+fieldName+'</Name>'
                         +'<FieldType>Text</FieldType>'
                         +'<MaxLength>50</MaxLength>'
+                        +'<IsRequired>true</IsRequired>'
+                        +'<IsPrimaryKey>true</IsPrimaryKey>'
+                        +'</Field>';
+                        
+                    } else if(fieldKey.toLowerCase().includes("phone")) {
+                                                
+                        fieldListString += '<Field>'
+                        +'<CustomerKey>'+fieldName+'</CustomerKey>'
+                        +'<Name>'+fieldName+'</Name>'
+                        +'<FieldType>Phone</FieldType>'
                         +'<IsRequired>true</IsRequired>'
                         +'<IsPrimaryKey>true</IsPrimaryKey>'
                         +'</Field>';
