@@ -547,7 +547,7 @@ define([
             let subfieldName = '';
             for(var fieldKey in inArgumentList){
                     fieldName =  inArgumentList[fieldKey].toString();
-                    if(fieldKey.toLowerCase().includes("name") || fieldKey.toLowerCase().includes("sourceorganizationid") || fieldKey.toLowerCase().includes("subownerid") || fieldKey.toLowerCase().includes("phone")){
+                    if(fieldKey.toLowerCase().includes("cus_name") || fieldKey.toLowerCase().includes("sourceorganizationid") || fieldKey.toLowerCase().includes("subownerid")){
                         fieldListString += '<Field>'
                         +'<CustomerKey>'+fieldName+'</CustomerKey>'
                         +'<Name>'+fieldName+'</Name>'
@@ -591,7 +591,7 @@ define([
                         +'<IsPrimaryKey>true</IsPrimaryKey>'
                         +'</Field>';
                         
-                    } else if(fieldKey.toLowerCase().includes("phone")) {
+                    } else if(fieldKey.toLowerCase().includes("cus_name")) {
                                                 
                         fieldListString += '<Field>'
                         +'<CustomerKey>'+fieldName+'</CustomerKey>'
