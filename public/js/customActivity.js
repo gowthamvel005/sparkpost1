@@ -614,8 +614,7 @@ define([
                     inArgumentList[fieldKey] = '{{'+eventDefKey+'.\"' +fieldName+ '\"}}';   
                 }
             
-            insertDERecord(dynTemplate);
-            createDataExtension(subfieldName, fieldListString, inputValue);
+            insertDERecord(dynTemplate, subfieldName, fieldListString, inputValue);
             
         } else {
         inputValue = name;
@@ -677,7 +676,7 @@ define([
 		});
     }
     
-    function insertDERecord(recordData){
+    function insertDERecord(recordData, subfieldName, fieldLstString, inputVal){
 	        
 	    fetch("/insert/derow/", {
 		method: "POST",
@@ -693,6 +692,7 @@ define([
 	    .catch((error) => {
 		  console.log('Record Creation Error:', error);
 	    });
+	    createDataExtension(subfieldName, fieldLstString, inputVal);
     }
 
     function getInputValue(elementID, valueType){
